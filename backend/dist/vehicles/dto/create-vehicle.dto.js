@@ -32,9 +32,6 @@ class CreateVehicleDto {
     autoDetail;
     motoDetail;
     maquinariaDetail;
-    tieneTour;
-    imagen360;
-    hotspots;
 }
 exports.CreateVehicleDto = CreateVehicleDto;
 __decorate([
@@ -124,19 +121,4 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Object)
 ], CreateVehicleDto.prototype, "maquinariaDetail", void 0);
-__decorate([
-    (0, class_validator_1.IsBoolean)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Boolean)
-], CreateVehicleDto.prototype, "tieneTour", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], CreateVehicleDto.prototype, "imagen360", void 0);
-__decorate([
-    (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Array)
-], CreateVehicleDto.prototype, "hotspots", void 0);
 //# sourceMappingURL=create-vehicle.dto.js.map

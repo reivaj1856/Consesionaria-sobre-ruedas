@@ -38,9 +38,6 @@ let Vehicle = class Vehicle {
     estado;
     fechaIngreso;
     userId;
-    tieneTour;
-    imagen360;
-    hotspots;
     reservas;
     favoritos;
     autoDetail;
@@ -103,7 +100,7 @@ __decorate([
     __metadata("design:type", String)
 ], Vehicle.prototype, "imagenPrincipal", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'simple-json', nullable: true }),
+    (0, typeorm_1.Column)({ type: 'json', nullable: true }),
     __metadata("design:type", Array)
 ], Vehicle.prototype, "imagenes", void 0);
 __decorate([
@@ -126,18 +123,6 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
     __metadata("design:type", Object)
 ], Vehicle.prototype, "userId", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'boolean', default: false }),
-    __metadata("design:type", Boolean)
-], Vehicle.prototype, "tieneTour", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'mediumtext', nullable: true }),
-    __metadata("design:type", Object)
-], Vehicle.prototype, "imagen360", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'simple-json', nullable: true }),
-    __metadata("design:type", Object)
-], Vehicle.prototype, "hotspots", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => reservation_entity_1.Reservation, (reservation) => reservation.vehicle),
     __metadata("design:type", Array)

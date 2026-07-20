@@ -53,7 +53,4 @@ export interface Vehicle {
   autoDetail?: AutoDetail;
   motoDetail?: MotoDetail;
   maquinariaDetail?: MaquinariaDetail;
-  tieneTour?: boolean;
-  imagen360?: string;
-  hotspots?: any[];
 }

@@ -48,7 +48,7 @@ export class Vehicle {
   @Column({ type: 'longtext' })
   imagenPrincipal: string;
 
-  @Column({ type: 'simple-json', nullable: true })
+  @Column({ type: 'json', nullable: true })
   imagenes: string[];
 
   @Column({ type: 'text' })
@@ -65,15 +65,6 @@ export class Vehicle {
 
   @Column({ type: 'varchar', nullable: true })
   userId: string | null;
-
-  @Column({ type: 'boolean', default: false })
-  tieneTour: boolean;
-
-  @Column({ type: 'mediumtext', nullable: true })
-  imagen360: string | null;
-
-  @Column({ type: 'simple-json', nullable: true })
-  hotspots: any[] | null;
 
   @OneToMany(() => Reservation, (reservation) => reservation.vehicle)
   reservas: Reservation[];

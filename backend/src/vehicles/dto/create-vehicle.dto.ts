@@ -77,16 +77,4 @@ export class CreateVehicleDto {
     pesoOperativo: number;
     horasUso: number;
   };
-
-  @IsBoolean()
-  @IsOptional()
-  tieneTour?: boolean;
-
-  @IsString()
-  @IsOptional()
-  imagen360?: string;
-
-  @IsArray()
-  @IsOptional()
-  hotspots?: any[];
 }

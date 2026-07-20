@@ -29,7 +29,4 @@ export declare class CreateVehicleDto {
         pesoOperativo: number;
         horasUso: number;
     };
-    tieneTour?: boolean;
-    imagen360?: string;
-    hotspots?: any[];
 }

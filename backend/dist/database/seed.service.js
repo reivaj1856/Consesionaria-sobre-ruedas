@@ -189,16 +189,6 @@ let SeedService = SeedService_1 = class SeedService {
                 'maquinaria-03': ["Aire acondicionado: Delantero", "4X4", "Turbo-engine"],
             };
             for (const v of seed_data_1.SEED_VEHICLES) {
-                const tieneTour = v.id === 'auto-03';
-                const imagen360 = v.id === 'auto-03'
-                    ? 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&q=80&w=1000'
-                    : null;
-                const hotspots = v.id === 'auto-03' ? [
-                    { id: 1, top: '48%', left: '16%', title: 'Faros Láser HD', description: 'Sistema de iluminación inteligente LED que se adapta a las curvas de la carretera de forma activa.' },
-                    { id: 2, top: '72%', left: '32%', title: 'Frenos de Carbono Cerámica', description: 'Discos cerámicos sobredimensionados para frenadas a alta velocidad con fatiga cero.' },
-                    { id: 3, top: '45%', left: '60%', title: 'Motor Eléctrico Dual', description: 'Propulsión síncrona en ambos ejes de hasta 761 HP y aceleración de 0 a 100 en 2.8s.' },
-                    { id: 4, top: '55%', left: '84%', title: 'Spoiler Aerodinámico Activo', description: 'Alerón retráctil de 3 posiciones para maximizar la carga vertical y estabilidad a alta velocidad.' }
-                ] : null;
                 const vehicle = this.vehicleRepository.create({
                     id: v.id,
                     nombre: v.nombre,
@@ -218,9 +208,6 @@ let SeedService = SeedService_1 = class SeedService {
                     destacado: v.destacado,
                     estado: v.estado,
                     fechaIngreso: v.fechaIngreso,
-                    tieneTour,
-                    imagen360,
-                    hotspots,
                     especificaciones: []
                 });
                 const specNames = vehicleSpecsMapping[v.id] || [];

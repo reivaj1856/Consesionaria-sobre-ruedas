@@ -25,9 +25,6 @@ export declare class Vehicle {
     estado: 'disponible' | 'reservado' | 'vendido';
     fechaIngreso: string;
     userId: string | null;
-    tieneTour: boolean;
-    imagen360: string | null;
-    hotspots: any[] | null;
     reservas: Reservation[];
     favoritos: Favorite[];
     autoDetail?: AutoDetail;

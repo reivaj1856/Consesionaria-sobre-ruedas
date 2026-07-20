@@ -213,88 +213,7 @@ interface HotspotConfig {
             </div>
           </div>
 
-          <!-- SECCIÓN DE TOUR VIRTUAL 360 (Solo Premium: Negocio, Empresa o Admin) -->
-          @if (isPremiumUser()) {
-            <div class="border-t border-slate-200 pt-6">
-              <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">Tour Virtual 360</h2>
-              
-              <div class="mt-4 flex items-center gap-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <input type="checkbox" formControlName="tieneTour" id="tieneTour" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" />
-                <label for="tieneTour" class="text-xs font-bold text-slate-700 cursor-pointer select-none">Habilitar Tour Virtual 360 para esta publicación</label>
-              </div>
 
-              @if (vehicleForm.get('tieneTour')?.value) {
-                <div class="mt-4 space-y-4">
-                  <!-- Upload 360 Image -->
-                  <div>
-                    <label class="block text-xs font-semibold text-slate-500 uppercase">Imagen 360 (Base64)</label>
-                    @if (image360Preview()) {
-                      <div class="mt-2 h-44 w-full rounded-xl overflow-hidden relative border border-slate-200 bg-slate-900">
-                        <img [src]="image360Preview()" class="h-full w-full object-cover" />
-                        <button type="button" (click)="removeImage360()" 
-                                class="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1.5 shadow hover:bg-red-500 transition-colors focus:outline-none">
-                          Remover Imagen
-                        </button>
-                      </div>
-                    } @else {
-                      <div class="mt-2 border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-blue-500 transition-colors cursor-pointer relative bg-slate-50">
-                        <input type="file" (change)="onFile360Selected($event)" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" />
-                        <span class="text-xs text-slate-500 block font-medium">Sube una foto panorámica para el visualizador 360</span>
-                      </div>
-                    }
-                  </div>
-
-                  <!-- Hotspots Editor -->
-                  <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <div class="flex justify-between items-center pb-2 border-b border-slate-100">
-                      <h3 class="text-xs font-bold text-slate-700 uppercase">Puntos de Interés (Hotspots)</h3>
-                      <button type="button" (click)="addHotspot()" class="text-[11px] font-bold text-blue-600 hover:text-blue-500">
-                        + Agregar Hotspot
-                      </button>
-                    </div>
-
-                    <div class="mt-3 space-y-3">
-                      @for (h of hotspots(); track $index) {
-                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end border-b border-slate-100 pb-3">
-                          <div class="sm:col-span-1">
-                            <span class="h-6 w-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
-                              {{ h.id }}
-                            </span>
-                          </div>
-                          <div class="sm:col-span-3">
-                            <label class="text-[10px] text-slate-500 block">Título</label>
-                            <input type="text" [(ngModel)]="h.title" [ngModelOptions]="{standalone: true}" placeholder="Ej. Faros LED"
-                                   class="w-full rounded-lg border border-slate-200 px-2 py-1 text-xs focus:outline-none" />
-                          </div>
-                          <div class="sm:col-span-4">
-                            <label class="text-[10px] text-slate-500 block">Descripción</label>
-                            <input type="text" [(ngModel)]="h.description" [ngModelOptions]="{standalone: true}" placeholder="Frenos cerámicos..."
-                                   class="w-full rounded-lg border border-slate-200 px-2 py-1 text-xs focus:outline-none" />
-                          </div>
-                          <div class="sm:col-span-2">
-                            <label class="text-[10px] text-slate-500 block">Top (%)</label>
-                            <input type="text" [(ngModel)]="h.top" [ngModelOptions]="{standalone: true}" placeholder="Ej. 45%"
-                                   class="w-full rounded-lg border border-slate-200 px-2 py-1 text-xs focus:outline-none" />
-                          </div>
-                          <div class="sm:col-span-1">
-                            <label class="text-[10px] text-slate-500 block">Left (%)</label>
-                            <input type="text" [(ngModel)]="h.left" [ngModelOptions]="{standalone: true}" placeholder="Ej. 20%"
-                                   class="w-full rounded-lg border border-slate-200 px-2 py-1 text-xs focus:outline-none" />
-                          </div>
-                          <div class="sm:col-span-1 text-right">
-                            <button type="button" (click)="removeHotspot($index)" class="text-xs font-semibold text-red-600 hover:text-red-500">
-                              Quitar
-                            </button>
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  </div>
-
-                </div>
-              }
-            </div>
-          }
 
           <!-- Seccion 4: Especificaciones de Subtipo (Ficha Técnica Específica) -->
           <div>
@@ -478,10 +397,6 @@ export class AdminFormComponent implements OnInit {
   protected readonly imagenPrincipalPreview = signal<string>('');
   protected readonly galleryImages = signal<string[]>([]);
 
-  // 360 Tour states
-  protected readonly image360Preview = signal<string>('');
-  protected readonly hotspots = signal<HotspotConfig[]>([]);
-
   // Modal para agregar especificación
   protected readonly isAddSpecModalOpen = signal(false);
   protected readonly newSpecName = signal('');
@@ -504,9 +419,6 @@ export class AdminFormComponent implements OnInit {
       descripcion: ['', [Validators.required, Validators.minLength(10)]],
       destacado: [false],
       estado: ['disponible', [Validators.required]],
-      // Tour 360 controls
-      tieneTour: [false],
-      imagen360: [''],
       // Autos
       autoCarroceria: [''],
       autoPuertas: [4],
@@ -560,8 +472,6 @@ export class AdminFormComponent implements OnInit {
         descripcion: v.descripcion,
         destacado: v.destacado,
         estado: v.estado,
-        tieneTour: v.tieneTour || false,
-        imagen360: v.imagen360 || '',
         autoCarroceria: v.autoDetail?.carroceria || '',
         autoPuertas: v.autoDetail?.puertas || 4,
         autoPasajeros: v.autoDetail?.pasajeros || 5,
@@ -576,13 +486,6 @@ export class AdminFormComponent implements OnInit {
       }
       if (v.imagenes && v.imagenes.length > 0) {
         this.galleryImages.set(v.imagenes);
-      }
-
-      if (v.imagen360) {
-        this.image360Preview.set(v.imagen360);
-      }
-      if (v.hotspots) {
-        this.hotspots.set(v.hotspots);
       }
 
       if (v.especificaciones) {
@@ -643,45 +546,6 @@ export class AdminFormComponent implements OnInit {
   protected removeGalleryImage(index: number): void {
     const current = this.galleryImages();
     this.galleryImages.set(current.filter((_, i) => i !== index));
-  }
-
-  // 360 Tour methods
-  protected removeImage360(): void {
-    this.image360Preview.set('');
-    this.vehicleForm.patchValue({ imagen360: '' });
-  }
-
-  protected onFile360Selected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      const reader = new FileReader();
-      
-      reader.onload = () => {
-        const base64 = reader.result as string;
-        this.image360Preview.set(base64);
-        this.vehicleForm.patchValue({ imagen360: base64 });
-      };
-      
-      reader.readAsDataURL(file);
-    }
-  }
-
-  protected addHotspot(): void {
-    const current = this.hotspots();
-    const nextId = current.length > 0 ? Math.max(...current.map(h => h.id)) + 1 : 1;
-    this.hotspots.set([...current, {
-      id: nextId,
-      top: '50%',
-      left: '50%',
-      title: '',
-      description: ''
-    }]);
-  }
-
-  protected removeHotspot(index: number): void {
-    const current = this.hotspots();
-    this.hotspots.set(current.filter((_, i) => i !== index));
   }
 
   protected toggleSpec(id: number): void {
@@ -754,9 +618,6 @@ export class AdminFormComponent implements OnInit {
         descripcion: formValue.descripcion,
         destacado: formValue.destacado,
         estado: formValue.estado,
-        tieneTour: formValue.tieneTour || false,
-        imagen360: this.image360Preview() || null,
-        hotspots: this.hotspots() || [],
         especificaciones: this.selectedSpecs()
       };
 

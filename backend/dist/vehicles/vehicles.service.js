@@ -116,9 +116,6 @@ let VehiclesService = class VehiclesService {
             if (activeCount >= limit) {
                 throw new common_1.BadRequestException(`Límite de publicaciones alcanzado. Tu plan actual (${dbUser.plan}) permite un máximo de ${limit} publicaciones activas.`);
             }
-            if (dbUser.plan === 'gratis' && createVehicleDto.tieneTour) {
-                throw new common_1.BadRequestException('El plan Gratis no permite crear publicaciones con Tour Virtual 360. Mejora tu plan a Negocio o Empresa.');
-            }
         }
         const id = `${createVehicleDto.categoria}-${Date.now()}`;
         const fechaIngreso = new Date().toISOString().split('T')[0];
@@ -164,12 +161,6 @@ let VehiclesService = class VehiclesService {
         const vehicle = await this.findOne(id);
         if (user && user.rol !== 'admin' && vehicle.userId !== user.id) {
             throw new common_1.ForbiddenException('No tienes permiso para modificar esta publicación.');
-        }
-        if (user && user.rol === 'cliente') {
-            const dbUser = await this.userRepository.findOne({ where: { id: user.id } });
-            if (dbUser && dbUser.plan === 'gratis' && updateVehicleDto.tieneTour) {
-                throw new common_1.BadRequestException('El plan Gratis no permite crear publicaciones con Tour Virtual 360. Mejora tu plan a Negocio o Empresa.');
-            }
         }
         const { autoDetail, motoDetail, maquinariaDetail, especificaciones, ...baseData } = updateVehicleDto;
         Object.assign(vehicle, baseData);

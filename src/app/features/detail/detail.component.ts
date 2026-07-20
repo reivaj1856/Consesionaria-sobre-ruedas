@@ -29,125 +29,6 @@ import { ReservationService } from '../../core/services/reservation.service';
           <span class="text-slate-800 font-bold truncate">{{ v.nombre }}</span>
         </nav>
 
-        <!-- TOUR VIRTUAL BUTTON -->
-        @if (v.tieneTour) {
-          <div class="mb-6">
-            <button (click)="toggleTour()" 
-                    [class]="showTour() ? 'bg-rose-600 hover:bg-rose-500' : 'bg-blue-600 hover:bg-blue-500'"
-                    class="inline-flex items-center gap-2 rounded-xl text-white px-5 py-3 text-sm font-bold shadow-md transition-all focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-              {{ showTour() ? 'Cerrar Tour Virtual' : 'Iniciar Tour Virtual 360°' }}
-            </button>
-          </div>
-        }
-
-        <!-- SIDE-BY-SIDE TOUR VIRTUAL SECTION -->
-        @if (showTour()) {
-          <div class="mb-10 bg-slate-950 text-white rounded-3xl p-6 md:p-8 border border-slate-800 shadow-2xl relative overflow-hidden fade-in">
-            <!-- Ambient Grid Background -->
-            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-slate-950 to-slate-950 z-0"></div>
-
-            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              
-              <!-- Left Side: Hotspots / Characteristics List (5/12) -->
-              <div class="lg:col-span-5 flex flex-col gap-5">
-                <div>
-                  <span class="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-3 py-1 text-[10px] font-bold text-blue-400 ring-1 ring-blue-500/20 uppercase tracking-wider">
-                    Vista Guiada Rápida
-                  </span>
-                  <h2 class="font-heading text-2xl font-extrabold mt-2 text-white">Características del Vehículo</h2>
-                  <p class="text-xs text-slate-400 mt-1">Navega por los puntos interactivos del tour guiado para conocer más detalles.</p>
-                </div>
-
-                <div class="flex flex-col gap-3 max-h-[350px] overflow-y-auto pr-2">
-                  @for (h of v.hotspots; track h.id) {
-                    <button (click)="focusHotspot(h.id)"
-                            [class]="focusedHotspotId() === h.id ? 'bg-slate-800 border-l-4 border-blue-500 text-white' : 'bg-slate-900/40 text-slate-400 border border-slate-800/40'"
-                            class="flex items-start p-3.5 rounded-xl text-left transition-all focus:outline-none hover:bg-slate-900/60">
-                      <span class="h-5 w-5 shrink-0 rounded-full bg-blue-600/20 text-blue-400 text-xs font-bold flex items-center justify-center mr-3 mt-0.5">
-                        {{ h.id }}
-                      </span>
-                      <div>
-                        <div class="text-xs font-bold text-white">{{ h.title }}</div>
-                        @if (focusedHotspotId() === h.id) {
-                          <div class="text-[11px] text-slate-300 mt-1.5 leading-relaxed">{{ h.description }}</div>
-                        }
-                      </div>
-                    </button>
-                  } @empty {
-                    <p class="text-xs text-slate-500 italic">No hay puntos de interés configurados para esta unidad.</p>
-                  }
-                </div>
-
-                <div class="border-t border-slate-800 pt-4 flex gap-2">
-                  <button (click)="showTour.set(false)" 
-                          class="rounded-xl border border-slate-700 hover:bg-slate-900 text-slate-300 text-xs font-bold py-2.5 px-4 transition-colors">
-                    Cerrar Tour Virtual
-                  </button>
-                </div>
-              </div>
-
-              <!-- Right Side: Interactive 360 Viewer (7/12) -->
-              <div class="lg:col-span-7 flex flex-col items-center gap-4">
-                
-                <!-- Viewport -->
-                <div class="relative bg-slate-900/20 border border-slate-800 rounded-3xl p-6 w-full min-h-[380px] flex items-center justify-center overflow-hidden shadow-inner">
-                  
-                  <div class="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950/20 z-0"></div>
-
-                  <!-- The Image with 3D Orbit transform -->
-                  <div class="relative z-10 w-full max-w-lg transition-all duration-300 select-none"
-                       [style.transform]="'perspective(1000px) rotateY(' + rotateY() + 'deg) rotateX(8deg)'">
-                    
-                    <img [src]="v.imagen360 || v.imagenPrincipal" 
-                         class="w-full h-auto object-contain transition-all duration-300 drop-shadow-[0_20px_40px_rgba(30,58,138,0.35)] pointer-events-none" 
-                         [alt]="v.nombre" />
-
-                    <!-- Hotspots overlay -->
-                    @for (h of v.hotspots; track h.id) {
-                      <div class="absolute transition-all duration-300"
-                           [style.top]="h.top"
-                           [style.left]="h.left">
-                        
-                        <button (click)="focusHotspot(h.id)"
-                                class="h-5.5 w-5.5 rounded-full bg-blue-600 hover:bg-blue-500 border border-white flex items-center justify-center focus:outline-none transition-all shadow-md">
-                          <span class="absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75 animate-ping"></span>
-                          <span class="text-[9px] font-bold text-white relative z-10">{{ h.id }}</span>
-                        </button>
-
-                        <!-- Tooltip -->
-                        <div class="absolute left-1/2 -translate-x-1/2 bottom-8 z-30 w-44 bg-slate-900 border border-slate-700 p-2.5 rounded-xl shadow-xl transition-all duration-300 scale-0"
-                             [class.scale-100]="focusedHotspotId() === h.id">
-                          <h4 class="text-xs font-bold text-white">{{ h.title }}</h4>
-                          <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">{{ h.description }}</p>
-                        </div>
-
-                      </div>
-                    }
-
-                  </div>
-
-                </div>
-
-                <!-- Range slider for orbit control -->
-                <div class="w-full max-w-md bg-slate-900/40 border border-slate-800 rounded-2xl p-4 flex flex-col gap-2">
-                  <div class="flex justify-between text-xs font-bold text-slate-400 uppercase">
-                    <span>Girar Vehículo (360°)</span>
-                    <span class="text-blue-400 font-mono">{{ rotateY() }}°</span>
-                  </div>
-                  <input type="range" min="0" max="360" [(ngModel)]="rotateYValue" (input)="updateRotation($event)"
-                         class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-                </div>
-
-              </div>
-
-            </div>
-          </div>
-        }
-
         <!-- Main Product Grid -->
         <div class="grid grid-cols-1 gap-10 lg:grid-cols-12">
           
@@ -573,12 +454,6 @@ export class DetailComponent implements OnInit {
   protected readonly isFavorite = computed(() => this.favoriteService.isFavorite(this.vehicleId()));
   protected readonly isCompared = computed(() => this.comparisonService.isCompared(this.vehicleId()));
 
-  // 360 Tour control signals
-  protected readonly showTour = signal(false);
-  protected readonly rotateY = signal(0);
-  protected rotateYValue = 0;
-  protected readonly focusedHotspotId = signal<number | null>(null);
-
   // Modals controllers
   protected readonly isQuoteModalOpen = signal(false);
   protected readonly quoteFormSubmitted = signal(false);
@@ -601,38 +476,12 @@ export class DetailComponent implements OnInit {
       const id = params.get('id') || '';
       this.vehicleId.set(id);
       
-      // Reset tour
-      this.showTour.set(false);
-      this.rotateY.set(0);
-      this.rotateYValue = 0;
-      this.focusedHotspotId.set(null);
-      
       // Inicializar imagen principal activa
       const currentVehicle = this.vehicle();
       if (currentVehicle) {
         this.activeImage.set(currentVehicle.imagenPrincipal);
       }
     });
-  }
-
-  protected toggleTour(): void {
-    this.showTour.set(!this.showTour());
-    this.rotateY.set(0);
-    this.rotateYValue = 0;
-    this.focusedHotspotId.set(null);
-  }
-
-  protected updateRotation(event: Event): void {
-    const slider = event.target as HTMLInputElement;
-    this.rotateY.set(Number(slider.value));
-  }
-
-  protected focusHotspot(id: number): void {
-    if (this.focusedHotspotId() === id) {
-      this.focusedHotspotId.set(null);
-    } else {
-      this.focusedHotspotId.set(id);
-    }
   }
 
   protected setActiveImage(url: string): void {
