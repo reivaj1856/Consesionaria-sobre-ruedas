@@ -1,0 +1,38 @@
+import { Reservation } from '../../reservations/entities/reservation.entity';
+import { Favorite } from '../../favorites/entities/favorite.entity';
+import { AutoDetail } from './auto-detail.entity';
+import { MotoDetail } from './moto-detail.entity';
+import { MaquinariaDetail } from './maquinaria-detail.entity';
+import { Specification } from '../../specifications/entities/specification.entity';
+import { User } from '../../users/entities/user.entity';
+export declare class Vehicle {
+    id: string;
+    nombre: string;
+    marca: string;
+    modelo: string;
+    anio: number;
+    precio: number;
+    categoria: 'autos' | 'motos' | 'maquinaria';
+    tipoCombustible: string;
+    transmision: string;
+    kilometraje: number;
+    condicion: 'nuevo' | 'usado';
+    ubicacion: string;
+    imagenPrincipal: string;
+    imagenes: string[];
+    descripcion: string;
+    destacado: boolean;
+    estado: 'disponible' | 'reservado' | 'vendido';
+    fechaIngreso: string;
+    userId: string | null;
+    tieneTour: boolean;
+    imagen360: string | null;
+    hotspots: any[] | null;
+    reservas: Reservation[];
+    favoritos: Favorite[];
+    autoDetail?: AutoDetail;
+    motoDetail?: MotoDetail;
+    maquinariaDetail?: MaquinariaDetail;
+    especificaciones: Specification[];
+    user?: User;
+}

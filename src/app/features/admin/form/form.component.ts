@@ -1,0 +1,796 @@
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { VehicleService } from '../../../core/services/vehicle.service';
+import { SpecificationService } from '../../../core/services/specification.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { Vehicle, SpecificationGroup, Specification } from '../../../core/models/vehicle.model';
+
+interface HotspotConfig {
+  id: number;
+  top: string;
+  left: string;
+  title: string;
+  description: string;
+}
+
+@Component({
+  selector: 'app-admin-form',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink],
+  template: `
+    <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 fade-in">
+      
+      <!-- Header -->
+      <div class="border-b border-slate-200 pb-5 flex justify-between items-center">
+        <div>
+          <h1 class="font-heading text-3xl font-extrabold text-slate-900">
+            {{ isEditMode() ? 'Editar Vehículo' : 'Registrar Nuevo Vehículo' }}
+          </h1>
+          <p class="mt-2 text-sm text-slate-500">Completa la ficha comercial y técnica del vehículo en el inventario</p>
+        </div>
+        <a routerLink="/admin" class="text-xs font-semibold text-slate-500 hover:text-slate-800 px-3.5 py-2 border border-slate-200 rounded-lg shadow-sm">
+          Regresar
+        </a>
+      </div>
+
+      <!-- Form Card -->
+      <div class="mt-8 bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+        
+        <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()" class="space-y-6">
+          
+          <!-- Seccion 1: Datos Básicos -->
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">Información Básica</h2>
+            
+            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase">Nombre Comercial</label>
+                <input type="text" formControlName="nombre" placeholder="Ej. Ford Mustang GT Premium"
+                       class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                       [class.border-red-400]="isFieldInvalid('nombre')" />
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase font-bold">Categoría</label>
+                <select formControlName="categoria" (change)="onCategoryChange()"
+                        class="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                  <option value="autos">Autos y Camionetas</option>
+                  <option value="motos">Motocicletas</option>
+                  <option value="maquinaria">Maquinaria Pesada</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase">Marca</label>
+                <input type="text" formControlName="marca" placeholder="Ej. Ford"
+                       class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                       [class.border-red-400]="isFieldInvalid('marca')" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase font-bold">Modelo</label>
+                <input type="text" formControlName="modelo" placeholder="Ej. Mustang"
+                       class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                       [class.border-red-400]="isFieldInvalid('modelo')" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase font-bold">Año</label>
+                <input type="number" formControlName="anio" placeholder="2024"
+                       class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                       [class.border-red-400]="isFieldInvalid('anio')" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase font-bold">Precio (USD)</label>
+                <input type="number" formControlName="precio" placeholder="45000"
+                       class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                       [class.border-red-400]="isFieldInvalid('precio')" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Seccion 2: Características del Vehículo -->
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">Características Técnicas Generales</h2>
+            
+            <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase">Kilometraje (Km)</label>
+                <input type="number" formControlName="kilometraje" placeholder="0"
+                       class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                       [class.border-red-400]="isFieldInvalid('kilometraje')" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase">Condición</label>
+                <select formControlName="condicion" 
+                        class="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                  <option value="nuevo">Nuevo</option>
+                  <option value="usado">Usado</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase">Transmisión</label>
+                <select formControlName="transmision" 
+                        class="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                  <option value="Manual">Manual</option>
+                  <option value="Automática">Automática</option>
+                  <option value="Hidrostática">Hidrostática</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase">Combustible</label>
+                <select formControlName="tipoCombustible" 
+                        class="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                  <option value="Gasolina">Gasolina</option>
+                  <option value="Diésel">Diésel</option>
+                  <option value="Híbrido">Híbrido</option>
+                  <option value="Eléctrico">Eléctrico</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase">Ubicación física</label>
+                <input type="text" formControlName="ubicacion" placeholder="Ej. Santiago, Centro"
+                       class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                       [class.border-red-400]="isFieldInvalid('ubicacion')" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase">Estado Comercial</label>
+                <select formControlName="estado" 
+                        class="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                  <option value="disponible">Disponible</option>
+                  <option value="reservado">Reservado</option>
+                  <option value="vendido">Vendido</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seccion 3: Imágenes (Subida de Archivos) -->
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">Visuales (Carga de Imágenes)</h2>
+            
+            <div class="mt-4 space-y-6">
+              <!-- Imagen Principal -->
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Imagen Principal del Vehículo</label>
+                
+                @if (imagenPrincipalPreview()) {
+                  <div class="mt-2 h-52 w-full rounded-2xl overflow-hidden relative border border-slate-200 bg-slate-900 shadow-sm">
+                    <img [src]="imagenPrincipalPreview()" class="h-full w-full object-cover" />
+                    <button type="button" (click)="removeImagenPrincipal()" 
+                            class="absolute top-3 right-3 bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow transition-colors flex items-center gap-1 focus:outline-none">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Cambiar Imagen Principal
+                    </button>
+                  </div>
+                } @else {
+                  <div class="mt-2 border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center hover:border-blue-500 transition-colors cursor-pointer relative bg-slate-50/50">
+                    <input type="file" (change)="onMainFileSelected($event)" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-10 w-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="text-xs text-slate-600 block mt-2 font-bold">Haz clic o arrastra un archivo de imagen aquí</span>
+                    <span class="text-[10px] text-slate-400 block mt-1">Soporta JPG, PNG, WEBP. Se guardará directamente en la base de datos.</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Galería de Imágenes Adicionales -->
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Galería de Imágenes Adicionales</label>
+                
+                <div class="mt-2 border-2 border-dashed border-slate-200 rounded-2xl p-5 text-center hover:border-blue-500 transition-colors cursor-pointer relative bg-slate-50/50">
+                  <input type="file" (change)="onGalleryFilesSelected($event)" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer" />
+                  <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span class="text-xs text-slate-600 block mt-1 font-bold font-sans">Añadir fotos a la galería (puedes seleccionar múltiples archivos)</span>
+                </div>
+
+                @if (galleryImages().length > 0) {
+                  <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    @for (img of galleryImages(); track $index) {
+                      <div class="relative aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-900 group shadow-sm">
+                        <img [src]="img" class="h-full w-full object-cover" />
+                        <button type="button" (click)="removeGalleryImage($index)" 
+                                class="absolute top-1.5 right-1.5 bg-red-600 hover:bg-red-500 text-white rounded-full p-1 shadow transition-colors focus:outline-none">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN DE TOUR VIRTUAL 360 (Solo Premium: Negocio, Empresa o Admin) -->
+          @if (isPremiumUser()) {
+            <div class="border-t border-slate-200 pt-6">
+              <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">Tour Virtual 360</h2>
+              
+              <div class="mt-4 flex items-center gap-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <input type="checkbox" formControlName="tieneTour" id="tieneTour" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" />
+                <label for="tieneTour" class="text-xs font-bold text-slate-700 cursor-pointer select-none">Habilitar Tour Virtual 360 para esta publicación</label>
+              </div>
+
+              @if (vehicleForm.get('tieneTour')?.value) {
+                <div class="mt-4 space-y-4">
+                  <!-- Upload 360 Image -->
+                  <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase">Imagen 360 (Base64)</label>
+                    @if (image360Preview()) {
+                      <div class="mt-2 h-44 w-full rounded-xl overflow-hidden relative border border-slate-200 bg-slate-900">
+                        <img [src]="image360Preview()" class="h-full w-full object-cover" />
+                        <button type="button" (click)="removeImage360()" 
+                                class="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1.5 shadow hover:bg-red-500 transition-colors focus:outline-none">
+                          Remover Imagen
+                        </button>
+                      </div>
+                    } @else {
+                      <div class="mt-2 border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-blue-500 transition-colors cursor-pointer relative bg-slate-50">
+                        <input type="file" (change)="onFile360Selected($event)" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" />
+                        <span class="text-xs text-slate-500 block font-medium">Sube una foto panorámica para el visualizador 360</span>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Hotspots Editor -->
+                  <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                      <h3 class="text-xs font-bold text-slate-700 uppercase">Puntos de Interés (Hotspots)</h3>
+                      <button type="button" (click)="addHotspot()" class="text-[11px] font-bold text-blue-600 hover:text-blue-500">
+                        + Agregar Hotspot
+                      </button>
+                    </div>
+
+                    <div class="mt-3 space-y-3">
+                      @for (h of hotspots(); track $index) {
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-end border-b border-slate-100 pb-3">
+                          <div class="sm:col-span-1">
+                            <span class="h-6 w-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
+                              {{ h.id }}
+                            </span>
+                          </div>
+                          <div class="sm:col-span-3">
+                            <label class="text-[10px] text-slate-500 block">Título</label>
+                            <input type="text" [(ngModel)]="h.title" [ngModelOptions]="{standalone: true}" placeholder="Ej. Faros LED"
+                                   class="w-full rounded-lg border border-slate-200 px-2 py-1 text-xs focus:outline-none" />
+                          </div>
+                          <div class="sm:col-span-4">
+                            <label class="text-[10px] text-slate-500 block">Descripción</label>
+                            <input type="text" [(ngModel)]="h.description" [ngModelOptions]="{standalone: true}" placeholder="Frenos cerámicos..."
+                                   class="w-full rounded-lg border border-slate-200 px-2 py-1 text-xs focus:outline-none" />
+                          </div>
+                          <div class="sm:col-span-2">
+                            <label class="text-[10px] text-slate-500 block">Top (%)</label>
+                            <input type="text" [(ngModel)]="h.top" [ngModelOptions]="{standalone: true}" placeholder="Ej. 45%"
+                                   class="w-full rounded-lg border border-slate-200 px-2 py-1 text-xs focus:outline-none" />
+                          </div>
+                          <div class="sm:col-span-1">
+                            <label class="text-[10px] text-slate-500 block">Left (%)</label>
+                            <input type="text" [(ngModel)]="h.left" [ngModelOptions]="{standalone: true}" placeholder="Ej. 20%"
+                                   class="w-full rounded-lg border border-slate-200 px-2 py-1 text-xs focus:outline-none" />
+                          </div>
+                          <div class="sm:col-span-1 text-right">
+                            <button type="button" (click)="removeHotspot($index)" class="text-xs font-semibold text-red-600 hover:text-red-500">
+                              Quitar
+                            </button>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Seccion 4: Especificaciones de Subtipo (Ficha Técnica Específica) -->
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">Especificaciones de Categoría</h2>
+            
+            @if (vehicleForm.get('categoria')?.value === 'autos') {
+              <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-500 uppercase">Carrocería</label>
+                  <input type="text" formControlName="autoCarroceria" placeholder="Ej. Sedán, SUV, Pickup" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-500 uppercase">Número de Puertas</label>
+                  <input type="number" formControlName="autoPuertas" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-500 uppercase">Pasajeros</label>
+                  <input type="number" formControlName="autoPasajeros" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                </div>
+              </div>
+            }
+
+            @if (vehicleForm.get('categoria')?.value === 'motos') {
+              <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-500 uppercase">Cilindrada (cc)</label>
+                  <input type="number" formControlName="motoCilindrada" placeholder="Ej. 500" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-500 uppercase">Tipo de Motocicleta</label>
+                  <input type="text" formControlName="motoTipoMoto" placeholder="Ej. Naked, Scooter, Custom" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                </div>
+              </div>
+            }
+
+            @if (vehicleForm.get('categoria')?.value === 'maquinaria') {
+              <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-500 uppercase">Peso Operativo (kg)</label>
+                  <input type="number" formControlName="maquinariaPesoOperativo" placeholder="Ej. 20500" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-500 uppercase">Horas de Uso</label>
+                  <input type="number" formControlName="maquinariaHorasUso" placeholder="Ej. 2400" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Seccion 5: Equipamiento y Características -->
+          <div class="mt-6">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+              <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Equipamiento y Características</h2>
+              <button type="button" (click)="openAddSpecModal()" class="text-xs font-semibold text-blue-600 hover:text-blue-500 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Agregar Nueva Característica
+              </button>
+            </div>
+            
+            <div class="mt-4 space-y-5">
+              @for (group of specificationGroups(); track group.id) {
+                <div>
+                  <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2.5">{{ group.nombre }}</h3>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50/50 p-4 rounded-xl border border-slate-200/50">
+                    @for (spec of group.especificaciones; track spec.id) {
+                      <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer select-none">
+                        <input type="checkbox"
+                               [checked]="selectedSpecs().includes(spec.id)"
+                               (change)="toggleSpec(spec.id)"
+                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded border-slate-200" />
+                        <span class="truncate">{{ spec.nombre }}</span>
+                      </label>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Seccion 6: Descripción y Destacado -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase">Descripción Comercial</label>
+              <textarea formControlName="descripcion" rows="4" placeholder="Escribe los argumentos de ventas..."
+                        class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                        [class.border-red-400]="isFieldInvalid('descripcion')"></textarea>
+            </div>
+
+            <div class="flex items-center gap-2 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+              <input type="checkbox" formControlName="destacado" id="destacado" class="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded" />
+              <label for="destacado" class="text-xs font-bold text-slate-700 cursor-pointer select-none">Marcar este vehículo como DESTACADO (se mostrará en el Home)</label>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-4 border-t border-slate-100 flex gap-4">
+            <button type="submit" [disabled]="vehicleForm.invalid"
+                    class="w-full sm:w-auto rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-bold text-white shadow-md hover:bg-blue-500 disabled:opacity-50 transition-colors">
+              {{ isEditMode() ? 'Guardar Cambios' : 'Registrar Vehículo' }}
+            </button>
+            <a routerLink="/admin" class="w-full sm:w-auto text-center rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-6 py-3.5 text-sm font-semibold text-slate-700 transition-colors">
+              Cancelar
+            </a>
+          </div>
+
+        </form>
+
+      </div>
+      
+      <!-- MODAL: Agregar Especificación -->
+      @if (isAddSpecModalOpen()) {
+        <div class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div class="w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl relative">
+            <button type="button" (click)="closeAddSpecModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <h3 class="font-heading text-xl font-bold text-slate-900">Nueva Característica</h3>
+            <p class="text-xs text-slate-500 mt-1">Crea una especificación disponible para todo el inventario.</p>
+
+            <div class="mt-4 space-y-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase">Nombre</label>
+                <input type="text" [(ngModel)]="newSpecName" placeholder="Ej. Techo Solar, ABS"
+                       class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase font-bold">Grupo / Categoría</label>
+                <select [(ngModel)]="newSpecGroupId"
+                        class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                  @for (group of specificationGroups(); track group.id) {
+                    <option [value]="group.id">{{ group.nombre }}</option>
+                  }
+                </select>
+              </div>
+              
+              @if (newSpecError()) {
+                <p class="text-xs text-rose-500">{{ newSpecError() }}</p>
+              }
+
+              <button type="button" (click)="submitNewSpec()" [disabled]="!newSpecName().trim() || !newSpecGroupId()"
+                      class="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-blue-500 disabled:opacity-50 transition-colors">
+                Guardar Especificación
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+      
+    </div>
+  `
+})
+export class AdminFormComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly vehicleService = inject(VehicleService);
+  private readonly specService = inject(SpecificationService);
+  private readonly authService = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+
+  protected readonly isEditMode = signal(false);
+  protected readonly vehicleId = signal<string | null>(null);
+
+  protected readonly vehicleForm: FormGroup;
+
+  // Premium feature validator
+  protected readonly isPremiumUser = computed(() => {
+    const user = this.authService.currentUser();
+    return user !== null && (user.rol === 'admin' || user.plan === 'negocio' || user.plan === 'empresa');
+  });
+
+  // Especificaciones
+  protected readonly specificationGroups = signal<SpecificationGroup[]>([]);
+  protected readonly selectedSpecs = signal<number[]>([]);
+
+  // Visuales Base64 state
+  protected readonly imagenPrincipalPreview = signal<string>('');
+  protected readonly galleryImages = signal<string[]>([]);
+
+  // 360 Tour states
+  protected readonly image360Preview = signal<string>('');
+  protected readonly hotspots = signal<HotspotConfig[]>([]);
+
+  // Modal para agregar especificación
+  protected readonly isAddSpecModalOpen = signal(false);
+  protected readonly newSpecName = signal('');
+  protected readonly newSpecGroupId = signal<number>(0);
+  protected readonly newSpecError = signal('');
+
+  constructor() {
+    this.vehicleForm = this.fb.group({
+      nombre: ['', [Validators.required]],
+      marca: ['', [Validators.required]],
+      modelo: ['', [Validators.required]],
+      anio: [new Date().getFullYear(), [Validators.required, Validators.min(1900)]],
+      precio: [0, [Validators.required, Validators.min(1)]],
+      categoria: ['autos', [Validators.required]],
+      tipoCombustible: ['Gasolina', [Validators.required]],
+      transmision: ['Automática', [Validators.required]],
+      kilometraje: [0, [Validators.required, Validators.min(0)]],
+      condicion: ['usado', [Validators.required]],
+      ubicacion: ['', [Validators.required]],
+      descripcion: ['', [Validators.required, Validators.minLength(10)]],
+      destacado: [false],
+      estado: ['disponible', [Validators.required]],
+      // Tour 360 controls
+      tieneTour: [false],
+      imagen360: [''],
+      // Autos
+      autoCarroceria: [''],
+      autoPuertas: [4],
+      autoPasajeros: [5],
+      // Motos
+      motoCilindrada: [125],
+      motoTipoMoto: [''],
+      // Maquinaria
+      maquinariaPesoOperativo: [1000],
+      maquinariaHorasUso: [0]
+    });
+  }
+
+  public ngOnInit(): void {
+    // Cargar grupos de especificaciones
+    this.loadSpecs();
+
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.isEditMode.set(true);
+        this.vehicleId.set(id);
+        this.loadVehicleData(id);
+      }
+    });
+  }
+
+  private async loadSpecs(): Promise<void> {
+    const groups = await this.specService.getGroups();
+    this.specificationGroups.set(groups);
+    if (groups.length > 0) {
+      this.newSpecGroupId.set(groups[0].id);
+    }
+  }
+
+  private async loadVehicleData(id: string): Promise<void> {
+    const v = await this.vehicleService.getVehicleById(id);
+    if (v) {
+      this.vehicleForm.patchValue({
+        nombre: v.nombre,
+        marca: v.marca,
+        modelo: v.modelo,
+        anio: v.anio,
+        precio: v.precio,
+        categoria: v.categoria,
+        tipoCombustible: v.tipoCombustible,
+        transmision: v.transmision,
+        kilometraje: v.kilometraje,
+        condicion: v.condicion,
+        ubicacion: v.ubicacion,
+        descripcion: v.descripcion,
+        destacado: v.destacado,
+        estado: v.estado,
+        tieneTour: v.tieneTour || false,
+        imagen360: v.imagen360 || '',
+        autoCarroceria: v.autoDetail?.carroceria || '',
+        autoPuertas: v.autoDetail?.puertas || 4,
+        autoPasajeros: v.autoDetail?.pasajeros || 5,
+        motoCilindrada: v.motoDetail?.cilindrada || 125,
+        motoTipoMoto: v.motoDetail?.tipoMoto || '',
+        maquinariaPesoOperativo: v.maquinariaDetail?.pesoOperativo || 1000,
+        maquinariaHorasUso: v.maquinariaDetail?.horasUso || 0
+      });
+
+      if (v.imagenPrincipal) {
+        this.imagenPrincipalPreview.set(v.imagenPrincipal);
+      }
+      if (v.imagenes && v.imagenes.length > 0) {
+        this.galleryImages.set(v.imagenes);
+      }
+
+      if (v.imagen360) {
+        this.image360Preview.set(v.imagen360);
+      }
+      if (v.hotspots) {
+        this.hotspots.set(v.hotspots);
+      }
+
+      if (v.especificaciones) {
+        this.selectedSpecs.set(v.especificaciones.map(s => s.id));
+      }
+    } else {
+      this.router.navigate(['/admin']);
+    }
+  }
+
+  protected onCategoryChange(): void {
+    const cat = this.vehicleForm.get('categoria')?.value;
+    if (cat === 'maquinaria') {
+      this.vehicleForm.patchValue({
+        tipoCombustible: 'Diésel',
+        transmision: 'Hidrostática'
+      });
+    } else if (cat === 'motos') {
+      this.vehicleForm.patchValue({
+        tipoCombustible: 'Gasolina',
+        transmision: 'Manual'
+      });
+    }
+  }
+
+  // Image Upload Methods
+  protected removeImagenPrincipal(): void {
+    this.imagenPrincipalPreview.set('');
+  }
+
+  protected onMainFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagenPrincipalPreview.set(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  protected onGalleryFilesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const files = Array.from(input.files);
+      const readPromises = files.map(file => new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      }));
+      Promise.all(readPromises).then(base64List => {
+        this.galleryImages.set([...this.galleryImages(), ...base64List]);
+      });
+    }
+  }
+
+  protected removeGalleryImage(index: number): void {
+    const current = this.galleryImages();
+    this.galleryImages.set(current.filter((_, i) => i !== index));
+  }
+
+  // 360 Tour methods
+  protected removeImage360(): void {
+    this.image360Preview.set('');
+    this.vehicleForm.patchValue({ imagen360: '' });
+  }
+
+  protected onFile360Selected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        this.image360Preview.set(base64);
+        this.vehicleForm.patchValue({ imagen360: base64 });
+      };
+      
+      reader.readAsDataURL(file);
+    }
+  }
+
+  protected addHotspot(): void {
+    const current = this.hotspots();
+    const nextId = current.length > 0 ? Math.max(...current.map(h => h.id)) + 1 : 1;
+    this.hotspots.set([...current, {
+      id: nextId,
+      top: '50%',
+      left: '50%',
+      title: '',
+      description: ''
+    }]);
+  }
+
+  protected removeHotspot(index: number): void {
+    const current = this.hotspots();
+    this.hotspots.set(current.filter((_, i) => i !== index));
+  }
+
+  protected toggleSpec(id: number): void {
+    const current = this.selectedSpecs();
+    if (current.includes(id)) {
+      this.selectedSpecs.set(current.filter(x => x !== id));
+    } else {
+      this.selectedSpecs.set([...current, id]);
+    }
+  }
+
+  // Operaciones del Modal de especificación
+  protected openAddSpecModal(): void {
+    this.newSpecName.set('');
+    this.newSpecError.set('');
+    this.isAddSpecModalOpen.set(true);
+  }
+
+  protected closeAddSpecModal(): void {
+    this.isAddSpecModalOpen.set(false);
+  }
+
+  protected async submitNewSpec(): Promise<void> {
+    const name = this.newSpecName().trim();
+    const groupId = Number(this.newSpecGroupId());
+    
+    if (name && groupId) {
+      const spec = await this.specService.createSpecification(name, groupId);
+      if (spec) {
+        // Recargar especificaciones de la base de datos
+        await this.loadSpecs();
+        // Auto-seleccionar la nueva especificación
+        this.selectedSpecs.set([...this.selectedSpecs(), spec.id]);
+        this.closeAddSpecModal();
+      } else {
+        this.newSpecError.set('Error al guardar la especificación. Es posible que ya exista.');
+      }
+    }
+  }
+
+  protected async onSubmit(): Promise<void> {
+    if (this.vehicleForm.valid) {
+      const mainImg = this.imagenPrincipalPreview();
+      if (!mainImg) {
+        alert('Por favor selecciona la imagen principal del vehículo.');
+        return;
+      }
+
+      let imagenes = this.galleryImages();
+      if (imagenes.length === 0) {
+        imagenes = [mainImg];
+      }
+
+      const formValue = this.vehicleForm.value;
+
+      const vehicleData: any = {
+        nombre: formValue.nombre,
+        marca: formValue.marca,
+        modelo: formValue.modelo,
+        anio: formValue.anio,
+        precio: formValue.precio,
+        categoria: formValue.categoria,
+        tipoCombustible: formValue.tipoCombustible,
+        transmision: formValue.transmision,
+        kilometraje: formValue.kilometraje,
+        condicion: formValue.condicion,
+        ubicacion: formValue.ubicacion,
+        imagenPrincipal: mainImg,
+        imagenes: imagenes,
+        descripcion: formValue.descripcion,
+        destacado: formValue.destacado,
+        estado: formValue.estado,
+        tieneTour: formValue.tieneTour || false,
+        imagen360: this.image360Preview() || null,
+        hotspots: this.hotspots() || [],
+        especificaciones: this.selectedSpecs()
+      };
+
+      // Adjuntar detalles condicionales del subtipo
+      if (formValue.categoria === 'autos') {
+        vehicleData.autoDetail = {
+          carroceria: formValue.autoCarroceria,
+          puertas: Number(formValue.autoPuertas),
+          pasajeros: Number(formValue.autoPasajeros)
+        };
+      } else if (formValue.categoria === 'motos') {
+        vehicleData.motoDetail = {
+          cilindrada: Number(formValue.motoCilindrada),
+          tipoMoto: formValue.motoTipoMoto
+        };
+      } else if (formValue.categoria === 'maquinaria') {
+        vehicleData.maquinariaDetail = {
+          pesoOperativo: Number(formValue.maquinariaPesoOperativo),
+          horasUso: Number(formValue.maquinariaHorasUso)
+        };
+      }
+
+      if (this.isEditMode() && this.vehicleId()) {
+        await this.vehicleService.updateVehicle(this.vehicleId()!, vehicleData);
+      } else {
+        await this.vehicleService.createVehicle(vehicleData);
+      }
+
+      this.router.navigate(['/admin']);
+    }
+  }
+
+  protected isFieldInvalid(fieldName: string): boolean {
+    const field = this.vehicleForm.get(fieldName);
+    return field ? field.invalid && (field.dirty || field.touched) : false;
+  }
+}
