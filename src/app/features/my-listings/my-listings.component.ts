@@ -113,10 +113,10 @@ import { Vehicle } from '../../core/models/vehicle.model';
                       </td>
 
                       <td class="whitespace-nowrap px-6 py-4 text-right text-xs font-medium space-x-2">
-                        <a [routerLink]="['/admin/editar', v.id]" class="inline-flex rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-bold text-slate-700 hover:bg-slate-50 shadow-sm transition-colors">
+                        <a [routerLink]="['/admin/editar', v.id]" class="inline-flex rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-50 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-350 dark:hover:bg-slate-800 dark:hover:text-white shadow-sm transition-colors">
                           Editar
                         </a>
-                        <button (click)="deleteItem(v.id)" class="inline-flex rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 font-bold text-red-600 hover:bg-red-100 shadow-sm transition-colors">
+                        <button (click)="deleteItem(v.id)" class="inline-flex rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-500 hover:text-red-600 hover:bg-red-50/50 hover:border-red-200 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:text-red-400 dark:hover:bg-red-950/20 dark:hover:border-red-900/50 shadow-sm transition-colors">
                           Eliminar
                         </button>
                       </td>

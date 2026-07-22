@@ -66,14 +66,14 @@ import { AuthService } from '../../core/services/auth.service';
           </form>
 
           <!-- Accounts Info Box (Only for Demo) -->
-          <div class="mt-8 border border-slate-100 rounded-xl p-4 bg-slate-50 space-y-2 text-[11px] text-slate-500 leading-relaxed">
+          <!-- <div class="mt-8 border border-slate-100 rounded-xl p-4 bg-slate-50 space-y-2 text-[11px] text-slate-500 leading-relaxed">
             <p class="font-bold text-slate-700">Cuentas de demostración predefinidas:</p>
             <div>
-              <span class="block"><strong class="text-slate-600">Administrador:</strong> admin&#64;concesionaria.com / admin123</span>
+              <span class="block"><strong class="text-slate-600">Administrador:</strong> 'admin&#64;concesionaria.com' / admin123</span>
               <span class="block"><strong class="text-slate-600">Cliente estándar:</strong> cliente&#64;concesionaria.com / cliente123</span>
             </div>
             <p class="text-[10px] text-slate-400 border-t border-slate-200/60 pt-1.5">Cualquier otra cuenta con clave de +6 caracteres iniciará sesión automáticamente como cliente.</p>
-          </div>
+          </div> -->
 
         } @else {
           

@@ -62,13 +62,13 @@ import { CarouselSlide } from '../../../core/models/carousel.model';
               </div>
 
               <!-- Actions -->
-              <div class="px-6 pb-6 pt-2 border-t border-slate-100 flex gap-2">
+              <div class="px-6 pb-6 pt-2 border-t border-slate-100 dark:border-slate-800 flex gap-2">
                 <button (click)="openEditModal(slide)" 
-                        class="flex-1 rounded-xl border border-slate-200 bg-white py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors">
+                        class="flex-1 rounded-xl border border-slate-200 bg-white py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-50 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-350 dark:hover:bg-slate-800 dark:hover:text-white transition-colors">
                   Editar
                 </button>
                 <button (click)="deleteSlide(slide.id)" 
-                        class="flex-1 rounded-xl border border-red-200 bg-red-50 py-2 text-xs font-bold text-red-600 hover:bg-red-100 transition-colors">
+                        class="flex-1 rounded-xl border border-slate-200 bg-white py-2 text-xs font-semibold text-slate-500 hover:text-red-600 hover:bg-red-50/50 hover:border-red-200 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:text-red-400 dark:hover:bg-red-950/20 dark:hover:border-red-900/50 transition-colors">
                   Eliminar
                 </button>
               </div>

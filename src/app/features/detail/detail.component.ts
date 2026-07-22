@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, effect, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
@@ -42,17 +42,17 @@ import { ReservationService } from '../../core/services/reservation.service';
                 {{ statusText() }}
               </span>
 
-              <img [src]="activeImage()" [alt]="v.nombre" class="h-full w-full object-cover" />
+              <img [src]="activeImage() || v.imagenPrincipal" [alt]="v.nombre" class="h-full w-full object-cover" />
             </div>
 
             <!-- Thumbnail Carousel Grid -->
-            @if (v.imagenes && v.imagenes.length > 0) {
+            @if (allImages().length > 1) {
               <div class="flex gap-3 overflow-x-auto pb-2">
-                @for (img of v.imagenes; track img) {
+                @for (img of allImages(); track img) {
                   <button (click)="setActiveImage(img)"
                           class="relative aspect-[4/3] w-24 shrink-0 overflow-hidden rounded-lg border-2 transition-all"
-                          [class.border-blue-600]="activeImage() === img"
-                          [class.border-transparent]="activeImage() !== img">
+                          [class.border-blue-600]="(activeImage() || v.imagenPrincipal) === img"
+                          [class.border-transparent]="(activeImage() || v.imagenPrincipal) !== img">
                     <img [src]="img" class="h-full w-full object-cover" alt="Miniatura" />
                   </button>
                 }
@@ -445,8 +445,8 @@ export class DetailComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   protected readonly vehicleId = signal<string>('');
-  
-  protected readonly vehicle = computed(() => 
+
+  protected readonly vehicle = computed(() =>
     this.vehicleService.vehicles().find(v => v.id === this.vehicleId())
   );
 
@@ -462,6 +462,13 @@ export class DetailComponent implements OnInit {
   protected readonly isReserveModalOpen = signal(false);
   protected readonly reserveFinished = signal(false);
 
+  protected readonly allImages = computed(() => {
+    const v = this.vehicle();
+    if (!v) return [];
+    const list = [v.imagenPrincipal, ...(v.imagenes || [])];
+    return Array.from(new Set(list.filter(Boolean)));
+  });
+
   constructor() {
     this.quoteForm = this.fb.group({
       nombre: ['', [Validators.required]],
@@ -469,18 +476,19 @@ export class DetailComponent implements OnInit {
       telefono: ['', [Validators.required]],
       mensaje: ['']
     });
+
+    effect(() => {
+      const v = this.vehicle();
+      if (v?.imagenPrincipal) {
+        this.activeImage.set(v.imagenPrincipal);
+      }
+    });
   }
 
   public ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id') || '';
       this.vehicleId.set(id);
-      
-      // Inicializar imagen principal activa
-      const currentVehicle = this.vehicle();
-      if (currentVehicle) {
-        this.activeImage.set(currentVehicle.imagenPrincipal);
-      }
     });
   }
 
@@ -491,7 +499,7 @@ export class DetailComponent implements OnInit {
   protected readonly groupedSpecifications = computed(() => {
     const v = this.vehicle();
     if (!v || !v.especificaciones) return [];
-    
+
     const groups: { [key: string]: Specification[] } = {};
     for (const spec of v.especificaciones) {
       const groupName = spec.grupo?.nombre || 'General';
@@ -500,7 +508,7 @@ export class DetailComponent implements OnInit {
       }
       groups[groupName].push(spec);
     }
-    
+
     return Object.entries(groups).map(([name, specs]) => ({
       name,
       specs
@@ -592,7 +600,7 @@ export class DetailComponent implements OnInit {
     if (success) {
       this.reserveFinished.set(true);
       await this.vehicleService.refreshVehicles();
-      
+
       setTimeout(() => {
         this.closeReserveModal();
       }, 3500);
