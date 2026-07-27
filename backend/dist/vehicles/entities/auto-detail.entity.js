@@ -17,6 +17,8 @@ let AutoDetail = class AutoDetail {
     carroceria;
     puertas;
     pasajeros;
+    autonomia;
+    tamanoBateria;
     vehicle;
 };
 exports.AutoDetail = AutoDetail;
@@ -36,6 +38,14 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'int' }),
     __metadata("design:type", Number)
 ], AutoDetail.prototype, "pasajeros", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'int', nullable: true }),
+    __metadata("design:type", Object)
+], AutoDetail.prototype, "autonomia", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'int', nullable: true }),
+    __metadata("design:type", Object)
+], AutoDetail.prototype, "tamanoBateria", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(() => vehicle_entity_1.Vehicle, { onDelete: 'CASCADE' }),
     (0, typeorm_1.JoinColumn)({ name: 'id' }),

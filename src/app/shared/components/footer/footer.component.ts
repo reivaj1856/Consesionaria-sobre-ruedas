@@ -44,9 +44,12 @@ import { RouterLink } from '@angular/router';
             <div>
               <p class="font-heading text-sm font-semibold tracking-wider text-white uppercase">Categorías</p>
               <nav class="mt-4 flex flex-col gap-2.5 text-sm">
-                <a routerLink="/catalogo" [queryParams]="{categoria: 'autos'}" class="text-slate-400 hover:text-white transition-colors">Autos y Camionetas</a>
-                <a routerLink="/catalogo" [queryParams]="{categoria: 'motos'}" class="text-slate-400 hover:text-white transition-colors">Motocicletas</a>
-                <a routerLink="/catalogo" [queryParams]="{categoria: 'maquinaria'}" class="text-slate-400 hover:text-white transition-colors">Maquinaria Pesada</a>
+                <a routerLink="/catalogo/autos" class="text-slate-400 hover:text-white transition-colors">Autos y Camionetas</a>
+                <a routerLink="/catalogo/autos-electricos" class="text-slate-400 hover:text-white transition-colors">Autos Eléctricos</a>
+                <a routerLink="/catalogo/motos" class="text-slate-400 hover:text-white transition-colors">Motocicletas</a>
+                <a routerLink="/catalogo/motos-electricas" class="text-slate-400 hover:text-white transition-colors">Motos Eléctricas</a>
+                <a routerLink="/catalogo/maquinaria-agricola" class="text-slate-400 hover:text-white transition-colors">Maquinaria Agrícola</a>
+                <a routerLink="/catalogo/transporte-pesado" class="text-slate-400 hover:text-white transition-colors">Transporte Pesado</a>
               </nav>
             </div>
 

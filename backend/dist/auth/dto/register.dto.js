@@ -15,6 +15,8 @@ class RegisterDto {
     nombre;
     email;
     contrasenia;
+    recibeDolares;
+    recibeBolivianos;
 }
 exports.RegisterDto = RegisterDto;
 __decorate([
@@ -31,4 +33,14 @@ __decorate([
     (0, class_validator_1.MinLength)(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "contrasenia", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)({ message: 'El campo recibeDolares debe ser un booleano' }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], RegisterDto.prototype, "recibeDolares", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)({ message: 'El campo recibeBolivianos debe ser un booleano' }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], RegisterDto.prototype, "recibeBolivianos", void 0);
 //# sourceMappingURL=register.dto.js.map

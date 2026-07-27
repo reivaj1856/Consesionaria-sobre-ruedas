@@ -14,6 +14,8 @@ export declare class AuthController {
             rol: "cliente" | "admin";
             plan: "gratis" | "negocio" | "empresa";
             suscripcionFecha: string;
+            recibeDolares: boolean;
+            recibeBolivianos: boolean;
         };
     }>;
     login(loginDto: LoginDto): Promise<{
@@ -25,6 +27,8 @@ export declare class AuthController {
             rol: "cliente" | "admin";
             plan: "gratis" | "negocio" | "empresa";
             suscripcionFecha: string;
+            recibeDolares: boolean;
+            recibeBolivianos: boolean;
         };
     }>;
     getProfile(req: any): Promise<{
@@ -34,6 +38,8 @@ export declare class AuthController {
         rol: "cliente" | "admin";
         plan: "gratis" | "negocio" | "empresa";
         suscripcionFecha: string;
+        recibeDolares: boolean;
+        recibeBolivianos: boolean;
     }>;
     subscribe(req: any, subscribeDto: SubscribeDto): Promise<{
         success: boolean;
@@ -45,6 +51,8 @@ export declare class AuthController {
             rol: "cliente" | "admin";
             plan: "gratis" | "negocio" | "empresa";
             suscripcionFecha: string;
+            recibeDolares: boolean;
+            recibeBolivianos: boolean;
         };
     }>;
     findAllUsers(): Promise<import("../users/entities/user.entity").User[]>;

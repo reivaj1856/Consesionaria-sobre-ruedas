@@ -24,8 +24,50 @@ import { ThemeService } from '../../../core/services/theme.service';
         <nav class="hidden md:flex items-center gap-8">
           <a routerLink="/" routerLinkActive="text-blue-600 dark:text-blue-400 font-semibold" [routerLinkActiveOptions]="{exact: true}"
              class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Inicio</a>
-          <a routerLink="/catalogo" routerLinkActive="text-blue-600 dark:text-blue-400 font-semibold"
-             class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Catálogo</a>
+            <!-- Dropdown Catálogo -->
+            <div class="relative group py-2">
+              <button class="inline-flex items-center gap-1 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer focus:outline-none">
+                <span>Catálogo</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              <!-- Dropdown Menu Card -->
+              <div class="absolute left-1/2 -translate-x-1/2 top-full z-50 w-56 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 shadow-xl invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200">
+                <a routerLink="/catalogo" routerLinkActive="bg-slate-50 dark:bg-slate-850 text-blue-600 dark:text-blue-400 font-semibold" [routerLinkActiveOptions]="{exact: true}"
+                   class="block rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                  Todos los Vehículos
+                </a>
+                <div class="my-1 border-t border-slate-100 dark:border-slate-800"></div>
+                <a routerLink="/catalogo/autos" routerLinkActive="bg-slate-50 dark:bg-slate-850 text-blue-600 dark:text-blue-400 font-semibold"
+                   class="block rounded-xl px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                  Autos y Camionetas
+                </a>
+                <a routerLink="/catalogo/autos-electricos" routerLinkActive="bg-slate-50 dark:bg-slate-850 text-blue-600 dark:text-blue-400 font-semibold"
+                   class="block rounded-xl px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+                  Autos Eléctricos
+                  <span class="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                </a>
+                <a routerLink="/catalogo/motos" routerLinkActive="bg-slate-50 dark:bg-slate-850 text-blue-600 dark:text-blue-400 font-semibold"
+                   class="block rounded-xl px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                  Motocicletas
+                </a>
+                <a routerLink="/catalogo/motos-electricas" routerLinkActive="bg-slate-50 dark:bg-slate-850 text-blue-600 dark:text-blue-400 font-semibold"
+                   class="block rounded-xl px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+                  Motos Eléctricas
+                  <span class="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                </a>
+                <a routerLink="/catalogo/maquinaria-agricola" routerLinkActive="bg-slate-50 dark:bg-slate-850 text-blue-600 dark:text-blue-400 font-semibold"
+                   class="block rounded-xl px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                  Maquinaria Agrícola
+                </a>
+                <a routerLink="/catalogo/transporte-pesado" routerLinkActive="bg-slate-50 dark:bg-slate-850 text-blue-600 dark:text-blue-400 font-semibold"
+                   class="block rounded-xl px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                  Transporte Pesado
+                </a>
+              </div>
+            </div>
           <a routerLink="/comparador" routerLinkActive="text-blue-600 dark:text-blue-400 font-semibold"
              class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5">
             Comparar
@@ -177,7 +219,28 @@ import { ThemeService } from '../../../core/services/theme.service';
       @if (isMenuOpen()) {
         <div class="border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-4 md:hidden space-y-3">
           <a routerLink="/" (click)="closeMenu()" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Inicio</a>
-          <a routerLink="/catalogo" (click)="closeMenu()" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Catálogo</a>
+          
+          <!-- Catálogo con sub-items en móvil -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between px-3 py-2 text-base font-semibold text-slate-700 dark:text-slate-200">
+              <span>Catálogo</span>
+              <a routerLink="/catalogo" (click)="closeMenu()" class="text-xs text-blue-600 hover:underline">Ver Todo</a>
+            </div>
+            <div class="pl-4 border-l-2 border-slate-100 dark:border-slate-800 ml-3 space-y-1.5">
+              <a routerLink="/catalogo/autos" (click)="closeMenu()" class="block py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600">Autos y Camionetas</a>
+              <a routerLink="/catalogo/autos-electricos" (click)="closeMenu()" class="block py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 flex items-center gap-1.5">
+                Autos Eléctricos
+                <span class="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              </a>
+              <a routerLink="/catalogo/motos" (click)="closeMenu()" class="block py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600">Motocicletas</a>
+              <a routerLink="/catalogo/motos-electricas" (click)="closeMenu()" class="block py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 flex items-center gap-1.5">
+                Motos Eléctricas
+                <span class="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              </a>
+              <a routerLink="/catalogo/maquinaria-agricola" (click)="closeMenu()" class="block py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600">Maquinaria Agrícola</a>
+              <a routerLink="/catalogo/transporte-pesado" (click)="closeMenu()" class="block py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600">Transporte Pesado</a>
+            </div>
+          </div>
           <a routerLink="/comparador" (click)="closeMenu()" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Comparar ({{ comparisonCount() }})</a>
           <a routerLink="/favoritos" (click)="closeMenu()" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Favoritos ({{ favoriteCount() }})</a>
           <a routerLink="/contacto" (click)="closeMenu()" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Contacto</a>

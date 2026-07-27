@@ -22,6 +22,8 @@ let User = class User {
     rol;
     plan;
     suscripcionFecha;
+    recibeDolares;
+    recibeBolivianos;
     reservas;
     favoritos;
     vehiculos;
@@ -55,6 +57,14 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 30, nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "suscripcionFecha", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: true }),
+    __metadata("design:type", Boolean)
+], User.prototype, "recibeDolares", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: true }),
+    __metadata("design:type", Boolean)
+], User.prototype, "recibeBolivianos", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => reservation_entity_1.Reservation, (reservation) => reservation.user),
     __metadata("design:type", Array)

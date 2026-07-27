@@ -9,6 +9,8 @@ export declare class User {
     rol: 'cliente' | 'admin';
     plan: 'gratis' | 'negocio' | 'empresa';
     suscripcionFecha: string;
+    recibeDolares: boolean;
+    recibeBolivianos: boolean;
     reservas: Reservation[];
     favoritos: Favorite[];
     vehiculos: Vehicle[];

@@ -17,6 +17,7 @@ class CreateVehicleDto {
     modelo;
     anio;
     precio;
+    moneda;
     categoria;
     tipoCombustible;
     transmision;
@@ -26,6 +27,7 @@ class CreateVehicleDto {
     imagenPrincipal;
     imagenes;
     descripcion;
+    telefonoContacto;
     destacado;
     estado;
     especificaciones;
@@ -55,7 +57,12 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateVehicleDto.prototype, "precio", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(['autos', 'motos', 'maquinaria'], { message: 'La categoría no es válida' }),
+    (0, class_validator_1.IsEnum)(['USD', 'BOB'], { message: 'La moneda no es válida' }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateVehicleDto.prototype, "moneda", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(['autos', 'autos_electricos', 'motos', 'motos_electricos', 'maquinaria_agricola', 'transporte_pesado', 'maquinaria'], { message: 'La categoría no es válida' }),
     __metadata("design:type", String)
 ], CreateVehicleDto.prototype, "categoria", void 0);
 __decorate([
@@ -91,6 +98,11 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)({ message: 'La descripción es requerida' }),
     __metadata("design:type", String)
 ], CreateVehicleDto.prototype, "descripcion", void 0);
+__decorate([
+    (0, class_validator_1.IsString)({ message: 'El teléfono de contacto debe ser un texto' }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateVehicleDto.prototype, "telefonoContacto", void 0);
 __decorate([
     (0, class_validator_1.IsBoolean)({ message: 'El campo destacado debe ser un booleano' }),
     (0, class_validator_1.IsOptional)(),

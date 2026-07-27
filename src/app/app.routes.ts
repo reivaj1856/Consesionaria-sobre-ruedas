@@ -26,6 +26,36 @@ export const routes: Routes = [
     component: CatalogComponent 
   },
   { 
+    path: 'catalogo/autos', 
+    component: CatalogComponent,
+    data: { category: 'autos', title: 'Autos y Camionetas' }
+  },
+  { 
+    path: 'catalogo/autos-electricos', 
+    component: CatalogComponent,
+    data: { category: 'autos_electricos', title: 'Autos Eléctricos' }
+  },
+  { 
+    path: 'catalogo/motos', 
+    component: CatalogComponent,
+    data: { category: 'motos', title: 'Motocicletas' }
+  },
+  { 
+    path: 'catalogo/motos-electricas', 
+    component: CatalogComponent,
+    data: { category: 'motos_electricos', title: 'Motos Eléctricas' }
+  },
+  { 
+    path: 'catalogo/maquinaria-agricola', 
+    component: CatalogComponent,
+    data: { category: 'maquinaria_agricola', title: 'Maquinaria Agrícola' }
+  },
+  { 
+    path: 'catalogo/transporte-pesado', 
+    component: CatalogComponent,
+    data: { category: 'transporte_pesado', title: 'Transporte Pesado' }
+  },
+  { 
     path: 'vehiculo/:id', 
     component: DetailComponent 
   },

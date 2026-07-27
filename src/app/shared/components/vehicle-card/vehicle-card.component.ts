@@ -1,7 +1,7 @@
 import { Component, input, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
-import { Vehicle } from '../../../core/models/vehicle.model';
+import { Vehicle, getCategoryLabel } from '../../../core/models/vehicle.model';
 import { FavoriteService } from '../../../core/services/favorite.service';
 import { ComparisonService } from '../../../core/services/comparison.service';
 
@@ -11,7 +11,7 @@ import { ComparisonService } from '../../../core/services/comparison.service';
   imports: [RouterLink, CurrencyPipe, DecimalPipe],
   template: `
     <div [routerLink]="['/vehiculo', vehicle().id]" 
-    class="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200/50 dark:hover:shadow-slate-950/80">
+         [class]="'group relative flex flex-col overflow-hidden rounded-2xl border transition-all hover:-translate-y-1 hover:shadow-xl ' + cardClass()">
       
       <!-- Card Image Header -->
       <div class="relative aspect-video w-full overflow-hidden bg-slate-100 dark:bg-slate-950">
@@ -32,6 +32,12 @@ import { ComparisonService } from '../../../core/services/comparison.service';
              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
              loading="lazy"/>
         <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+        @if (vehicle().categoria === 'autos_electricos' || vehicle().categoria === 'motos_electricos') {
+          <span class="absolute bottom-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 text-white px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest shadow border border-emerald-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+            Eco Eléctrico
+          </span>
+        }
       </div>
 
       <!-- Card Body Content -->
@@ -40,7 +46,7 @@ import { ComparisonService } from '../../../core/services/comparison.service';
         <!-- Category & Title -->
         <div class="flex items-center justify-between">
           <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-            {{ vehicle().categoria }}
+            {{ getCategoryLabel(vehicle().categoria) }}
           </span>
           <span class="text-xs font-medium text-slate-400 dark:text-slate-500">
             Añadido: {{ vehicle().anio }}
@@ -74,7 +80,7 @@ import { ComparisonService } from '../../../core/services/comparison.service';
           <div>
             <p class="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500 font-semibold">Precio Contado</p>
             <p class="font-heading text-xl font-extrabold text-slate-900 dark:text-white">
-              {{ vehicle().precio | currency:'USD':'symbol':'1.0-0' }}
+              {{ displayedPrice() | currency:displayCurrency():(displayCurrency() === 'BOB' ? 'Bs. ' : '$'):'1.0-0' }}
             </p>
           </div>
           
@@ -100,10 +106,14 @@ import { ComparisonService } from '../../../core/services/comparison.service';
             </button>
 
             <!-- Detail button -->
-            <a  
-               class="inline-flex h-10 items-center justify-center rounded-lg bg-blue-600 px-4 text-xs font-semibold text-white shadow-sm hover:bg-blue-500 transition-colors">
-              Ficha
-            </a>
+            <button
+               class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm hover:bg-blue-500 transition-colors focus:outline-none"
+               title="Ver Detalles">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -113,12 +123,41 @@ import { ComparisonService } from '../../../core/services/comparison.service';
 })
 export class VehicleCardComponent {
   public readonly vehicle = input.required<Vehicle>();
+  public readonly displayCurrency = input<'USD' | 'BOB'>('BOB');
+  protected readonly getCategoryLabel = getCategoryLabel;
 
+  protected readonly cardClass = computed(() => {
+    const isEV = this.vehicle().categoria === 'autos_electricos' || this.vehicle().categoria === 'motos_electricos';
+    if (isEV) {
+      return 'bg-emerald-50/25 dark:bg-emerald-950/15 border-emerald-100/70 dark:border-emerald-900/30 hover:shadow-emerald-100/30 dark:hover:shadow-emerald-950/20';
+    }
+    return 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:shadow-slate-200/50 dark:hover:shadow-slate-950/80';
+  });
+  
   private readonly favoriteService = inject(FavoriteService);
   private readonly comparisonService = inject(ComparisonService);
 
   protected readonly isFavorite = computed(() => this.favoriteService.isFavorite(this.vehicle().id));
   protected readonly isCompared = computed(() => this.comparisonService.isCompared(this.vehicle().id));
+
+  protected readonly displayedPrice = computed(() => {
+    const v = this.vehicle();
+    const target = this.displayCurrency();
+    const source = v.moneda || 'USD';
+    const price = v.precio;
+    const rate = 6.96;
+
+    if (source === target) {
+      return price;
+    }
+    if (source === 'USD' && target === 'BOB') {
+      return price * rate;
+    }
+    if (source === 'BOB' && target === 'USD') {
+      return price / rate;
+    }
+    return price;
+  });
 
   protected readonly statusText = computed(() => {
     const estado = this.vehicle().estado;

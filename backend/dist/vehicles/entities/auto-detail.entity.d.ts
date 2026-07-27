@@ -4,5 +4,7 @@ export declare class AutoDetail {
     carroceria: string;
     puertas: number;
     pasajeros: number;
+    autonomia: number | null;
+    tamanoBateria: number | null;
     vehicle: Vehicle;
 }

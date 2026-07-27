@@ -56,9 +56,12 @@ interface HotspotConfig {
                 <label class="block text-xs font-semibold text-slate-500 uppercase font-bold">Categoría</label>
                 <select formControlName="categoria" (change)="onCategoryChange()"
                         class="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none">
-                  <option value="autos">Autos y Camionetas</option>
-                  <option value="motos">Motocicletas</option>
-                  <option value="maquinaria">Maquinaria Pesada</option>
+                  <option value="autos">Autos</option>
+                  <option value="autos_electricos">Autos Eléctricos</option>
+                  <option value="motos">Motos</option>
+                  <option value="motos_electricos">Motos Eléctricas</option>
+                  <option value="maquinaria_agricola">Maquinaria Agrícola</option>
+                  <option value="transporte_pesado">Transporte Pesado</option>
                 </select>
               </div>
             </div>
@@ -83,10 +86,22 @@ interface HotspotConfig {
                        [class.border-red-400]="isFieldInvalid('anio')" />
               </div>
               <div>
-                <label class="block text-xs font-semibold text-slate-500 uppercase font-bold">Precio (USD)</label>
-                <input type="number" formControlName="precio" placeholder="45000"
-                       class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-                       [class.border-red-400]="isFieldInvalid('precio')" />
+                <div class="grid grid-cols-3 gap-1">
+                  <div class="col-span-2">
+                    <label class="block text-[10px] font-semibold text-slate-500 uppercase font-bold tracking-tight">Precio</label>
+                    <input type="number" formControlName="precio" placeholder="45000"
+                           class="mt-1.5 w-full rounded-lg border border-slate-200 px-2 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                           [class.border-red-400]="isFieldInvalid('precio')" />
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-semibold text-slate-500 uppercase font-bold tracking-tight">Moneda</label>
+                    <select formControlName="moneda"
+                            class="mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-1 py-2 text-sm focus:border-blue-500 focus:outline-none">
+                      <option value="USD">USD</option>
+                      <option value="BOB">BOB</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -131,12 +146,18 @@ interface HotspotConfig {
               </div>
             </div>
 
-            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-500 uppercase">Ubicación física</label>
                 <input type="text" formControlName="ubicacion" placeholder="Ej. Santiago, Centro"
                        class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
                        [class.border-red-400]="isFieldInvalid('ubicacion')" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 uppercase font-bold">Teléfono de Contacto</label>
+                <input type="text" formControlName="telefonoContacto" placeholder="Ej. 59177490451"
+                       class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                       [class.border-red-400]="isFieldInvalid('telefonoContacto')" />
               </div>
               <div>
                 <label class="block text-xs font-semibold text-slate-500 uppercase">Estado Comercial</label>
@@ -219,7 +240,7 @@ interface HotspotConfig {
           <div>
             <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">Especificaciones de Categoría</h2>
             
-            @if (vehicleForm.get('categoria')?.value === 'autos') {
+            @if (vehicleForm.get('categoria')?.value === 'autos' || vehicleForm.get('categoria')?.value === 'autos_electricos') {
               <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label class="block text-xs font-semibold text-slate-500 uppercase">Carrocería</label>
@@ -234,9 +255,21 @@ interface HotspotConfig {
                   <input type="number" formControlName="autoPasajeros" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
                 </div>
               </div>
+              @if (vehicleForm.get('categoria')?.value === 'autos_electricos') {
+                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase font-bold">Autonomía (km)</label>
+                    <input type="number" formControlName="autoAutonomia" placeholder="Ej. 629" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase font-bold">Tamaño de Batería (kWh)</label>
+                    <input type="number" formControlName="autoTamanoBateria" placeholder="Ej. 75" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                  </div>
+                </div>
+              }
             }
 
-            @if (vehicleForm.get('categoria')?.value === 'motos') {
+            @if (vehicleForm.get('categoria')?.value === 'motos' || vehicleForm.get('categoria')?.value === 'motos_electricos') {
               <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-xs font-semibold text-slate-500 uppercase">Cilindrada (cc)</label>
@@ -247,9 +280,21 @@ interface HotspotConfig {
                   <input type="text" formControlName="motoTipoMoto" placeholder="Ej. Naked, Scooter, Custom" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
                 </div>
               </div>
+              @if (vehicleForm.get('categoria')?.value === 'motos_electricos') {
+                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase font-bold">Autonomía (km)</label>
+                    <input type="number" formControlName="motoAutonomia" placeholder="Ej. 235" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase font-bold">Tamaño de Batería (kWh)</label>
+                    <input type="number" formControlName="motoTamanoBateria" placeholder="Ej. 15" class="mt-1.5 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                  </div>
+                </div>
+              }
             }
 
-            @if (vehicleForm.get('categoria')?.value === 'maquinaria') {
+            @if (vehicleForm.get('categoria')?.value === 'maquinaria' || vehicleForm.get('categoria')?.value === 'maquinaria_agricola' || vehicleForm.get('categoria')?.value === 'transporte_pesado') {
               <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-xs font-semibold text-slate-500 uppercase">Peso Operativo (kg)</label>
@@ -410,6 +455,7 @@ export class AdminFormComponent implements OnInit {
       modelo: ['', [Validators.required]],
       anio: [new Date().getFullYear(), [Validators.required, Validators.min(1900)]],
       precio: [0, [Validators.required, Validators.min(1)]],
+      moneda: ['USD', [Validators.required]],
       categoria: ['autos', [Validators.required]],
       tipoCombustible: ['Gasolina', [Validators.required]],
       transmision: ['Automática', [Validators.required]],
@@ -417,15 +463,20 @@ export class AdminFormComponent implements OnInit {
       condicion: ['usado', [Validators.required]],
       ubicacion: ['', [Validators.required]],
       descripcion: ['', [Validators.required, Validators.minLength(10)]],
+      telefonoContacto: ['59177490451', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
       destacado: [false],
       estado: ['disponible', [Validators.required]],
       // Autos
       autoCarroceria: [''],
       autoPuertas: [4],
       autoPasajeros: [5],
+      autoAutonomia: [null],
+      autoTamanoBateria: [null],
       // Motos
       motoCilindrada: [125],
       motoTipoMoto: [''],
+      motoAutonomia: [null],
+      motoTamanoBateria: [null],
       // Maquinaria
       maquinariaPesoOperativo: [1000],
       maquinariaHorasUso: [0]
@@ -463,6 +514,7 @@ export class AdminFormComponent implements OnInit {
         modelo: v.modelo,
         anio: v.anio,
         precio: v.precio,
+        moneda: v.moneda || 'USD',
         categoria: v.categoria,
         tipoCombustible: v.tipoCombustible,
         transmision: v.transmision,
@@ -470,13 +522,18 @@ export class AdminFormComponent implements OnInit {
         condicion: v.condicion,
         ubicacion: v.ubicacion,
         descripcion: v.descripcion,
+        telefonoContacto: v.telefonoContacto || '59177490451',
         destacado: v.destacado,
         estado: v.estado,
         autoCarroceria: v.autoDetail?.carroceria || '',
         autoPuertas: v.autoDetail?.puertas || 4,
         autoPasajeros: v.autoDetail?.pasajeros || 5,
+        autoAutonomia: v.autoDetail?.autonomia || null,
+        autoTamanoBateria: v.autoDetail?.tamanoBateria || null,
         motoCilindrada: v.motoDetail?.cilindrada || 125,
         motoTipoMoto: v.motoDetail?.tipoMoto || '',
+        motoAutonomia: v.motoDetail?.autonomia || null,
+        motoTamanoBateria: v.motoDetail?.tamanoBateria || null,
         maquinariaPesoOperativo: v.maquinariaDetail?.pesoOperativo || 1000,
         maquinariaHorasUso: v.maquinariaDetail?.horasUso || 0
       });
@@ -498,7 +555,7 @@ export class AdminFormComponent implements OnInit {
 
   protected onCategoryChange(): void {
     const cat = this.vehicleForm.get('categoria')?.value;
-    if (cat === 'maquinaria') {
+    if (cat === 'maquinaria' || cat === 'maquinaria_agricola' || cat === 'transporte_pesado') {
       this.vehicleForm.patchValue({
         tipoCombustible: 'Diésel',
         transmision: 'Hidrostática'
@@ -507,6 +564,11 @@ export class AdminFormComponent implements OnInit {
       this.vehicleForm.patchValue({
         tipoCombustible: 'Gasolina',
         transmision: 'Manual'
+      });
+    } else if (cat === 'autos_electricos' || cat === 'motos_electricos') {
+      this.vehicleForm.patchValue({
+        tipoCombustible: 'Eléctrico',
+        transmision: 'Automática'
       });
     }
   }
@@ -607,6 +669,7 @@ export class AdminFormComponent implements OnInit {
         modelo: formValue.modelo,
         anio: formValue.anio,
         precio: formValue.precio,
+        moneda: formValue.moneda,
         categoria: formValue.categoria,
         tipoCombustible: formValue.tipoCombustible,
         transmision: formValue.transmision,
@@ -616,24 +679,29 @@ export class AdminFormComponent implements OnInit {
         imagenPrincipal: mainImg,
         imagenes: imagenes,
         descripcion: formValue.descripcion,
+        telefonoContacto: formValue.telefonoContacto,
         destacado: formValue.destacado,
         estado: formValue.estado,
         especificaciones: this.selectedSpecs()
       };
 
       // Adjuntar detalles condicionales del subtipo
-      if (formValue.categoria === 'autos') {
+      if (formValue.categoria === 'autos' || formValue.categoria === 'autos_electricos') {
         vehicleData.autoDetail = {
           carroceria: formValue.autoCarroceria,
           puertas: Number(formValue.autoPuertas),
-          pasajeros: Number(formValue.autoPasajeros)
+          pasajeros: Number(formValue.autoPasajeros),
+          autonomia: formValue.autoAutonomia ? Number(formValue.autoAutonomia) : null,
+          tamanoBateria: formValue.autoTamanoBateria ? Number(formValue.autoTamanoBateria) : null
         };
-      } else if (formValue.categoria === 'motos') {
+      } else if (formValue.categoria === 'motos' || formValue.categoria === 'motos_electricos') {
         vehicleData.motoDetail = {
           cilindrada: Number(formValue.motoCilindrada),
-          tipoMoto: formValue.motoTipoMoto
+          tipoMoto: formValue.motoTipoMoto,
+          autonomia: formValue.motoAutonomia ? Number(formValue.motoAutonomia) : null,
+          tamanoBateria: formValue.motoTamanoBateria ? Number(formValue.motoTamanoBateria) : null
         };
-      } else if (formValue.categoria === 'maquinaria') {
+      } else if (formValue.categoria === 'maquinaria' || formValue.categoria === 'maquinaria_agricola' || formValue.transporte_pesado) {
         vehicleData.maquinariaDetail = {
           pesoOperativo: Number(formValue.maquinariaPesoOperativo),
           horasUso: Number(formValue.maquinariaHorasUso)

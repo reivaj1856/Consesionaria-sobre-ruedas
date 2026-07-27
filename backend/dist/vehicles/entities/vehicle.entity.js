@@ -25,6 +25,7 @@ let Vehicle = class Vehicle {
     modelo;
     anio;
     precio;
+    moneda;
     categoria;
     tipoCombustible;
     transmision;
@@ -37,6 +38,7 @@ let Vehicle = class Vehicle {
     destacado;
     estado;
     fechaIngreso;
+    telefonoContacto;
     userId;
     reservas;
     favoritos;
@@ -72,7 +74,11 @@ __decorate([
     __metadata("design:type", Number)
 ], Vehicle.prototype, "precio", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 20 }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 10, default: 'USD' }),
+    __metadata("design:type", String)
+], Vehicle.prototype, "moneda", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 30 }),
     __metadata("design:type", String)
 ], Vehicle.prototype, "categoria", void 0);
 __decorate([
@@ -119,6 +125,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 20 }),
     __metadata("design:type", String)
 ], Vehicle.prototype, "fechaIngreso", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 30, default: '59177490451' }),
+    __metadata("design:type", String)
+], Vehicle.prototype, "telefonoContacto", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
     __metadata("design:type", Object)

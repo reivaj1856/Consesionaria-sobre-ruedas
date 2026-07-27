@@ -12,7 +12,8 @@ export declare class Vehicle {
     modelo: string;
     anio: number;
     precio: number;
-    categoria: 'autos' | 'motos' | 'maquinaria';
+    moneda: 'USD' | 'BOB';
+    categoria: 'autos' | 'autos_electricos' | 'motos' | 'motos_electricos' | 'maquinaria_agricola' | 'transporte_pesado' | 'maquinaria';
     tipoCombustible: string;
     transmision: string;
     kilometraje: number;
@@ -24,6 +25,7 @@ export declare class Vehicle {
     destacado: boolean;
     estado: 'disponible' | 'reservado' | 'vendido';
     fechaIngreso: string;
+    telefonoContacto: string;
     userId: string | null;
     reservas: Reservation[];
     favoritos: Favorite[];

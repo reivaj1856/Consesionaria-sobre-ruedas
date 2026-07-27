@@ -31,7 +31,9 @@ export class AuthService {
       nombre,
       rol: 'cliente',
       plan: 'gratis',
-      suscripcionFecha: new Date().toISOString().split('T')[0]
+      suscripcionFecha: new Date().toISOString().split('T')[0],
+      recibeDolares: registerDto.recibeDolares !== undefined ? registerDto.recibeDolares : true,
+      recibeBolivianos: registerDto.recibeBolivianos !== undefined ? registerDto.recibeBolivianos : true,
     });
 
     const savedUser = await this.userRepository.save(newUser);
@@ -46,6 +48,8 @@ export class AuthService {
         rol: savedUser.rol,
         plan: savedUser.plan,
         suscripcionFecha: savedUser.suscripcionFecha,
+        recibeDolares: savedUser.recibeDolares,
+        recibeBolivianos: savedUser.recibeBolivianos,
       },
     };
   }
@@ -74,6 +78,8 @@ export class AuthService {
         rol: user.rol,
         plan: user.plan,
         suscripcionFecha: user.suscripcionFecha,
+        recibeDolares: user.recibeDolares,
+        recibeBolivianos: user.recibeBolivianos,
       },
     };
   }
@@ -90,6 +96,8 @@ export class AuthService {
       rol: user.rol,
       plan: user.plan,
       suscripcionFecha: user.suscripcionFecha,
+      recibeDolares: user.recibeDolares,
+      recibeBolivianos: user.recibeBolivianos,
     };
   }
 
@@ -113,6 +121,8 @@ export class AuthService {
         rol: user.rol,
         plan: user.plan,
         suscripcionFecha: user.suscripcionFecha,
+        recibeDolares: user.recibeDolares,
+        recibeBolivianos: user.recibeBolivianos,
       }
     };
   }
@@ -125,7 +135,9 @@ export class AuthService {
         nombre: true,
         rol: true,
         plan: true,
-        suscripcionFecha: true
+        suscripcionFecha: true,
+        recibeDolares: true,
+        recibeBolivianos: true
       },
       order: { nombre: 'ASC' }
     });

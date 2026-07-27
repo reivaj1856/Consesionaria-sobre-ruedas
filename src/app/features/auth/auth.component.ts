@@ -97,6 +97,23 @@ import { AuthService } from '../../core/services/auth.service';
                      class="mt-1.5 w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-none" />
             </div>
 
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Monedas que Aceptas para Recibir Pagos</label>
+              <div class="mt-2 flex gap-4">
+                <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer select-none">
+                  <input type="checkbox" formControlName="recibeDolares" class="h-4 w-4 rounded border-slate-200 text-blue-600 focus:ring-blue-500" />
+                  <span>Dólares (USD)</span>
+                </label>
+                <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer select-none">
+                  <input type="checkbox" formControlName="recibeBolivianos" class="h-4 w-4 rounded border-slate-200 text-blue-600 focus:ring-blue-500" />
+                  <span>Bolivianos (BOB)</span>
+                </label>
+              </div>
+              @if (registerForm.errors?.['noCurrencySelected']) {
+                <p class="text-xs text-rose-500 mt-1 font-semibold">Debes seleccionar al menos una moneda para recibir pagos.</p>
+              }
+            </div>
+
             <button type="submit" [disabled]="registerForm.invalid"
                     class="w-full rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-bold text-white shadow-md hover:bg-blue-500 disabled:opacity-50 transition-colors">
               Crear Cuenta Nueva
@@ -129,8 +146,16 @@ export class AuthComponent {
     this.registerForm = this.fb.group({
       nombre: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      contrasenia: ['', [Validators.required, Validators.minLength(6)]]
-    });
+      contrasenia: ['', [Validators.required, Validators.minLength(6)]],
+      recibeDolares: [true],
+      recibeBolivianos: [true]
+    }, { validators: this.currencySelectionValidator });
+  }
+
+  private currencySelectionValidator(group: FormGroup): any {
+    const usd = group.get('recibeDolares')?.value;
+    const bob = group.get('recibeBolivianos')?.value;
+    return (usd || bob) ? null : { noCurrencySelected: true };
   }
 
   protected setMode(login: boolean): void {
@@ -159,8 +184,8 @@ export class AuthComponent {
 
   protected async onRegisterSubmit(): Promise<void> {
     if (this.registerForm.valid) {
-      const { nombre, email, contrasenia } = this.registerForm.value;
-      const success = await this.authService.register(nombre, email, contrasenia);
+      const { nombre, email, contrasenia, recibeDolares, recibeBolivianos } = this.registerForm.value;
+      const success = await this.authService.register(nombre, email, contrasenia, recibeDolares, recibeBolivianos);
       if (success) {
         this.errorMessage.set('');
         this.router.navigate(['/']);

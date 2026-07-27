@@ -26,6 +26,12 @@ export class User {
   @Column({ type: 'varchar', length: 30, nullable: true })
   suscripcionFecha: string;
 
+  @Column({ type: 'boolean', default: true })
+  recibeDolares: boolean;
+
+  @Column({ type: 'boolean', default: true })
+  recibeBolivianos: boolean;
+
   @OneToMany(() => Reservation, (reservation) => reservation.user)
   reservas: Reservation[];
 

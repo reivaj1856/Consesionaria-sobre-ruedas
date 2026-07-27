@@ -27,8 +27,11 @@ export class Vehicle {
   @Column({ type: 'decimal', precision: 12, scale: 2 })
   precio: number;
 
-  @Column({ type: 'varchar', length: 20 })
-  categoria: 'autos' | 'motos' | 'maquinaria';
+  @Column({ type: 'varchar', length: 10, default: 'USD' })
+  moneda: 'USD' | 'BOB';
+
+  @Column({ type: 'varchar', length: 30 })
+  categoria: 'autos' | 'autos_electricos' | 'motos' | 'motos_electricos' | 'maquinaria_agricola' | 'transporte_pesado' | 'maquinaria';
 
   @Column()
   tipoCombustible: string;
@@ -62,6 +65,9 @@ export class Vehicle {
 
   @Column({ type: 'varchar', length: 20 })
   fechaIngreso: string;
+
+  @Column({ type: 'varchar', length: 30, default: '59177490451' })
+  telefonoContacto: string;
 
   @Column({ type: 'varchar', nullable: true })
   userId: string | null;

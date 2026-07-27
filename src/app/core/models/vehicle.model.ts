@@ -1,3 +1,5 @@
+import { User } from './user.model';
+
 export interface Specification {
   id: number;
   nombre: string;
@@ -16,12 +18,18 @@ export interface AutoDetail {
   carroceria: string;
   puertas: number;
   pasajeros: number;
+  autonomia?: number;
+  tamanoBateria?: number;
 }
 
 export interface MotoDetail {
   id?: string;
+  whiteSpace?: string;
+  whiteSpace2?: string;
   cilindrada: number;
   tipoMoto: string;
+  autonomia?: number;
+  tamanoBateria?: number;
 }
 
 export interface MaquinariaDetail {
@@ -37,7 +45,8 @@ export interface Vehicle {
   modelo: string;
   anio: number;
   precio: number;
-  categoria: 'autos' | 'motos' | 'maquinaria';
+  moneda?: 'USD' | 'BOB';
+  categoria: 'autos' | 'autos_electricos' | 'motos' | 'motos_electricos' | 'maquinaria_agricola' | 'transporte_pesado' | 'maquinaria';
   tipoCombustible: string;
   transmision: string;
   kilometraje: number;
@@ -49,8 +58,24 @@ export interface Vehicle {
   destacado: boolean;
   estado: 'disponible' | 'reservado' | 'vendido';
   fechaIngreso: string;
+  telefonoContacto?: string;
   especificaciones: Specification[];
   autoDetail?: AutoDetail;
   motoDetail?: MotoDetail;
   maquinariaDetail?: MaquinariaDetail;
+  user?: User;
+}
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  'autos': 'Autos y Camionetas',
+  'autos_electricos': 'Autos Eléctricos',
+  'motos': 'Motocicletas',
+  'motos_electricos': 'Motos Eléctricas',
+  'maquinaria_agricola': 'Maquinaria Agrícola',
+  'transporte_pesado': 'Transporte Pesado',
+  'maquinaria': 'Maquinaria Pesada'
+};
+
+export function getCategoryLabel(category: string): string {
+  return CATEGORY_LABELS[category] || category;
 }

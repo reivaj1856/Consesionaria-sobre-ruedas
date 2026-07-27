@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VehicleService } from '../../../core/services/vehicle.service';
-import { Vehicle } from '../../../core/models/vehicle.model';
+import { Vehicle, getCategoryLabel } from '../../../core/models/vehicle.model';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -119,14 +119,14 @@ import { Vehicle } from '../../../core/models/vehicle.model';
                   
                   <!-- Category -->
                   <td class="whitespace-nowrap px-6 py-4">
-                    <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700 capitalize ring-1 ring-inset ring-blue-700/10">
-                      {{ v.categoria }}
+                    <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                      {{ getCategoryLabel(v.categoria) }}
                     </span>
                   </td>
                   
                   <!-- Price -->
                   <td class="whitespace-nowrap px-6 py-4 text-sm font-bold text-slate-900">
-                    {{ v.precio | currency:'USD':'symbol':'1.0-0' }}
+                    {{ v.precio | currency:(v.moneda || 'USD'):((v.moneda || 'USD') === 'BOB' ? 'Bs. ' : '$'):'1.0-0' }}
                   </td>
                   
                   <!-- Featured Checkbox -->
@@ -179,6 +179,7 @@ import { Vehicle } from '../../../core/models/vehicle.model';
 })
 export class AdminDashboardComponent {
   private readonly vehicleService = inject(VehicleService);
+  protected readonly getCategoryLabel = getCategoryLabel;
 
   protected readonly searchQuery = signal('');
 

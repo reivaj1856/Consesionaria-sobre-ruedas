@@ -59,10 +59,10 @@ export class AuthService {
     }
   }
 
-  public async register(nombre: string, email: string, contrasenia: string): Promise<boolean> {
+  public async register(nombre: string, email: string, contrasenia: string, recibeDolares: boolean, recibeBolivianos: boolean): Promise<boolean> {
     try {
       const response = await firstValueFrom(
-        this.http.post<{ token: string; user: User }>(`${this.apiUrl}/register`, { nombre, email, contrasenia })
+        this.http.post<{ token: string; user: User }>(`${this.apiUrl}/register`, { nombre, email, contrasenia, recibeDolares, recibeBolivianos })
       );
 
       if (response && response.token) {

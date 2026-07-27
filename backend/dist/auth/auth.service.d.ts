@@ -16,6 +16,8 @@ export declare class AuthService {
             rol: "cliente" | "admin";
             plan: "gratis" | "negocio" | "empresa";
             suscripcionFecha: string;
+            recibeDolares: boolean;
+            recibeBolivianos: boolean;
         };
     }>;
     login(loginDto: LoginDto): Promise<{
@@ -27,6 +29,8 @@ export declare class AuthService {
             rol: "cliente" | "admin";
             plan: "gratis" | "negocio" | "empresa";
             suscripcionFecha: string;
+            recibeDolares: boolean;
+            recibeBolivianos: boolean;
         };
     }>;
     findUserById(id: string): Promise<{
@@ -36,6 +40,8 @@ export declare class AuthService {
         rol: "cliente" | "admin";
         plan: "gratis" | "negocio" | "empresa";
         suscripcionFecha: string;
+        recibeDolares: boolean;
+        recibeBolivianos: boolean;
     }>;
     subscribe(userId: string, plan: 'gratis' | 'negocio' | 'empresa'): Promise<{
         success: boolean;
@@ -47,6 +53,8 @@ export declare class AuthService {
             rol: "cliente" | "admin";
             plan: "gratis" | "negocio" | "empresa";
             suscripcionFecha: string;
+            recibeDolares: boolean;
+            recibeBolivianos: boolean;
         };
     }>;
     findAllUsers(): Promise<User[]>;

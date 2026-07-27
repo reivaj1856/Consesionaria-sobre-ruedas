@@ -5,14 +5,15 @@ import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { VehicleService } from '../../core/services/vehicle.service';
 import { FavoriteService } from '../../core/services/favorite.service';
 import { ComparisonService } from '../../core/services/comparison.service';
-import { Vehicle, Specification } from '../../core/models/vehicle.model';
+import { Vehicle, Specification, getCategoryLabel } from '../../core/models/vehicle.model';
 import { QuoteService } from '../../core/services/quote.service';
 import { ReservationService } from '../../core/services/reservation.service';
+import { VehicleCardComponent } from '../../shared/components/vehicle-card/vehicle-card.component';
 
 @Component({
   selector: 'app-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule, FormsModule, CurrencyPipe, DecimalPipe],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, FormsModule, CurrencyPipe, DecimalPipe, VehicleCardComponent],
   template: `
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 fade-in">
       
@@ -24,7 +25,7 @@ import { ReservationService } from '../../core/services/reservation.service';
           <span>/</span>
           <a routerLink="/catalogo" class="hover:text-blue-600">Catálogo</a>
           <span>/</span>
-          <a routerLink="/catalogo" [queryParams]="{categoria: v.categoria}" class="hover:text-blue-600 capitalize">{{ v.categoria }}</a>
+          <a routerLink="/catalogo" [queryParams]="{categoria: v.categoria}" class="hover:text-blue-600">{{ getCategoryLabel(v.categoria) }}</a>
           <span>/</span>
           <span class="text-slate-800 font-bold truncate">{{ v.nombre }}</span>
         </nav>
@@ -61,193 +62,258 @@ import { ReservationService } from '../../core/services/reservation.service';
           </div>
 
           <!-- Column 2: Buy details & actions (5/12 cols) -->
-          <div class="lg:col-span-5 flex flex-col justify-between">
+          <div class="lg:col-span-5 flex flex-col justify-between p-6 rounded-3xl border shadow-sm transition-all duration-300"
+               [class]="detailContainerClass()">
             <div>
+              <!-- Eco Header Banner -->
+              @if (isEV()) {
+                <div class="mb-5 rounded-2xl bg-emerald-600 dark:bg-emerald-800 text-white p-4 flex items-center justify-between shadow border border-emerald-500/50">
+                  <div class="flex items-center gap-3">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-700/60 text-emerald-100 shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <span class="block text-[9px] uppercase font-bold tracking-widest text-emerald-250">Tecnología Sustentable</span>
+                      <span class="text-xs font-black">100% Ecológico & Eléctrico</span>
+                    </div>
+                  </div>
+                  <span class="rounded-lg bg-emerald-700/80 px-2 py-1 text-[8px] font-bold tracking-widest border border-emerald-500/50 uppercase">Cero Emisiones</span>
+                </div>
+              }
+
               <!-- Category and Condition -->
               <div class="flex items-center justify-between">
-                <span class="text-xs font-semibold uppercase tracking-widest text-blue-600">{{ v.categoria }}</span>
+                <span class="text-xs font-semibold uppercase tracking-widest text-blue-600">{{ getCategoryLabel(v.categoria) }}</span>
                 <span class="rounded bg-slate-200 px-2 py-0.5 text-[11px] font-bold text-slate-800 capitalize">{{ v.condicion }}</span>
               </div>
 
               <!-- Title & Price -->
-              <h1 class="mt-4 font-heading text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">{{ v.nombre }}</h1>
+              <h1 class="mt-4 font-heading text-3xl font-extrabold tracking-tight sm:text-4xl"
+                  [class]="isEV() ? 'text-emerald-950 dark:text-white' : 'text-slate-900 dark:text-white'">{{ v.nombre }}</h1>
               
-              <div class="mt-6 rounded-2xl bg-slate-100 p-6">
-                <div class="flex items-end justify-between">
+              <div class="mt-4 rounded-2xl p-5 shadow-sm transition-all duration-300" [class]="priceBoxClass()">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <span class="text-xs font-medium text-slate-500 uppercase">Precio Especial de Venta</span>
-                    <p class="font-heading text-3xl font-extrabold text-slate-950 mt-1">
-                      {{ v.precio | currency:'USD':'symbol':'1.0-0' }}
-                    </p>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Precio en monedas aceptadas</span>
+                    <div class="mt-1.5 flex flex-wrap gap-x-6 gap-y-2">
+                      @for (p of acceptedPrices(); track p.currency) {
+                        <div>
+                          <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{{ p.label }}</p>
+                          <p class="font-heading text-2xl font-black text-slate-950 dark:text-white">
+                            {{ p.amount | currency:p.currency:(p.currency === 'BOB' ? 'Bs. ' : '$'):'1.0-0' }}
+                          </p>
+                        </div>
+                      }
+                    </div>
                   </div>
-                  <span class="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                  <span class="text-xs text-emerald-600 font-bold flex items-center gap-1 shrink-0 self-start sm:self-center">
                     <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     Entrega inmediata
                   </span>
                 </div>
               </div>
-
-              <!-- Summary Specifications -->
-              <div class="mt-8 grid grid-cols-2 gap-4 border-b border-slate-200 pb-8">
-                <div class="flex items-center gap-3">
-                  <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div [class]="isEV() ? 'mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2.5 border-b border-emerald-250/50 dark:border-emerald-800/40 pb-4' : 'mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2.5 border-b border-slate-200 pb-4'">
+                <!-- Año -->
+                <div [class]="specPillClass()">
+                  <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
-                  <div>
-                    <span class="block text-[10px] uppercase font-bold text-slate-400">Año de Modelo</span>
-                    <span class="text-sm font-semibold text-slate-900">{{ v.anio }}</span>
+                  <div class="min-w-0">
+                    <span class="block text-[9px] uppercase font-bold text-slate-455">Año</span>
+                    <span class="text-xs font-semibold text-slate-900 dark:text-white leading-tight">{{ v.anio }}</span>
                   </div>
                 </div>
 
-                <div class="flex items-center gap-3">
-                  <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <!-- Recorrido -->
+                <div [class]="specPillClass()">
+                  <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <div>
-                    <span class="block text-[10px] uppercase font-bold text-slate-400">Kilometraje</span>
-                    <span class="text-sm font-semibold text-slate-900">{{ v.kilometraje | number:'1.0-0' }} km</span>
+                  <div class="min-w-0">
+                    <span class="block text-[9px] uppercase font-bold text-slate-455">Recorrido</span>
+                    <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight">{{ v.kilometraje | number:'1.0-0' }} km</span>
                   </div>
                 </div>
 
-                <div class="flex items-center gap-3">
-                  <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <!-- Transmisión -->
+                <div [class]="specPillClass()">
+                  <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                     </svg>
                   </div>
-                  <div>
-                    <span class="block text-[10px] uppercase font-bold text-slate-400">Transmisión</span>
-                    <span class="text-sm font-semibold text-slate-900">{{ v.transmision }}</span>
-                  </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                  <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                  </div>
-                  <div>
-                    <span class="block text-[10px] uppercase font-bold text-slate-400">Ubicación</span>
-                    <span class="text-sm font-semibold text-slate-900 truncate max-w-[150px]" [title]="v.ubicacion">{{ v.ubicacion }}</span>
+                  <div class="min-w-0">
+                    <span class="block text-[9px] uppercase font-bold text-slate-450">Transmisión</span>
+                    <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight" [title]="v.transmision">{{ v.transmision }}</span>
                   </div>
                 </div>
                 
-                @if (v.categoria === 'autos' && v.autoDetail) {
-                  <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <!-- Ubicación -->
+                <div [class]="specPillClass()">
+                  <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <div class="min-w-0">
+                    <span class="block text-[9px] uppercase font-bold text-slate-455">Ubicación</span>
+                    <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight" [title]="v.ubicacion">{{ v.ubicacion }}</span>
+                  </div>
+                </div>
+
+                <!-- Auto Specifics -->
+                @if ((v.categoria === 'autos' || v.categoria === 'autos_electricos') && v.autoDetail) {
+                  <div [class]="specPillClass()">
+                    <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1" />
                       </svg>
                     </div>
-                    <div>
-                      <span class="block text-[10px] uppercase font-bold text-slate-400">Carrocería</span>
-                      <span class="text-sm font-semibold text-slate-900">{{ v.autoDetail.carroceria }}</span>
+                    <div class="min-w-0">
+                      <span class="block text-[9px] uppercase font-bold text-slate-455">Carrocería</span>
+                      <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight" [title]="v.autoDetail.carroceria">{{ v.autoDetail.carroceria }}</span>
                     </div>
                   </div>
-                  <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div [class]="specPillClass()">
+                    <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     </div>
-                    <div>
-                      <span class="block text-[10px] uppercase font-bold text-slate-400">Pasajeros / Puertas</span>
-                      <span class="text-sm font-semibold text-slate-900">{{ v.autoDetail.pasajeros }} asientos / {{ v.autoDetail.puertas }}p</span>
+                    <div class="min-w-0">
+                      <span class="block text-[9px] uppercase font-bold text-slate-455">Capacidad</span>
+                      <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight">{{ v.autoDetail.pasajeros }} as. / {{ v.autoDetail.puertas }}p</span>
                     </div>
                   </div>
+                  @if (v.autoDetail.autonomia) {
+                    <div [class]="specPillClass()">
+                      <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 012.553 15.48V8.52a2 2 0 011.053-1.796L9 4m12 16l-5.447-2.724a2 2 0 01-1.053-1.796V8.52a2 2 0 011.053-1.796L21 4m-12 0v16m0 0l-4-4m4 4l4-4m4-12v16m0 0l-4-4m4 4l4-4" />
+                        </svg>
+                      </div>
+                      <div class="min-w-0">
+                        <span class="block text-[9px] uppercase font-bold text-slate-455">Autonomía</span>
+                        <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight">{{ v.autoDetail.autonomia }} km</span>
+                      </div>
+                    </div>
+                  }
+                  @if (v.autoDetail.tamanoBateria) {
+                    <div [class]="specPillClass()">
+                      <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                      </div>
+                      <div class="min-w-0">
+                        <span class="block text-[9px] uppercase font-bold text-slate-455">Batería</span>
+                        <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight">{{ v.autoDetail.tamanoBateria }} kWh</span>
+                      </div>
+                    </div>
+                  }
                 }
 
-                @if (v.categoria === 'motos' && v.motoDetail) {
-                  <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <!-- Moto Specifics -->
+                @if ((v.categoria === 'motos' || v.categoria === 'motos_electricos') && v.motoDetail) {
+                  <div [class]="specPillClass()">
+                    <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                     </div>
-                    <div>
-                      <span class="block text-[10px] uppercase font-bold text-slate-400">Cilindrada</span>
-                      <span class="text-sm font-semibold text-slate-900">{{ v.motoDetail.cilindrada }} cc</span>
+                    <div class="min-w-0">
+                      <span class="block text-[9px] uppercase font-bold text-slate-455">Cilindrada</span>
+                      <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight">{{ v.motoDetail.cilindrada }} cc</span>
                     </div>
                   </div>
-                  <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div [class]="specPillClass()">
+                    <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                       </svg>
                     </div>
-                    <div>
-                      <span class="block text-[10px] uppercase font-bold text-slate-400">Tipo de Moto</span>
-                      <span class="text-sm font-semibold text-slate-900">{{ v.motoDetail.tipoMoto }}</span>
+                    <div class="min-w-0">
+                      <span class="block text-[9px] uppercase font-bold text-slate-455">Tipo Moto</span>
+                      <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight" [title]="v.motoDetail.tipoMoto">{{ v.motoDetail.tipoMoto }}</span>
                     </div>
                   </div>
+                  @if (v.motoDetail.autonomia) {
+                    <div [class]="specPillClass()">
+                      <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A2 2 0 012.553 15.48V8.52a2 2 0 011.053-1.796L9 4m12 16l-5.447-2.724a2 2 0 01-1.053-1.796V8.52a2 2 0 011.053-1.796L21 4m-12 0v16m0 0l-4-4m4 4l4-4m4-12v16m0 0l-4-4m4 4l4-4" />
+                        </svg>
+                      </div>
+                      <div class="min-w-0">
+                        <span class="block text-[9px] uppercase font-bold text-slate-455">Autonomía</span>
+                        <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight">{{ v.motoDetail.autonomia }} km</span>
+                      </div>
+                    </div>
+                  }
+                  @if (v.motoDetail.tamanoBateria) {
+                    <div [class]="specPillClass()">
+                      <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                      </div>
+                      <div class="min-w-0">
+                        <span class="block text-[9px] uppercase font-bold text-slate-455">Batería</span>
+                        <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight">{{ v.motoDetail.tamanoBateria }} kWh</span>
+                      </div>
+                    </div>
+                  }
                 }
 
-                @if (v.categoria === 'maquinaria' && v.maquinariaDetail) {
-                  <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <!-- Maquinaria Specifics -->
+                @if ((v.categoria === 'maquinaria' || v.categoria === 'maquinaria_agricola' || v.categoria === 'transporte_pesado') && v.maquinariaDetail) {
+                  <div [class]="specPillClass()">
+                    <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
                       </svg>
                     </div>
-                    <div>
-                      <span class="block text-[10px] uppercase font-bold text-slate-400">Peso Operativo</span>
-                      <span class="text-sm font-semibold text-slate-900">{{ v.maquinariaDetail.pesoOperativo | number:'1.0-0' }} kg</span>
+                    <div class="min-w-0">
+                      <span class="block text-[9px] uppercase font-bold text-slate-455">Peso</span>
+                      <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight">{{ v.maquinariaDetail.pesoOperativo | number:'1.0-0' }} kg</span>
                     </div>
                   </div>
-                  <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div [class]="specPillClass()">
+                    <div class="flex h-7 w-7 items-center justify-center rounded-md shrink-0" [class]="isEV() ? 'bg-emerald-500/10 text-emerald-600' : 'bg-blue-50 text-blue-600'">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
-                    <div>
-                      <span class="block text-[10px] uppercase font-bold text-slate-400">Horas de Uso</span>
-                      <span class="text-sm font-semibold text-slate-900">{{ v.maquinariaDetail.horasUso }} hrs</span>
+                    <div class="min-w-0">
+                      <span class="block text-[9px] uppercase font-bold text-slate-455">Uso</span>
+                      <span class="text-xs font-semibold text-slate-900 dark:text-white truncate block leading-tight">{{ v.maquinariaDetail.horasUso }} hrs</span>
                     </div>
                   </div>
                 }
               </div>
 
               <!-- Description -->
-              <div class="mt-8">
-                <h3 class="text-sm font-bold text-slate-950 uppercase tracking-wider">Descripción del Vehículo</h3>
-                <p class="mt-3 text-sm text-slate-600 leading-relaxed">{{ v.descripcion }}</p>
+              <div class="mt-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider" [class]="isEV() ? 'text-emerald-900 dark:text-emerald-205' : 'text-slate-950 dark:text-white'">Descripción del Vehículo</h3>
+                <p class="mt-1.5 text-xs leading-relaxed" [class]="isEV() ? 'text-emerald-900 dark:text-emerald-200' : 'text-slate-650 dark:text-slate-350'">{{ v.descripcion }}</p>
               </div>
 
             </div>
 
             <!-- CTA Action Buttons -->
-            <div class="mt-10 space-y-3 pt-6 border-t border-slate-200">
+            <div class="mt-6 pt-5 border-t border-slate-200">
               <div class="flex gap-3">
-                <button (click)="openQuoteModal()"
-                        class="flex-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 py-3.5 text-sm font-bold transition-all focus:outline-none">
-                  Solicitar Cotización
-                </button>
-                
-                @if (v.estado === 'disponible') {
-                  <button (click)="openReserveModal()"
-                          class="flex-1 rounded-xl bg-blue-600 hover:bg-blue-500 text-white py-3.5 text-sm font-bold shadow-md transition-all focus:outline-none">
-                    Reservar Unidad
-                  </button>
-                } @else {
-                  <button disabled
-                          class="flex-1 rounded-xl bg-slate-300 text-slate-500 py-3.5 text-sm font-bold cursor-not-allowed">
-                    No disponible para reserva
-                  </button>
-                }
-              </div>
-
-              <div class="flex gap-2">
                 <!-- WhatsApp CTA button -->
                 <a [href]="whatsAppLink()" target="_blank" rel="noopener noreferrer"
-                   class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 text-sm font-bold transition-all shadow">
+                   class="flex-1 inline-flex items-center justify-center gap-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 text-sm font-bold transition-all shadow">
                   <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.703 1.458h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                  Consultar WhatsApp
+                  Consultar al WhatsApp
                 </a>
 
                 <!-- Favorite / Compare buttons -->
@@ -275,30 +341,41 @@ import { ReservationService } from '../../core/services/reservation.service';
         </div>
 
         <!-- Specifications Section -->
-        <section class="mt-16 border-t border-slate-200 pt-12">
-          <h2 class="font-heading text-2xl font-bold text-slate-900">Equipamiento y Características</h2>
-          <p class="text-slate-500 text-sm mt-1">Detalles de confort, seguridad y especificaciones adicionales</p>
+        <section class="mt-10 border-t border-slate-200/60 dark:border-slate-800 pt-8">
+          <h2 class="font-heading text-lg font-bold text-slate-900 dark:text-white">Equipamiento y Características</h2>
+          <p class="text-slate-500 dark:text-slate-400 text-xs mt-0.5">Detalles de confort, seguridad y especificaciones adicionales</p>
 
-          <div class="mt-8 space-y-8">
-            @for (group of groupedSpecifications(); track group.name) {
-              <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2 mb-4">{{ group.name }}</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  @for (spec of group.specs; track spec.id) {
-                    <div class="flex items-center gap-2 text-sm text-slate-700 bg-slate-50/50 hover:bg-slate-50 px-3.5 py-2.5 rounded-xl border border-slate-100 transition-colors">
-                      <span class="h-2 w-2 rounded-full bg-blue-500 shrink-0"></span>
-                      <span class="font-medium text-slate-800">{{ spec.nombre }}</span>
-                    </div>
-                  }
-                </div>
+          <div class="mt-5">
+            @if (v.especificaciones && v.especificaciones.length > 0) {
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                @for (spec of v.especificaciones; track spec.id) {
+                  <div class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-350 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/80 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-800 transition-colors">
+                    <span class="h-1.5 w-1.5 rounded-full shrink-0" [class]="isEV() ? 'bg-emerald-500' : 'bg-blue-500'"></span>
+                    <span class="font-medium truncate" [title]="spec.nombre">{{ spec.nombre }}</span>
+                  </div>
+                }
               </div>
-            } @empty {
-              <div class="text-center py-12 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
-                <p class="text-sm text-slate-400">Este vehículo no tiene equipamiento específico registrado.</p>
+            } @else {
+              <div class="text-center py-8 bg-slate-50/50 dark:bg-slate-900/30 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
+                <p class="text-xs text-slate-400">Este vehículo no tiene equipamiento específico registrado.</p>
               </div>
             }
           </div>
         </section>
+
+        <!-- Recommended Vehicles Section -->
+        @if (recommendedVehicles().length > 0) {
+          <section class="mt-12 border-t border-slate-200/60 dark:border-slate-800 pt-10">
+            <h2 class="font-heading text-xl font-bold text-slate-900 dark:text-white">Vehículos Recomendados</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-xs mt-0.5">Opciones similares en nuestro catálogo que podrían interesarte</p>
+
+            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              @for (item of recommendedVehicles(); track item.id) {
+                <app-vehicle-card [vehicle]="item" [displayCurrency]="item.moneda || 'USD'"></app-vehicle-card>
+              }
+            </div>
+          </section>
+        }
 
       } @else {
         <!-- Error / Loading view -->
@@ -442,7 +519,34 @@ export class DetailComponent implements OnInit {
   private readonly comparisonService = inject(ComparisonService);
   private readonly quoteService = inject(QuoteService);
   private readonly reservationService = inject(ReservationService);
-  private readonly fb = inject(FormBuilder);
+  protected readonly fb = inject(FormBuilder);
+  protected readonly getCategoryLabel = getCategoryLabel;
+
+  protected readonly isEV = computed(() => {
+    const v = this.vehicle();
+    return v ? (v.categoria === 'autos_electricos' || v.categoria === 'motos_electricos') : false;
+  });
+
+  protected readonly specPillClass = computed(() => {
+    if (this.isEV()) {
+      return 'flex items-center gap-2 p-2 rounded-xl bg-emerald-500/5 dark:bg-emerald-950/40 border border-emerald-500/10 dark:border-emerald-900/30';
+    }
+    return 'flex items-center gap-2 p-2 rounded-xl bg-slate-50 border border-slate-100/80';
+  });
+
+  protected readonly detailContainerClass = computed(() => {
+    if (this.isEV()) {
+      return 'bg-emerald-50/70 dark:bg-emerald-950 border-slate-200 dark:border-emerald-700 shadow-xl shadow-emerald-100/30 dark:shadow-emerald-950/40 text-emerald-950 dark:text-emerald-50';
+    }
+    return 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800';
+  });
+
+  protected readonly priceBoxClass = computed(() => {
+    if (this.isEV()) {
+      return 'bg-emerald-100/80 dark:bg-emerald-900/60 border border-emerald-250 dark:border-emerald-800';
+    }
+    return 'bg-slate-100 dark:bg-slate-950/40';
+  });
 
   protected readonly vehicleId = signal<string>('');
 
@@ -453,6 +557,58 @@ export class DetailComponent implements OnInit {
   protected readonly activeImage = signal<string>('');
   protected readonly isFavorite = computed(() => this.favoriteService.isFavorite(this.vehicleId()));
   protected readonly isCompared = computed(() => this.comparisonService.isCompared(this.vehicleId()));
+
+  protected readonly recommendedVehicles = computed(() => {
+    const current = this.vehicle();
+    if (!current) return [];
+    
+    const all = this.vehicleService.vehicles();
+    const sameCategory = all.filter(v => v.categoria === current.categoria && v.id !== current.id && v.estado === 'disponible');
+    
+    if (sameCategory.length >= 4) {
+      return sameCategory.slice(0, 4);
+    }
+    
+    const sameCatIds = new Set(sameCategory.map(v => v.id));
+    const others = all.filter(v => v.id !== current.id && !sameCatIds.has(v.id) && v.estado === 'disponible');
+    
+    return [...sameCategory, ...others].slice(0, 4);
+  });
+
+  protected readonly acceptedPrices = computed(() => {
+    const v = this.vehicle();
+    if (!v) return [];
+
+    const prices: { amount: number, currency: 'USD' | 'BOB', label: string }[] = [];
+    const rate = 6.96;
+    const nativeCurrency = v.moneda || 'USD';
+    const nativePrice = v.precio;
+
+    const receivesUSD = v.user?.recibeDolares ?? true;
+    const receivesBOB = v.user?.recibeBolivianos ?? true;
+
+    if (receivesUSD) {
+      let usdAmount = nativePrice;
+      if (nativeCurrency === 'BOB') {
+        usdAmount = nativePrice / rate;
+      }
+      prices.push({ amount: usdAmount, currency: 'USD', label: 'Dólares (USD)' });
+    }
+
+    if (receivesBOB) {
+      let bobAmount = nativePrice;
+      if (nativeCurrency === 'USD') {
+        bobAmount = nativePrice * rate;
+      }
+      prices.push({ amount: bobAmount, currency: 'BOB', label: 'Bolivianos (BOB)' });
+    }
+
+    if (prices.length === 0) {
+      prices.push({ amount: nativePrice, currency: nativeCurrency, label: nativeCurrency === 'BOB' ? 'Bolivianos (BOB)' : 'Dólares (USD)' });
+    }
+
+    return prices;
+  });
 
   // Modals controllers
   protected readonly isQuoteModalOpen = signal(false);
@@ -486,6 +642,7 @@ export class DetailComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    this.vehicleService.refreshVehicles();
     this.route.paramMap.subscribe(params => {
       const id = params.get('id') || '';
       this.vehicleId.set(id);
@@ -532,8 +689,11 @@ export class DetailComponent implements OnInit {
   protected readonly whatsAppLink = computed(() => {
     const v = this.vehicle();
     if (!v) return '';
-    const text = encodeURIComponent(`Hola, me interesa el vehículo ${v.nombre} ($${v.precio} USD). ¿Sigue disponible?`);
-    return `https://wa.me/59177490451?text=${text}`; // WhatsApp is admin number
+    const currencyStr = v.moneda || 'USD';
+    const rawPhone = v.telefonoContacto || '59177490451';
+    const phone = rawPhone.replace(/\D/g, '');
+    const text = encodeURIComponent(`Hola, me interesa el vehículo ${v.nombre} (${v.precio} ${currencyStr}). ¿Sigue disponible?`);
+    return `https://wa.me/${phone}?text=${text}`;
   });
 
   protected toggleFavorite(): void {

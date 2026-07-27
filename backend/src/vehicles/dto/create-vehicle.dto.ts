@@ -16,8 +16,12 @@ export class CreateVehicleDto {
   @IsNumber({}, { message: 'El precio debe ser un número' })
   precio: number;
 
-  @IsEnum(['autos', 'motos', 'maquinaria'], { message: 'La categoría no es válida' })
-  categoria: 'autos' | 'motos' | 'maquinaria';
+  @IsEnum(['USD', 'BOB'], { message: 'La moneda no es válida' })
+  @IsOptional()
+  moneda?: 'USD' | 'BOB';
+
+  @IsEnum(['autos', 'autos_electricos', 'motos', 'motos_electricos', 'maquinaria_agricola', 'transporte_pesado', 'maquinaria'], { message: 'La categoría no es válida' })
+  categoria: 'autos' | 'autos_electricos' | 'motos' | 'motos_electricos' | 'maquinaria_agricola' | 'transporte_pesado' | 'maquinaria';
 
   @IsNotEmpty({ message: 'El tipo de combustible es requerido' })
   tipoCombustible: string;
@@ -44,6 +48,10 @@ export class CreateVehicleDto {
   @IsNotEmpty({ message: 'La descripción es requerida' })
   descripcion: string;
 
+  @IsString({ message: 'El teléfono de contacto debe ser un texto' })
+  @IsOptional()
+  telefonoContacto?: string;
+
   @IsBoolean({ message: 'El campo destacado debe ser un booleano' })
   @IsOptional()
   destacado: boolean;
@@ -62,6 +70,8 @@ export class CreateVehicleDto {
     carroceria: string;
     puertas: number;
     pasajeros: number;
+    autonomia?: number;
+    tamanoBateria?: number;
   };
 
   @IsObject()
@@ -69,6 +79,8 @@ export class CreateVehicleDto {
   motoDetail?: {
     cilindrada: number;
     tipoMoto: string;
+    autonomia?: number;
+    tamanoBateria?: number;
   };
 
   @IsObject()

@@ -1,149 +1,234 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, computed, effect, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VehicleService } from '../../core/services/vehicle.service';
 import { VehicleCardComponent } from '../../shared/components/vehicle-card/vehicle-card.component';
-import { Vehicle } from '../../core/models/vehicle.model';
+import { Vehicle, getCategoryLabel } from '../../core/models/vehicle.model';
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, FormsModule, VehicleCardComponent],
+  imports: [CommonModule, FormsModule, VehicleCardComponent, CurrencyPipe, RouterLink],
   template: `
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 fade-in">
       
-      <!-- Breadcrumb & Header -->
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-5">
-        <div>
-          <h1 class="font-heading text-3xl font-extrabold text-slate-900">Catálogo de Vehículos</h1>
-          <p class="mt-2 text-sm text-slate-500">Explora nuestro inventario con filtros de precisión avanzada</p>
-        </div>
-        <div class="flex items-center gap-3">
-          <button (click)="toggleMobileFilters()" class="md:hidden inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-            Filtros
-          </button>
+      <!-- Recommended Category Vehicles Carousel (Home Style, Edge-to-Edge) -->
+      @if (recommendedCategoryVehicles().length > 0) {
+        <section class="relative bg-slate-950 text-white overflow-hidden h-[360px] md:h-[440px] -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 mb-6 border-b border-slate-900 z-0">
           
-          <select [(ngModel)]="sortBy" (change)="resetPagination()"
-                  class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 shadow-sm focus:border-blue-500 focus:outline-none">
-            <option value="reciente">Más recientes</option>
-            <option value="precio_asc">Precio: de menor a mayor</option>
-            <option value="precio_desc">Precio: de mayor a menor</option>
-            <option value="kilometraje_asc">Kilometraje: menor primero</option>
-          </select>
+          <!-- Slides Wrapper -->
+          @for (item of recommendedCategoryVehicles(); track item.id) {
+            <div class="absolute inset-0 transition-opacity duration-700 ease-in-out"
+                 [class.opacity-100]="activeSlide() === $index"
+                 [class.opacity-0]="activeSlide() !== $index"
+                 [class.pointer-events-none]="activeSlide() !== $index">
+              
+              <!-- Background Image -->
+              <img [src]="item.imagenPrincipal" class="h-full w-full object-cover" [alt]="item.nombre" />
+              
+              <!-- Gradient Overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent"></div>
+              
+              <!-- Slide Content Box (Floating Card, Bottom-left aligned) -->
+              <div class="absolute inset-x-0 bottom-0 z-10 pb-8 sm:pb-10">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-start">
+                  <a [routerLink]="['/vehiculo', item.id]" 
+                     class="max-w-xs sm:max-w-sm bg-slate-950/60 backdrop-blur-md border border-white/15 p-4 rounded-xl shadow-2xl transition-all duration-500 hover:border-white/30 block cursor-pointer">
+                    
+                    <!-- Badge -->
+                    <span class="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-2 py-0.5 text-[9px] font-bold text-white uppercase tracking-wider shadow-sm">
+                      Recomendado en {{ getCategoryLabel(filterCategory()) }}
+                    </span>
+
+                    <!-- Title -->
+                    <h3 class="mt-2 font-heading text-base font-extrabold tracking-tight text-white leading-snug hover:text-blue-400 transition-colors line-clamp-1">
+                      {{ item.nombre }}
+                    </h3>
+
+                    <!-- Price -->
+                    <p class="mt-1 text-sm font-black text-blue-400">
+                      {{ getVehicleDisplayedPrice(item, displayCurrency()) | currency:displayCurrency():(displayCurrency() === 'BOB' ? 'Bs. ' : '$'):'1.0-0' }}
+                    </p>
+
+                  </a>
+                </div>
+              </div>
+              
+            </div>
+          }
+
+          <!-- Carousel Indicators -->
+          @if (recommendedCategoryVehicles().length > 1) {
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 p-1 rounded-full bg-slate-950/40 backdrop-blur-sm border border-white/10">
+              @for (item of recommendedCategoryVehicles(); track item.id) {
+                <button (click)="setSlide($index)" 
+                        class="h-1 transition-all duration-300 focus:outline-none cursor-pointer"
+                        [class.w-4]="activeSlide() === $index"
+                        [class.bg-blue-500]="activeSlide() === $index"
+                        [class.w-1]="activeSlide() !== $index"
+                        [class.bg-white/40]="activeSlide() !== $index">
+                </button>
+              }
+            </div>
+          }
+
+          <!-- Carousel Navigation Arrows -->
+          @if (recommendedCategoryVehicles().length > 1) {
+            <button (click)="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-lg bg-slate-950/30 hover:bg-slate-950/60 backdrop-blur-sm border border-white/10 text-white focus:outline-none flex items-center justify-center transition-colors cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button (click)="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-lg bg-slate-950/30 hover:bg-slate-950/60 backdrop-blur-sm border border-white/10 text-white focus:outline-none flex items-center justify-center transition-colors cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          }
+
+        </section>
+      }
+
+      <!-- Category Tabs (Horizontal pills at top if category is not locked) -->
+      @if (!isCategoryLocked()) {
+        <div class="flex gap-2 overflow-x-auto pb-2.5 mt-2 scrollbar-hide mb-4">
+          <button (click)="filterCategory.set(''); resetPagination()"
+                  [class]="filterCategory() === '' ? 'bg-blue-600 text-white font-semibold' : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200'"
+                  class="rounded-full px-4.5 py-1.5 text-xs transition-all shadow-sm shrink-0 cursor-pointer">
+            Todas las Categorías
+          </button>
+          <button (click)="filterCategory.set('autos'); resetPagination()"
+                  [class]="filterCategory() === 'autos' ? 'bg-blue-600 text-white font-semibold' : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200'"
+                  class="rounded-full px-4.5 py-1.5 text-xs transition-all shadow-sm shrink-0 cursor-pointer">
+            Autos
+          </button>
+          <button (click)="filterCategory.set('autos_electricos'); resetPagination()"
+                  [class]="filterCategory() === 'autos_electricos' ? 'bg-blue-600 text-white font-semibold' : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200'"
+                  class="rounded-full px-4.5 py-1.5 text-xs transition-all shadow-sm shrink-0 cursor-pointer">
+            Autos Eléctricos
+          </button>
+          <button (click)="filterCategory.set('motos'); resetPagination()"
+                  [class]="filterCategory() === 'motos' ? 'bg-blue-600 text-white font-semibold' : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200'"
+                  class="rounded-full px-4.5 py-1.5 text-xs transition-all shadow-sm shrink-0 cursor-pointer">
+            Motocicletas
+          </button>
+          <button (click)="filterCategory.set('motos_electricos'); resetPagination()"
+                  [class]="filterCategory() === 'motos_electricos' ? 'bg-blue-600 text-white font-semibold' : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200'"
+                  class="rounded-full px-4.5 py-1.5 text-xs transition-all shadow-sm shrink-0 cursor-pointer">
+            Motos Eléctricas
+          </button>
+          <button (click)="filterCategory.set('maquinaria_agricola'); resetPagination()"
+                  [class]="filterCategory() === 'maquinaria_agricola' ? 'bg-blue-600 text-white font-semibold' : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200'"
+                  class="rounded-full px-4.5 py-1.5 text-xs transition-all shadow-sm shrink-0 cursor-pointer">
+            Maquinaria Agrícola
+          </button>
+          <button (click)="filterCategory.set('transporte_pesado'); resetPagination()"
+                  [class]="filterCategory() === 'transporte_pesado' ? 'bg-blue-600 text-white font-semibold' : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200'"
+                  class="rounded-full px-4.5 py-1.5 text-xs transition-all shadow-sm shrink-0 cursor-pointer">
+            Transporte Pesado
+          </button>
+        </div>
+      }
+
+      <!-- Horizontal Filter Bar -->
+      <div class="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm mt-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7 gap-4 items-end">
+          
+          <!-- Mostrar Precios En -->
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1.5">Moneda</label>
+            <div class="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-200/50 dark:border-slate-700/30">
+              <button type="button" 
+                      (click)="setDisplayCurrency('BOB')"
+                      [class]="displayCurrency() === 'BOB' 
+                        ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm font-semibold' 
+                        : 'bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
+                      class="text-center py-1 text-[11px] rounded-md transition-all focus:outline-none cursor-pointer">
+                Bs
+              </button>
+              <button type="button" 
+                      (click)="setDisplayCurrency('USD')"
+                      [class]="displayCurrency() === 'USD' 
+                        ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm font-semibold' 
+                        : 'bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
+                      class="text-center py-1 text-[11px] rounded-md transition-all focus:outline-none cursor-pointer">
+                USD
+              </button>
+            </div>
+          </div>
+
+          <!-- Buscar por texto -->
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1.5">Buscar</label>
+            <input type="text" [(ngModel)]="filterText" (ngModelChange)="resetPagination()" placeholder="Marca, modelo..." 
+                   class="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-1.5 text-xs text-slate-800 dark:text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none" />
+          </div>
+
+          <!-- Condición -->
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1.5">Condición</label>
+            <select [(ngModel)]="filterCondition" (change)="resetPagination()"
+                    class="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-1.5 text-xs text-slate-800 dark:text-white focus:border-blue-500 focus:outline-none">
+              <option value="">Cualquiera</option>
+              <option value="nuevo">Nuevo</option>
+              <option value="usado">Usado</option>
+            </select>
+          </div>
+
+          <!-- Marca -->
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1.5">Marca</label>
+            <select [(ngModel)]="filterBrand" (change)="resetPagination()"
+                    class="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-1.5 text-xs text-slate-800 dark:text-white focus:border-blue-500 focus:outline-none">
+              <option value="">Todas las marcas</option>
+              @for (brand of uniqueBrands(); track brand) {
+                <option [value]="brand">{{ brand }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Rango de Precios -->
+          <div class="flex items-center gap-1.5">
+            <div class="flex-1">
+              <label class="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1.5">Costo Mín</label>
+              <input type="number" [(ngModel)]="filterMinPrice" (ngModelChange)="resetPagination()" placeholder="Min" 
+                     class="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-1.5 text-xs text-slate-800 dark:text-white focus:border-blue-500 focus:outline-none" />
+            </div>
+            <span class="text-slate-300 dark:text-slate-700 self-center mt-4">-</span>
+            <div class="flex-1">
+              <label class="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1.5">Costo Máx</label>
+              <input type="number" [(ngModel)]="filterMaxPrice" (ngModelChange)="resetPagination()" placeholder="Max" 
+                     class="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-1.5 text-xs text-slate-800 dark:text-white focus:border-blue-500 focus:outline-none" />
+            </div>
+          </div>
+
+          <!-- Ordenar Por -->
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1.5">Ordenar</label>
+            <select [(ngModel)]="sortBy" (change)="resetPagination()"
+                    class="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-1.5 text-xs text-slate-800 dark:text-white focus:border-blue-500 focus:outline-none">
+              <option value="reciente">Más recientes</option>
+              <option value="precio_asc">Precio: menor a mayor</option>
+              <option value="precio_desc">Precio: mayor a menor</option>
+              <option value="kilometraje_asc">Kilometraje: menor primero</option>
+            </select>
+          </div>
+
+          <!-- Botón de Limpiar -->
+          <div>
+            <button (click)="clearFilters()" 
+                    class="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700/80 py-1.5 text-xs font-bold text-slate-700 dark:text-white cursor-pointer transition-colors">
+              Limpiar
+            </button>
+          </div>
+
         </div>
       </div>
 
-      <!-- Main Grid with Sidebar and Products -->
-      <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-4">
-        
-        <!-- Desktop Filter Sidebar -->
-        <aside class="hidden lg:block space-y-6">
-          <div class="sticky top-24 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-            <div class="flex items-center justify-between">
-              <h2 class="font-heading text-lg font-bold text-slate-900">Filtros Avanzados</h2>
-              <button (click)="clearFilters()" class="text-xs font-semibold text-blue-600 hover:text-blue-500">
-                Limpiar todo
-              </button>
-            </div>
-            
-            <div class="mt-6 space-y-6">
-              <!-- Categoria -->
-              <div>
-                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Categoría</label>
-                <div class="mt-2.5 space-y-2">
-                  <label class="flex items-center gap-2.5 text-sm text-slate-700 cursor-pointer">
-                    <input type="radio" name="category" value="" [(ngModel)]="filterCategory" (change)="resetPagination()" class="text-blue-600 focus:ring-blue-500" />
-                    <span>Todas las categorías</span>
-                  </label>
-                  <label class="flex items-center gap-2.5 text-sm text-slate-700 cursor-pointer">
-                    <input type="radio" name="category" value="autos" [(ngModel)]="filterCategory" (change)="resetPagination()" class="text-blue-600 focus:ring-blue-500" />
-                    <span>Autos y Camionetas</span>
-                  </label>
-                  <label class="flex items-center gap-2.5 text-sm text-slate-700 cursor-pointer">
-                    <input type="radio" name="category" value="motos" [(ngModel)]="filterCategory" (change)="resetPagination()" class="text-blue-600 focus:ring-blue-500" />
-                    <span>Motocicletas</span>
-                  </label>
-                  <label class="flex items-center gap-2.5 text-sm text-slate-700 cursor-pointer">
-                    <input type="radio" name="category" value="maquinaria" [(ngModel)]="filterCategory" (change)="resetPagination()" class="text-blue-600 focus:ring-blue-500" />
-                    <span>Maquinaria Pesada</span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Buscar -->
-              <div>
-                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Buscar por Texto</label>
-                <input type="text" [(ngModel)]="filterText" (ngModelChange)="resetPagination()" placeholder="Marca, modelo..." 
-                       class="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none transition-colors" />
-              </div>
-
-              <!-- Marca -->
-              <div>
-                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Marca</label>
-                <select [(ngModel)]="filterBrand" (change)="resetPagination()"
-                        class="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none">
-                  <option value="">Todas las marcas</option>
-                  @for (brand of uniqueBrands(); track brand) {
-                    <option [value]="brand">{{ brand }}</option>
-                  }
-                </select>
-              </div>
-
-              <!-- Precio rango -->
-              <div>
-                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Precio Rango (USD)</label>
-                <div class="mt-2 flex items-center gap-2">
-                  <input type="number" [(ngModel)]="filterMinPrice" (ngModelChange)="resetPagination()" placeholder="Min" 
-                         class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none" />
-                  <span class="text-slate-400">-</span>
-                  <input type="number" [(ngModel)]="filterMaxPrice" (ngModelChange)="resetPagination()" placeholder="Max" 
-                         class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none" />
-                </div>
-              </div>
-
-              <!-- Condición -->
-              <div>
-                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Condición</label>
-                <select [(ngModel)]="filterCondition" (change)="resetPagination()"
-                        class="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none">
-                  <option value="">Cualquiera</option>
-                  <option value="nuevo">Nuevo (0 Km)</option>
-                  <option value="usado">Usado</option>
-                </select>
-              </div>
-
-              <!-- Transmisión -->
-              <div>
-                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Transmisión</label>
-                <select [(ngModel)]="filterTransmission" (change)="resetPagination()"
-                        class="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none">
-                  <option value="">Todas</option>
-                  <option value="Manual">Manual</option>
-                  <option value="Automática">Automática</option>
-                  <option value="Hidrostática">Hidrostática</option>
-                </select>
-              </div>
-
-              <!-- Combustible -->
-              <div>
-                <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Combustible</label>
-                <select [(ngModel)]="filterFuel" (change)="resetPagination()"
-                        class="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none">
-                  <option value="">Todos</option>
-                  <option value="Gasolina">Gasolina</option>
-                  <option value="Diésel">Diésel</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        <!-- Product Grid & Pagination Area -->
-        <main class="lg:col-span-3">
+      <!-- Main Products Container -->
+      <div class="mt-8">
+        <main class="w-full">
           
           <!-- Active filters details banner -->
           <div class="mb-4 text-xs text-slate-500 flex items-center justify-between">
@@ -154,9 +239,9 @@ import { Vehicle } from '../../core/models/vehicle.model';
           </div>
 
           <!-- Product Grid -->
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             @for (vehicle of paginatedVehicles(); track vehicle.id) {
-              <app-vehicle-card [vehicle]="vehicle"></app-vehicle-card>
+              <app-vehicle-card [vehicle]="vehicle" [displayCurrency]="displayCurrency()"></app-vehicle-card>
             } @empty {
               <div class="col-span-full rounded-2xl border border-dashed border-slate-200 py-16 text-center text-slate-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -219,16 +304,43 @@ import { Vehicle } from '../../core/models/vehicle.model';
                 </div>
 
                 <div class="mt-4 space-y-5">
-                  <!-- Categoria -->
+                  <!-- Mostrar Precios En (Mobile) -->
                   <div>
-                    <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Categoría</label>
-                    <select [(ngModel)]="filterCategory" (change)="resetPagination()" class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
-                      <option value="">Todas</option>
-                      <option value="autos">Autos y Camionetas</option>
-                      <option value="motos">Motocicletas</option>
-                      <option value="maquinaria">Maquinaria Pesada</option>
-                    </select>
+                    <label class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-2">Mostrar Precios En</label>
+                    <div class="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200/50 dark:border-slate-700/30">
+                      <button type="button" 
+                              (click)="setDisplayCurrency('BOB')"
+                              [class]="displayCurrency() === 'BOB' 
+                                ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm font-semibold' 
+                                : 'bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
+                              class="text-center py-1.5 text-xs rounded-lg transition-all focus:outline-none cursor-pointer">
+                        Bolivianos
+                      </button>
+                      <button type="button" 
+                              (click)="setDisplayCurrency('USD')"
+                              [class]="displayCurrency() === 'USD' 
+                                ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm font-semibold' 
+                                : 'bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
+                              class="text-center py-1.5 text-xs rounded-lg transition-all focus:outline-none cursor-pointer">
+                        Dólares
+                      </button>
+                    </div>
                   </div>
+                  <!-- Categoria -->
+                  @if (!isCategoryLocked()) {
+                    <div>
+                      <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Categoría</label>
+                      <select [(ngModel)]="filterCategory" (change)="resetPagination()" class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+                        <option value="">Todas</option>
+                        <option value="autos">Autos</option>
+                        <option value="autos_electricos">Autos Eléctricos</option>
+                        <option value="motos">Motos</option>
+                        <option value="motos_electricos">Motos Eléctricas</option>
+                        <option value="maquinaria_agricola">Maquinaria Agrícola</option>
+                        <option value="transporte_pesado">Transporte Pesado</option>
+                      </select>
+                    </div>
+                  }
 
                   <!-- Buscar -->
                   <div>
@@ -249,7 +361,7 @@ import { Vehicle } from '../../core/models/vehicle.model';
 
                   <!-- Precios -->
                   <div>
-                    <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Precios (USD)</label>
+                    <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Precios ({{ displayCurrency() }})</label>
                     <div class="mt-1 flex gap-2">
                       <input type="number" [(ngModel)]="filterMinPrice" (ngModelChange)="resetPagination()" placeholder="Min" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
                       <input type="number" [(ngModel)]="filterMaxPrice" (ngModelChange)="resetPagination()" placeholder="Max" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
@@ -284,10 +396,15 @@ import { Vehicle } from '../../core/models/vehicle.model';
     </div>
   `
 })
-export class CatalogComponent {
+export class CatalogComponent implements OnInit, OnDestroy {
   private readonly vehicleService = inject(VehicleService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  protected readonly getCategoryLabel = getCategoryLabel;
+
+  // Carousel Signals and Fields
+  protected readonly activeSlide = signal(0);
+  private carouselIntervalId: any = null;
 
   // Filter States
   protected readonly filterCategory = signal<string>('');
@@ -299,6 +416,7 @@ export class CatalogComponent {
   protected readonly filterTransmission = signal<string>('');
   protected readonly filterFuel = signal<string>('');
   protected readonly sortBy = signal<string>('reciente');
+  protected readonly displayCurrency = signal<'USD' | 'BOB'>('BOB');
 
   // Pagination States
   protected readonly currentPage = signal<number>(1);
@@ -307,10 +425,36 @@ export class CatalogComponent {
   // UI state
   protected readonly isMobileFiltersOpen = signal(false);
 
+  protected readonly isCategoryLocked = signal<boolean>(false);
+  protected readonly catalogTitle = signal<string>('Catálogo de Vehículos');
+
   constructor() {
+    // Reset active slide when category changes
+    effect(() => {
+      this.filterCategory();
+      this.activeSlide.set(0);
+    });
+  }
+
+  public ngOnInit(): void {
+    // Escuchar data de la ruta para ver si es un catálogo dedicado
+    this.route.data.subscribe(data => {
+      if (data['category']) {
+        this.filterCategory.set(data['category']);
+        this.isCategoryLocked.set(true);
+      } else {
+        this.isCategoryLocked.set(false);
+      }
+      if (data['title']) {
+        this.catalogTitle.set(data['title']);
+      } else {
+        this.catalogTitle.set('Catálogo de Vehículos');
+      }
+    });
+
     // Escuchar parámetros de ruta (ej. buscador en Home o click en categorías)
     this.route.queryParams.subscribe(params => {
-      if (params['categoria']) {
+      if (!this.isCategoryLocked() && params['categoria']) {
         this.filterCategory.set(params['categoria']);
       }
       if (params['buscar']) {
@@ -318,6 +462,52 @@ export class CatalogComponent {
       }
       this.resetPagination();
     });
+
+    this.startCarousel();
+  }
+
+  public ngOnDestroy(): void {
+    this.stopCarousel();
+  }
+
+  private startCarousel(): void {
+    if (typeof window !== 'undefined') {
+      this.carouselIntervalId = setInterval(() => {
+        this.nextSlide();
+      }, 7000);
+    }
+  }
+
+  private stopCarousel(): void {
+    if (this.carouselIntervalId) {
+      clearInterval(this.carouselIntervalId);
+    }
+  }
+
+  protected setSlide(index: number): void {
+    this.activeSlide.set(index);
+    this.stopCarousel();
+    this.startCarousel();
+  }
+
+  protected prevSlide(): void {
+    const current = this.activeSlide();
+    const count = this.recommendedCategoryVehicles().length;
+    if (count === 0) return;
+    const prev = current === 0 ? count - 1 : current - 1;
+    this.activeSlide.set(prev);
+    this.stopCarousel();
+    this.startCarousel();
+  }
+
+  protected nextSlide(): void {
+    const current = this.activeSlide();
+    const count = this.recommendedCategoryVehicles().length;
+    if (count === 0) return;
+    const next = current === count - 1 ? 0 : current + 1;
+    this.activeSlide.set(next);
+    this.stopCarousel();
+    this.startCarousel();
   }
 
   // Dynamic brand selection based on current category
@@ -326,6 +516,19 @@ export class CatalogComponent {
     const list = this.vehicleService.vehicles();
     const filteredByCat = cat ? list.filter(v => v.categoria === cat) : list;
     return Array.from(new Set(filteredByCat.map(v => v.marca))).sort();
+  });
+
+  protected readonly recommendedCategoryVehicles = computed(() => {
+    const category = this.filterCategory();
+    if (!category) return [];
+
+    const list = this.vehicleService.vehicles()
+      .filter(v => v.categoria === category && v.estado === 'disponible');
+
+    const featured = list.filter(v => v.destacado);
+    const standard = list.filter(v => !v.destacado);
+
+    return [...featured, ...standard].slice(0, 4);
   });
 
   // Main list filtered
@@ -340,9 +543,9 @@ export class CatalogComponent {
     // Texto de Búsqueda
     if (this.filterText()) {
       const q = this.filterText().toLowerCase();
-      result = result.filter(v => 
-        v.nombre.toLowerCase().includes(q) || 
-        v.marca.toLowerCase().includes(q) || 
+      result = result.filter(v =>
+        v.nombre.toLowerCase().includes(q) ||
+        v.marca.toLowerCase().includes(q) ||
         v.modelo.toLowerCase().includes(q) ||
         v.descripcion.toLowerCase().includes(q)
       );
@@ -354,11 +557,12 @@ export class CatalogComponent {
     }
 
     // Precios
+    const targetCurr = this.displayCurrency();
     if (this.filterMinPrice() !== null) {
-      result = result.filter(v => v.precio >= this.filterMinPrice()!);
+      result = result.filter(v => this.getVehicleDisplayedPrice(v, targetCurr) >= this.filterMinPrice()!);
     }
     if (this.filterMaxPrice() !== null) {
-      result = result.filter(v => v.precio <= this.filterMaxPrice()!);
+      result = result.filter(v => this.getVehicleDisplayedPrice(v, targetCurr) <= this.filterMaxPrice()!);
     }
 
     // Condición
@@ -378,9 +582,9 @@ export class CatalogComponent {
 
     // Ordenamiento
     if (this.sortBy() === 'precio_asc') {
-      result.sort((a, b) => a.precio - b.precio);
+      result.sort((a, b) => this.getVehicleDisplayedPrice(a, targetCurr) - this.getVehicleDisplayedPrice(b, targetCurr));
     } else if (this.sortBy() === 'precio_desc') {
-      result.sort((a, b) => b.precio - a.precio);
+      result.sort((a, b) => this.getVehicleDisplayedPrice(b, targetCurr) - this.getVehicleDisplayedPrice(a, targetCurr));
     } else if (this.sortBy() === 'kilometraje_asc') {
       result.sort((a, b) => a.kilometraje - b.kilometraje);
     } else {
@@ -411,14 +615,15 @@ export class CatalogComponent {
   });
 
   protected readonly hasActiveFilters = computed(() => {
-    return this.filterCategory() !== '' || 
-           this.filterText() !== '' || 
-           this.filterBrand() !== '' || 
-           this.filterMinPrice() !== null || 
-           this.filterMaxPrice() !== null || 
-           this.filterCondition() !== '' ||
-           this.filterTransmission() !== '' ||
-           this.filterFuel() !== '';
+    const hasCategoryFilter = !this.isCategoryLocked() && this.filterCategory() !== '';
+    return hasCategoryFilter ||
+      this.filterText() !== '' ||
+      this.filterBrand() !== '' ||
+      this.filterMinPrice() !== null ||
+      this.filterMaxPrice() !== null ||
+      this.filterCondition() !== '' ||
+      this.filterTransmission() !== '' ||
+      this.filterFuel() !== '';
   });
 
   protected toggleMobileFilters(): void {
@@ -426,7 +631,12 @@ export class CatalogComponent {
   }
 
   protected clearFilters(): void {
-    this.filterCategory.set('');
+    if (!this.isCategoryLocked()) {
+      this.filterCategory.set('');
+      this.router.navigate([], { queryParams: {} });
+    } else {
+      this.router.navigate([], { queryParams: { buscar: null, condicion: null } });
+    }
     this.filterText.set('');
     this.filterBrand.set('');
     this.filterMinPrice.set(null);
@@ -435,14 +645,34 @@ export class CatalogComponent {
     this.filterTransmission.set('');
     this.filterFuel.set('');
     this.sortBy.set('reciente');
-    
-    // Remover parámetros de la url
-    this.router.navigate([], { queryParams: {} });
+
     this.resetPagination();
   }
 
   protected resetPagination(): void {
     this.currentPage.set(1);
+  }
+
+  protected setDisplayCurrency(curr: 'USD' | 'BOB'): void {
+    this.displayCurrency.set(curr);
+    this.resetPagination();
+  }
+
+  protected getVehicleDisplayedPrice(v: Vehicle, targetCurrency: 'USD' | 'BOB'): number {
+    const source = v.moneda || 'USD';
+    const price = v.precio;
+    const rate = 6.96;
+
+    if (source === targetCurrency) {
+      return price;
+    }
+    if (source === 'USD' && targetCurrency === 'BOB') {
+      return price * rate;
+    }
+    if (source === 'BOB' && targetCurrency === 'USD') {
+      return price / rate;
+    }
+    return price;
   }
 
   protected setPage(page: number): void {

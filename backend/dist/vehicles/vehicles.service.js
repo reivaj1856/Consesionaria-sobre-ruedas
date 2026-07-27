@@ -53,6 +53,7 @@ let VehiclesService = class VehiclesService {
             motoDetail: true,
             maquinariaDetail: true,
             especificaciones: { grupo: true },
+            user: true,
         };
         if (query.search) {
             const searchPattern = (0, typeorm_2.Like)(`%${query.search}%`);
@@ -80,6 +81,7 @@ let VehiclesService = class VehiclesService {
                 motoDetail: true,
                 maquinariaDetail: true,
                 especificaciones: { grupo: true },
+                user: true,
             },
             order: { fechaIngreso: 'DESC' },
         });
@@ -92,6 +94,7 @@ let VehiclesService = class VehiclesService {
                 motoDetail: true,
                 maquinariaDetail: true,
                 especificaciones: { grupo: true },
+                user: true,
             },
         });
         if (!vehicle) {
@@ -134,21 +137,21 @@ let VehiclesService = class VehiclesService {
             vehicle.especificaciones = specs;
         }
         const savedVehicle = await this.vehicleRepository.save(vehicle);
-        if (createVehicleDto.categoria === 'autos' && autoDetail) {
+        if ((createVehicleDto.categoria === 'autos' || createVehicleDto.categoria === 'autos_electricos') && autoDetail) {
             const detail = this.autoRepository.create({
                 ...autoDetail,
                 id: savedVehicle.id,
             });
             await this.autoRepository.save(detail);
         }
-        else if (createVehicleDto.categoria === 'motos' && motoDetail) {
+        else if ((createVehicleDto.categoria === 'motos' || createVehicleDto.categoria === 'motos_electricos') && motoDetail) {
             const detail = this.motoRepository.create({
                 ...motoDetail,
                 id: savedVehicle.id,
             });
             await this.motoRepository.save(detail);
         }
-        else if (createVehicleDto.categoria === 'maquinaria' && maquinariaDetail) {
+        else if ((createVehicleDto.categoria === 'maquinaria' || createVehicleDto.categoria === 'maquinaria_agricola' || createVehicleDto.categoria === 'transporte_pesado') && maquinariaDetail) {
             const detail = this.maquinariaRepository.create({
                 ...maquinariaDetail,
                 id: savedVehicle.id,
@@ -176,7 +179,7 @@ let VehiclesService = class VehiclesService {
             }
         }
         const savedVehicle = await this.vehicleRepository.save(vehicle);
-        if (savedVehicle.categoria === 'autos' && autoDetail) {
+        if ((savedVehicle.categoria === 'autos' || savedVehicle.categoria === 'autos_electricos') && autoDetail) {
             const detail = await this.autoRepository.findOne({ where: { id } });
             if (detail) {
                 Object.assign(detail, autoDetail);
@@ -184,15 +187,13 @@ let VehiclesService = class VehiclesService {
             }
             else {
                 const newDetail = this.autoRepository.create({
+                    ...autoDetail,
                     id,
-                    carroceria: autoDetail.carroceria,
-                    puertas: Number(autoDetail.puertas),
-                    pasajeros: Number(autoDetail.pasajeros)
                 });
                 await this.autoRepository.save(newDetail);
             }
         }
-        else if (savedVehicle.categoria === 'motos' && motoDetail) {
+        else if ((savedVehicle.categoria === 'motos' || savedVehicle.categoria === 'motos_electricos') && motoDetail) {
             const detail = await this.motoRepository.findOne({ where: { id } });
             if (detail) {
                 Object.assign(detail, motoDetail);
@@ -200,14 +201,13 @@ let VehiclesService = class VehiclesService {
             }
             else {
                 const newDetail = this.motoRepository.create({
+                    ...motoDetail,
                     id,
-                    cilindrada: Number(motoDetail.cilindrada),
-                    tipoMoto: motoDetail.tipoMoto
                 });
                 await this.motoRepository.save(newDetail);
             }
         }
-        else if (savedVehicle.categoria === 'maquinaria' && maquinariaDetail) {
+        else if ((savedVehicle.categoria === 'maquinaria' || savedVehicle.categoria === 'maquinaria_agricola' || savedVehicle.categoria === 'transporte_pesado') && maquinariaDetail) {
             const detail = await this.maquinariaRepository.findOne({ where: { id } });
             if (detail) {
                 Object.assign(detail, maquinariaDetail);

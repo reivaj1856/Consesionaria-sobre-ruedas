@@ -15,6 +15,12 @@ export class AutoDetail {
   @Column({ type: 'int' })
   pasajeros: number;
 
+  @Column({ type: 'int', nullable: true })
+  autonomia: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  tamanoBateria: number | null;
+
   @OneToOne(() => Vehicle, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id' })
   vehicle: Vehicle;

@@ -11,6 +11,16 @@ import { CommonModule } from '@angular/common';
   selector: 'app-home',
   standalone: true,
   imports: [RouterLink, ReactiveFormsModule, FormsModule, VehicleCardComponent, CommonModule],
+  styles: [`
+    @keyframes featuredSlideRight {
+      0% { transform: translateX(120px); opacity: 0; }
+      40% { opacity: 1; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    .featured-card-animate {
+      animation: featuredSlideRight 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+  `],
   template: `
     <div class="fade-in">
       
@@ -119,10 +129,10 @@ import { CommonModule } from '@angular/common';
           <p class="mt-4 text-slate-600">Explora nuestro stock completo segmentado por tipo de vehículo</p>
         </div>
 
-        <div class="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3">
+        <div class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           
           <!-- Autos -->
-          <a routerLink="/catalogo" [queryParams]="{categoria: 'autos'}"
+          <a routerLink="/catalogo/autos"
              class="group relative flex h-72 flex-col justify-end overflow-hidden rounded-3xl bg-slate-900 p-6 shadow-md transition-transform hover:-translate-y-1">
             <div class="absolute inset-0 z-0">
               <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=600" 
@@ -131,12 +141,29 @@ import { CommonModule } from '@angular/common';
             </div>
             <div class="relative z-10 text-white">
               <h3 class="font-heading text-2xl font-bold">Autos y Camionetas</h3>
-              <p class="mt-1 text-xs text-slate-300">Sedanes, SUV, Hatchback y Pick-ups de alta gama.</p>
+              <p class="mt-1 text-xs text-slate-300">Sedanes, SUV, Pick-ups y familiares a combustión.</p>
+            </div>
+          </a>
+
+          <!-- Autos Eléctricos -->
+          <a routerLink="/catalogo/autos-electricos"
+             class="group relative flex h-72 flex-col justify-end overflow-hidden rounded-3xl bg-slate-900 p-6 shadow-md transition-transform hover:-translate-y-1">
+            <div class="absolute inset-0 z-0">
+              <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=600" 
+                   class="h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-105" alt="Categoría Autos Eléctricos" />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+            </div>
+            <div class="relative z-10 text-white">
+              <h3 class="font-heading text-2xl font-bold flex items-center gap-2">
+                Autos Eléctricos
+                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              </h3>
+              <p class="mt-1 text-xs text-slate-300">Vehículos 100% eléctricos, híbridos y sustentables.</p>
             </div>
           </a>
 
           <!-- Motos -->
-          <a routerLink="/catalogo" [queryParams]="{categoria: 'motos'}"
+          <a routerLink="/catalogo/motos"
              class="group relative flex h-72 flex-col justify-end overflow-hidden rounded-3xl bg-slate-900 p-6 shadow-md transition-transform hover:-translate-y-1">
             <div class="absolute inset-0 z-0">
               <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&q=80&w=600" 
@@ -145,31 +172,62 @@ import { CommonModule } from '@angular/common';
             </div>
             <div class="relative z-10 text-white">
               <h3 class="font-heading text-2xl font-bold">Motocicletas</h3>
-              <p class="mt-1 text-xs text-slate-300">Deportivas, Chopper, Adventure y Urbanas.</p>
+              <p class="mt-1 text-xs text-slate-300">Deportivas, Chopper, Adventure y de calle.</p>
             </div>
           </a>
 
-          <!-- Maquinaria -->
-          <a routerLink="/catalogo" [queryParams]="{categoria: 'maquinaria'}"
+          <!-- Motos Eléctricas -->
+          <a routerLink="/catalogo/motos-electricas"
              class="group relative flex h-72 flex-col justify-end overflow-hidden rounded-3xl bg-slate-900 p-6 shadow-md transition-transform hover:-translate-y-1">
             <div class="absolute inset-0 z-0">
-              <img src="https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&q=80&w=600" 
-                   class="h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-105" alt="Categoría Maquinaria" />
+              <img src="https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&q=80&w=600" 
+                   class="h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-105" alt="Categoría Motos Eléctricas" />
               <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
             </div>
             <div class="relative z-10 text-white">
-              <h3 class="font-heading text-2xl font-bold">Maquinaria Pesada</h3>
-              <p class="mt-1 text-xs text-slate-300">Tractores, Retroexcavadoras y Grúas industriales.</p>
+              <h3 class="font-heading text-2xl font-bold flex items-center gap-2">
+                Motos Eléctricas
+                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              </h3>
+              <p class="mt-1 text-xs text-slate-300">Scooters urbanos y motos de alto rendimiento eléctrico.</p>
+            </div>
+          </a>
+
+          <!-- Maquinaria Agrícola -->
+          <a routerLink="/catalogo/maquinaria-agricola"
+             class="group relative flex h-72 flex-col justify-end overflow-hidden rounded-3xl bg-slate-900 p-6 shadow-md transition-transform hover:-translate-y-1">
+            <div class="absolute inset-0 z-0">
+              <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80&w=600" 
+                   class="h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-105" alt="Categoría Maquinaria Agrícola" />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+            </div>
+            <div class="relative z-10 text-white">
+              <h3 class="font-heading text-2xl font-bold">Maquinaria Agrícola</h3>
+              <p class="mt-1 text-xs text-slate-300">Tractores, cosechadoras y herramientas de campo.</p>
+            </div>
+          </a>
+
+          <!-- Transporte Pesado -->
+          <a routerLink="/catalogo/transporte-pesado"
+             class="group relative flex h-72 flex-col justify-end overflow-hidden rounded-3xl bg-slate-900 p-6 shadow-md transition-transform hover:-translate-y-1">
+            <div class="absolute inset-0 z-0">
+              <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=600" 
+                   class="h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-105" alt="Categoría Transporte Pesado" />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+            </div>
+            <div class="relative z-10 text-white">
+              <h3 class="font-heading text-2xl font-bold">Transporte Pesado</h3>
+              <p class="mt-1 text-xs text-slate-300">Camiones, volquetas y maquinaria pesada industrial.</p>
             </div>
           </a>
 
         </div>
       </section>
 
-      <!-- Featured Vehicles -->
-      <section class="bg-slate-100 py-20">
+      <!-- Featured Vehicles Slideshow Carousel -->
+      <section class="bg-slate-100 py-16">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between">
+          <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between border-b border-slate-200/50 pb-5">
             <div>
               <span class="inline-flex items-center gap-1 rounded-full bg-blue-600/10 px-3 py-1 text-xs font-bold text-blue-600 uppercase tracking-wider">
                 Modelos Recomendados
@@ -185,16 +243,58 @@ import { CommonModule } from '@angular/common';
             </a>
           </div>
 
-          <!-- Featured List Grid -->
-          <div class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            @for (vehicle of featuredVehicles(); track vehicle.id) {
-              <app-vehicle-card [vehicle]="vehicle"></app-vehicle-card>
-            } @empty {
-              <div class="col-span-full py-12 text-center text-slate-500">
-                Cargando recomendaciones premium...
-              </div>
+          <!-- Slideshow Carousel Container (4 vehicles side-by-side) -->
+          <div class="mt-10 relative flex justify-center items-center w-full px-6 md:px-10 overflow-hidden">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-7xl mx-auto">
+              @for (item of visibleFeaturedVehicles(); track item.trackKey) {
+                <div class="w-full transform hover:-translate-y-1 transition-transform duration-300 featured-card-animate"
+                     [style.animation-delay]="($index * 0.12) + 's'"
+                     [class.hidden]="$index > 0"
+                     [class.sm:block]="$index === 1"
+                     [class.lg:block]="$index >= 2">
+                  <app-vehicle-card [vehicle]="item.vehicle"></app-vehicle-card>
+                </div>
+              } @empty {
+                <div class="col-span-full py-12 text-center text-slate-500">
+                  Cargando recomendaciones premium...
+                </div>
+              }
+            </div>
+
+            <!-- Navigation Buttons (Prev / Next) -->
+            @if (featuredVehicles().length > 4) {
+              <button (click)="prevFeaturedSlide()" 
+                      class="absolute left-[-20px] sm:left-[-10px] md:left-0 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white text-slate-700 shadow-md border border-slate-200 hover:bg-slate-50 focus:outline-none flex items-center justify-center transition-all cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button (click)="nextFeaturedSlide()" 
+                      class="absolute right-[-20px] sm:right-[-10px] md:right-0 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-white text-slate-700 shadow-md border border-slate-200 hover:bg-slate-50 focus:outline-none flex items-center justify-center transition-all cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             }
+
           </div>
+
+          <!-- Carousel Dots Indicators -->
+          @if (featuredVehicles().length > 4) {
+            <div class="mt-8 flex justify-center gap-2">
+              @for (vehicle of featuredVehicles(); track vehicle.id) {
+                <button (click)="setFeaturedSlide($index)" 
+                        class="h-2 rounded-full transition-all duration-300 focus:outline-none cursor-pointer"
+                        [class.w-6]="activeFeaturedSlide() === $index"
+                        [class.bg-blue-600]="activeFeaturedSlide() === $index"
+                        [class.w-2]="activeFeaturedSlide() !== $index"
+                        [class.bg-slate-300]="activeFeaturedSlide() !== $index">
+                </button>
+              }
+            </div>
+          }
+
         </div>
       </section>
     </div>
@@ -212,10 +312,32 @@ export class HomeComponent implements OnInit, OnDestroy {
   protected readonly loadingSlides = signal(true);
   private carouselIntervalId: any = null;
 
+  // Featured Vehicles Carousel Signals
+  protected readonly activeFeaturedSlide = signal(0);
+  private featuredIntervalId: any = null;
+
   // Featured Vehicles
   protected readonly featuredVehicles = computed(() =>
-    this.vehicleService.vehicles().filter(v => v.destacado).slice(0, 3)
+    this.vehicleService.vehicles().filter(v => v.destacado)
   );
+
+  protected readonly visibleFeaturedVehicles = computed(() => {
+    const list = this.featuredVehicles();
+    if (list.length === 0) return [];
+
+    const index = this.activeFeaturedSlide();
+    const count = list.length;
+
+    const items = count <= 4 ? list : [
+      list[index % count],
+      list[(index + 1) % count],
+      list[(index + 2) % count],
+      list[(index + 3) % count]
+    ];
+
+    // Unique key per rotation so Angular re-creates the DOM elements
+    return items.map((v, i) => ({ vehicle: v, trackKey: `${index}-${i}` }));
+  });
 
   protected readonly contactForm: FormGroup;
   protected readonly formEnviado = signal(false);
@@ -232,10 +354,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   public async ngOnInit(): Promise<void> {
     await this.loadCarouselData();
     this.startCarousel();
+    this.startFeaturedCarousel();
   }
 
   public ngOnDestroy(): void {
     this.stopCarousel();
+    this.stopFeaturedCarousel();
   }
 
   private async loadCarouselData(): Promise<void> {
@@ -285,6 +409,47 @@ export class HomeComponent implements OnInit, OnDestroy {
       const next = current === this.slides().length - 1 ? 0 : current + 1;
       this.activeSlide.set(next);
     }
+  }
+
+  // Featured Carousel Slideshow Helper Methods
+  private startFeaturedCarousel(): void {
+    if (typeof window !== 'undefined') {
+      this.featuredIntervalId = setInterval(() => {
+        this.nextFeaturedSlide();
+      }, 5000);
+    }
+  }
+
+  private stopFeaturedCarousel(): void {
+    if (this.featuredIntervalId) {
+      clearInterval(this.featuredIntervalId);
+    }
+  }
+
+  protected setFeaturedSlide(index: number): void {
+    this.activeFeaturedSlide.set(index);
+    this.stopFeaturedCarousel();
+    this.startFeaturedCarousel();
+  }
+
+  protected prevFeaturedSlide(): void {
+    const current = this.activeFeaturedSlide();
+    const count = this.featuredVehicles().length;
+    if (count === 0) return;
+    const prev = current === 0 ? count - 1 : current - 1;
+    this.activeFeaturedSlide.set(prev);
+    this.stopFeaturedCarousel();
+    this.startFeaturedCarousel();
+  }
+
+  protected nextFeaturedSlide(): void {
+    const current = this.activeFeaturedSlide();
+    const count = this.featuredVehicles().length;
+    if (count === 0) return;
+    const next = current === count - 1 ? 0 : current + 1;
+    this.activeFeaturedSlide.set(next);
+    this.stopFeaturedCarousel();
+    this.startFeaturedCarousel();
   }
 
   // Search Submit

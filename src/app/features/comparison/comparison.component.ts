@@ -46,7 +46,7 @@ import { Vehicle } from '../../core/models/vehicle.model';
                         <a [routerLink]="['/vehiculo', v.id]" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{{ v.nombre }}</a>
                       </h3>
                       <p class="font-heading font-extrabold text-slate-900 dark:text-white mt-2 text-lg">
-                        {{ v.precio | currency:'USD':'symbol':'1.0-0' }}
+                        {{ v.precio | currency:(v.moneda || 'USD'):((v.moneda || 'USD') === 'BOB' ? 'Bs. ' : '$'):'1.0-0' }}
                       </p>
                       
                       <a [routerLink]="['/vehiculo', v.id]" 

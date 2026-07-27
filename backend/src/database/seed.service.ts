@@ -134,16 +134,18 @@ export class SeedService implements OnApplicationBootstrap {
     if (vehicleCount === 0) {
       this.logger.log('No se encontraron vehículos. Insertando catálogo original...');
 
-      const subtypesDetails: Record<string, { type: 'autos' | 'motos' | 'maquinaria'; details: any }> = {
+      const subtypesDetails: Record<string, { type: 'autos' | 'autos_electricos' | 'motos' | 'motos_electricos' | 'maquinaria_agricola' | 'transporte_pesado' | 'maquinaria'; details: any }> = {
         'auto-01': { type: 'autos', details: { carroceria: 'Camioneta', puertas: 4, pasajeros: 5 } },
         'auto-02': { type: 'autos', details: { carroceria: 'Hatchback', puertas: 5, pasajeros: 5 } },
         'auto-03': { type: 'autos', details: { carroceria: 'Coupé', puertas: 2, pasajeros: 4 } },
         'moto-01': { type: 'motos', details: { cilindrada: 471, tipoMoto: 'Adventure' } },
         'moto-02': { type: 'motos', details: { cilindrada: 890, tipoMoto: 'Naked' } },
         'moto-03': { type: 'motos', details: { cilindrada: 1254, tipoMoto: 'Adventure' } },
-        'maquinaria-01': { type: 'maquinaria', details: { pesoOperativo: 20500, horasUso: 2400 } },
-        'maquinaria-02': { type: 'maquinaria', details: { pesoOperativo: 7500, horasUso: 3100 } },
-        'maquinaria-03': { type: 'maquinaria', details: { pesoOperativo: 8135, horasUso: 150 } },
+        'maquinaria-01': { type: 'transporte_pesado', details: { pesoOperativo: 20500, horasUso: 2400 } },
+        'maquinaria-02': { type: 'maquinaria_agricola', details: { pesoOperativo: 7500, horasUso: 3100 } },
+        'maquinaria-03': { type: 'maquinaria_agricola', details: { pesoOperativo: 8135, horasUso: 150 } },
+        'auto-ev-01': { type: 'autos_electricos', details: { carroceria: 'Sedán', puertas: 4, pasajeros: 5, autonomia: 629, tamanoBateria: 75 } },
+        'moto-ev-01': { type: 'motos_electricos', details: { cilindrada: 0, tipoMoto: 'Naked', autonomia: 235, tamanoBateria: 15 } },
       };
 
       const vehicleSpecsMapping: Record<string, string[]> = {
@@ -156,6 +158,8 @@ export class SeedService implements OnApplicationBootstrap {
         'maquinaria-01': ["Aire acondicionado: Delantero", "Security System", "Turbo-engine"],
         'maquinaria-02': ["Aire acondicionado: Delantero", "Power Steering", "4X4"],
         'maquinaria-03': ["Aire acondicionado: Delantero", "4X4", "Turbo-engine"],
+        'auto-ev-01': ["ABS", "Airbag: Conductor", "Airbag: pasajero", "Bluetooth", "Cámara de visión trasera", "Premium Audio", "Navigation system"],
+        'moto-ev-01': ["ABS", "Liquid Cooling", "Modern Disc Brakes", "Sports suspension", "Traction Control"],
       };
 
       for (const v of SEED_VEHICLES) {
@@ -178,6 +182,8 @@ export class SeedService implements OnApplicationBootstrap {
           destacado: v.destacado,
           estado: v.estado as any,
           fechaIngreso: v.fechaIngreso,
+          telefonoContacto: (v as any).telefonoContacto || '59177490451',
+          moneda: (v as any).moneda || 'USD',
           especificaciones: []
         });
 
@@ -193,19 +199,19 @@ export class SeedService implements OnApplicationBootstrap {
 
         const subData = subtypesDetails[v.id];
         if (subData) {
-          if (subData.type === 'autos') {
+          if (subData.type === 'autos' || subData.type === 'autos_electricos') {
             const detail = this.autoRepository.create({
               ...subData.details,
               id: savedVehicle.id
             });
             await this.autoRepository.save(detail);
-          } else if (subData.type === 'motos') {
+          } else if (subData.type === 'motos' || subData.type === 'motos_electricos') {
             const detail = this.motoRepository.create({
               ...subData.details,
               id: savedVehicle.id
             });
             await this.motoRepository.save(detail);
-          } else if (subData.type === 'maquinaria') {
+          } else if (subData.type === 'maquinaria' || subData.type === 'maquinaria_agricola' || subData.type === 'transporte_pesado') {
             const detail = this.maquinariaRepository.create({
               ...subData.details,
               id: savedVehicle.id

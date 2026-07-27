@@ -16,6 +16,8 @@ let MotoDetail = class MotoDetail {
     id;
     cilindrada;
     tipoMoto;
+    autonomia;
+    tamanoBateria;
     vehicle;
 };
 exports.MotoDetail = MotoDetail;
@@ -31,6 +33,14 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], MotoDetail.prototype, "tipoMoto", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'int', nullable: true }),
+    __metadata("design:type", Object)
+], MotoDetail.prototype, "autonomia", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'int', nullable: true }),
+    __metadata("design:type", Object)
+], MotoDetail.prototype, "tamanoBateria", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(() => vehicle_entity_1.Vehicle, { onDelete: 'CASCADE' }),
     (0, typeorm_1.JoinColumn)({ name: 'id' }),

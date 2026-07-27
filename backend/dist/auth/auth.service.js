@@ -72,7 +72,9 @@ let AuthService = class AuthService {
             nombre,
             rol: 'cliente',
             plan: 'gratis',
-            suscripcionFecha: new Date().toISOString().split('T')[0]
+            suscripcionFecha: new Date().toISOString().split('T')[0],
+            recibeDolares: registerDto.recibeDolares !== undefined ? registerDto.recibeDolares : true,
+            recibeBolivianos: registerDto.recibeBolivianos !== undefined ? registerDto.recibeBolivianos : true,
         });
         const savedUser = await this.userRepository.save(newUser);
         const token = this.generateToken(savedUser);
@@ -85,6 +87,8 @@ let AuthService = class AuthService {
                 rol: savedUser.rol,
                 plan: savedUser.plan,
                 suscripcionFecha: savedUser.suscripcionFecha,
+                recibeDolares: savedUser.recibeDolares,
+                recibeBolivianos: savedUser.recibeBolivianos,
             },
         };
     }
@@ -108,6 +112,8 @@ let AuthService = class AuthService {
                 rol: user.rol,
                 plan: user.plan,
                 suscripcionFecha: user.suscripcionFecha,
+                recibeDolares: user.recibeDolares,
+                recibeBolivianos: user.recibeBolivianos,
             },
         };
     }
@@ -123,6 +129,8 @@ let AuthService = class AuthService {
             rol: user.rol,
             plan: user.plan,
             suscripcionFecha: user.suscripcionFecha,
+            recibeDolares: user.recibeDolares,
+            recibeBolivianos: user.recibeBolivianos,
         };
     }
     async subscribe(userId, plan) {
@@ -143,6 +151,8 @@ let AuthService = class AuthService {
                 rol: user.rol,
                 plan: user.plan,
                 suscripcionFecha: user.suscripcionFecha,
+                recibeDolares: user.recibeDolares,
+                recibeBolivianos: user.recibeBolivianos,
             }
         };
     }
@@ -154,7 +164,9 @@ let AuthService = class AuthService {
                 nombre: true,
                 rol: true,
                 plan: true,
-                suscripcionFecha: true
+                suscripcionFecha: true,
+                recibeDolares: true,
+                recibeBolivianos: true
             },
             order: { nombre: 'ASC' }
         });

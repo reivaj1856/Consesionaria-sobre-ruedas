@@ -3,7 +3,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { VehicleService } from '../../core/services/vehicle.service';
 import { AuthService } from '../../core/services/auth.service';
-import { Vehicle } from '../../core/models/vehicle.model';
+import { Vehicle, getCategoryLabel } from '../../core/models/vehicle.model';
 
 @Component({
   selector: 'app-my-listings',
@@ -93,12 +93,12 @@ import { Vehicle } from '../../core/models/vehicle.model';
                         </div>
                       </td>
                       
-                      <td class="whitespace-nowrap px-6 py-4 text-xs capitalize text-slate-600">
-                        {{ v.categoria }}
+                      <td class="whitespace-nowrap px-6 py-4 text-xs text-slate-650">
+                        {{ getCategoryLabel(v.categoria) }}
                       </td>
                       
                       <td class="whitespace-nowrap px-6 py-4 text-sm font-bold text-slate-900">
-                        {{ v.precio | currency:'USD':'symbol':'1.0-0' }}
+                        {{ v.precio | currency:(v.moneda || 'USD'):((v.moneda || 'USD') === 'BOB' ? 'Bs. ' : '$'):'1.0-0' }}
                       </td>
                       
                       <td class="whitespace-nowrap px-6 py-4 text-xs capitalize font-semibold text-slate-700">
@@ -153,6 +153,7 @@ import { Vehicle } from '../../core/models/vehicle.model';
 export class MyListingsComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
   private readonly authService = inject(AuthService);
+  protected readonly getCategoryLabel = getCategoryLabel;
 
   protected readonly myListings = signal<Vehicle[]>([]);
   protected readonly loading = signal(true);

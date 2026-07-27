@@ -4,7 +4,8 @@ export declare class CreateVehicleDto {
     modelo: string;
     anio: number;
     precio: number;
-    categoria: 'autos' | 'motos' | 'maquinaria';
+    moneda?: 'USD' | 'BOB';
+    categoria: 'autos' | 'autos_electricos' | 'motos' | 'motos_electricos' | 'maquinaria_agricola' | 'transporte_pesado' | 'maquinaria';
     tipoCombustible: string;
     transmision: string;
     kilometraje: number;
@@ -13,6 +14,7 @@ export declare class CreateVehicleDto {
     imagenPrincipal: string;
     imagenes: string[];
     descripcion: string;
+    telefonoContacto?: string;
     destacado: boolean;
     estado: 'disponible' | 'reservado' | 'vendido';
     especificaciones: number[];
@@ -20,10 +22,14 @@ export declare class CreateVehicleDto {
         carroceria: string;
         puertas: number;
         pasajeros: number;
+        autonomia?: number;
+        tamanoBateria?: number;
     };
     motoDetail?: {
         cilindrada: number;
         tipoMoto: string;
+        autonomia?: number;
+        tamanoBateria?: number;
     };
     maquinariaDetail?: {
         pesoOperativo: number;

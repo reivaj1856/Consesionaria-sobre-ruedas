@@ -12,6 +12,12 @@ export class MotoDetail {
   @Column()
   tipoMoto: string;
 
+  @Column({ type: 'int', nullable: true })
+  autonomia: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  tamanoBateria: number | null;
+
   @OneToOne(() => Vehicle, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id' })
   vehicle: Vehicle;

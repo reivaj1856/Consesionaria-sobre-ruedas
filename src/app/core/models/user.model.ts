@@ -5,4 +5,6 @@ export interface User {
   rol: 'cliente' | 'admin';
   plan?: 'gratis' | 'negocio' | 'empresa';
   suscripcionFecha?: string;
+  recibeDolares?: boolean;
+  recibeBolivianos?: boolean;
 }
