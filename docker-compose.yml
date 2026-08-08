@@ -3,45 +3,53 @@ version: '3.8'
 services:
   db:
     image: mysql:8.0
-    container_name: concesionaria_db
+    container_name: concesionaria_ruedas_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root123}
       MYSQL_DATABASE: ${DB_NAME:-concesionaria_db}
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - internal_net
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: concesionaria_backend
+    container_name: concesionaria_ruedas_backend
     restart: always
     environment:
       DB_HOST: db
       DB_PORT: 3306
       DB_USERNAME: root
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-root123}
       DB_NAME: ${DB_NAME:-concesionaria_db}
       PORT: 3000
-      JWT_SECRET: ${JWT_SECRET:-supersecretkey}
-    ports:
-      - "3000:3000"
+      JWT_SECRET: ${JWT_SECRET:-supersecretkey123}
     depends_on:
       - db
+    networks:
+      - internal_net
+      - proxy_network
 
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: concesionaria_frontend
+    container_name: concesionaria_ruedas_frontend
     restart: always
-    ports:
-      - "80:80"
     depends_on:
       - backend
+    networks:
+      - internal_net
+      - proxy_network
 
 volumes:
   mysql_data:
+
+networks:
+  internal_net:
+    driver: bridge
+  proxy_network:
+    external: true
