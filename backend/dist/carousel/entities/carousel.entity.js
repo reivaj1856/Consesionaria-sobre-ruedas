@@ -26,7 +26,7 @@ __decorate([
     __metadata("design:type", Number)
 ], CarouselSlide.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'mediumtext' }),
+    (0, typeorm_1.Column)({ type: 'longtext' }),
     __metadata("design:type", String)
 ], CarouselSlide.prototype, "image", void 0);
 __decorate([

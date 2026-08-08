@@ -5,7 +5,7 @@ export class CarouselSlide {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'mediumtext' })
+  @Column({ type: 'longtext' })
   image: string; // Base64 representation
 
   @Column()

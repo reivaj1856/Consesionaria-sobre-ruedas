@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CarouselService } from '../../../core/services/carousel.service';
 import { CarouselSlide } from '../../../core/models/carousel.model';
+import { compressImage } from '../../../core/utils/image-compressor.util';
 
 @Component({
   selector: 'app-carousel-admin',
@@ -287,19 +288,18 @@ export class CarouselAdminComponent implements OnInit {
     this.slideForm.image = '';
   }
 
-  protected onFileSelected(event: Event): void {
+  protected async onFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
-      const file = input.files[0];
-      const reader = new FileReader();
-      
-      reader.onload = () => {
-        const base64 = reader.result as string;
-        this.imagePreview.set(base64);
-        this.slideForm.image = base64;
-      };
-      
-      reader.readAsDataURL(file);
+      try {
+        const file = input.files[0];
+        const compressedBase64 = await compressImage(file, 1600, 900, 0.82);
+        this.imagePreview.set(compressedBase64);
+        this.slideForm.image = compressedBase64;
+      } catch (err) {
+        console.error('Error al comprimir imagen:', err);
+        alert('No se pudo procesar la imagen seleccionada.');
+      }
     }
   }
 

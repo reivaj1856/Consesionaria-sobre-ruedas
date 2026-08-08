@@ -13,6 +13,8 @@ import { UsersAdminComponent } from './features/admin/users/users-admin.componen
 import { CarouselAdminComponent } from './features/admin/carousel/carousel-admin.component';
 import { PlansComponent } from './features/subscriptions/plans.component';
 import { MyListingsComponent } from './features/my-listings/my-listings.component';
+import { TermsComponent } from './features/legal/terms.component';
+import { PrivacyComponent } from './features/legal/privacy.component';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 
@@ -114,6 +116,14 @@ export const routes: Routes = [
     path: 'mis-publicaciones', 
     component: MyListingsComponent, 
     canActivate: [authGuard] 
+  },
+  { 
+    path: 'terminos', 
+    component: TermsComponent 
+  },
+  { 
+    path: 'privacidad', 
+    component: PrivacyComponent 
   },
   // Comodín para redirigir rutas no encontradas al inicio
   { 

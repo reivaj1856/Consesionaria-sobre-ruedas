@@ -346,12 +346,17 @@ import { VehicleCardComponent } from '../../shared/components/vehicle-card/vehic
           <p class="text-slate-500 dark:text-slate-400 text-xs mt-0.5">Detalles de confort, seguridad y especificaciones adicionales</p>
 
           <div class="mt-5">
-            @if (v.especificaciones && v.especificaciones.length > 0) {
-              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-                @for (spec of v.especificaciones; track spec.id) {
-                  <div class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-350 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/80 px-3 py-2 rounded-lg border border-slate-100 dark:border-slate-800 transition-colors">
-                    <span class="h-1.5 w-1.5 rounded-full shrink-0" [class]="isEV() ? 'bg-emerald-500' : 'bg-blue-500'"></span>
-                    <span class="font-medium truncate" [title]="spec.nombre">{{ spec.nombre }}</span>
+            @if (formattedSpecs().length > 0) {
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                @for (spec of formattedSpecs(); track spec.label) {
+                  <div class="flex items-center justify-between gap-2 text-xs text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-800/60 px-3.5 py-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="h-2 w-2 rounded-full shrink-0" [class]="isEV() ? 'bg-emerald-500' : 'bg-blue-500'"></span>
+                      <span class="font-bold text-slate-900 dark:text-white truncate">{{ spec.label }}:</span>
+                    </div>
+                    @if (spec.value) {
+                      <span class="font-semibold text-slate-600 dark:text-slate-300 shrink-0">{{ spec.value }}</span>
+                    }
                   </div>
                 }
               </div>
@@ -646,6 +651,9 @@ export class DetailComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id') || '';
       this.vehicleId.set(id);
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
     });
   }
 
@@ -653,23 +661,40 @@ export class DetailComponent implements OnInit {
     this.activeImage.set(url);
   }
 
-  protected readonly groupedSpecifications = computed(() => {
+  protected readonly formattedSpecs = computed(() => {
     const v = this.vehicle();
     if (!v || !v.especificaciones) return [];
 
-    const groups: { [key: string]: Specification[] } = {};
-    for (const spec of v.especificaciones) {
-      const groupName = spec.grupo?.nombre || 'General';
-      if (!groups[groupName]) {
-        groups[groupName] = [];
+    let specs = v.especificaciones as any;
+
+    if (typeof specs === 'string') {
+      try {
+        specs = JSON.parse(specs);
+      } catch {
+        return [];
       }
-      groups[groupName].push(spec);
     }
 
-    return Object.entries(groups).map(([name, specs]) => ({
-      name,
-      specs
-    }));
+    if (Array.isArray(specs)) {
+      return specs.map(item => {
+        if (typeof item === 'string') return { label: item, value: '' };
+        if (item && typeof item === 'object') {
+          const label = item.nombre || item.label || item.key || item.name || '';
+          const value = item.value || item.valor || '';
+          return { label, value };
+        }
+        return { label: String(item), value: '' };
+      }).filter(s => s.label);
+    }
+
+    if (typeof specs === 'object' && specs !== null) {
+      return Object.entries(specs).map(([label, value]) => ({
+        label,
+        value: String(value)
+      }));
+    }
+
+    return [];
   });
 
   protected readonly statusText = computed(() => {

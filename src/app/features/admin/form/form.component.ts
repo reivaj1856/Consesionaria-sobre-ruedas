@@ -6,6 +6,7 @@ import { VehicleService } from '../../../core/services/vehicle.service';
 import { SpecificationService } from '../../../core/services/specification.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Vehicle, SpecificationGroup, Specification } from '../../../core/models/vehicle.model';
+import { compressImage } from '../../../core/utils/image-compressor.util';
 
 interface HotspotConfig {
   id: number;
@@ -578,30 +579,30 @@ export class AdminFormComponent implements OnInit {
     this.imagenPrincipalPreview.set('');
   }
 
-  protected onMainFileSelected(event: Event): void {
+  protected async onMainFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
-      const file = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagenPrincipalPreview.set(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const file = input.files[0];
+        const compressedBase64 = await compressImage(file, 1600, 900, 0.82);
+        this.imagenPrincipalPreview.set(compressedBase64);
+      } catch (err) {
+        console.error('Error al comprimir imagen principal:', err);
+      }
     }
   }
 
-  protected onGalleryFilesSelected(event: Event): void {
+  protected async onGalleryFilesSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const files = Array.from(input.files);
-      const readPromises = files.map(file => new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
-      }));
-      Promise.all(readPromises).then(base64List => {
-        this.galleryImages.set([...this.galleryImages(), ...base64List]);
-      });
+      try {
+        const compressPromises = files.map(file => compressImage(file, 1600, 900, 0.82));
+        const compressedList = await Promise.all(compressPromises);
+        this.galleryImages.set([...this.galleryImages(), ...compressedList]);
+      } catch (err) {
+        console.error('Error al comprimir imágenes de galería:', err);
+      }
     }
   }
 

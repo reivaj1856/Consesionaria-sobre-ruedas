@@ -86,7 +86,7 @@ import { ComparisonService } from '../../../core/services/comparison.service';
           
           <div class="flex items-center gap-1.5">
             <!-- Favorite button -->
-            <button (click)="toggleFavorite()"
+            <button (click)="toggleFavorite($event)"
                     class="flex h-10 w-10 items-center justify-center rounded-lg border transition-colors focus:outline-none"
                     [class]="isFavorite() ? 'border-red-100 dark:border-red-900 bg-red-50 dark:bg-red-950/50 text-red-500 hover:bg-red-100' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-400 hover:text-red-500 hover:bg-slate-50 dark:hover:bg-slate-700'"
                     title="Añadir a Favoritos">
@@ -96,7 +96,7 @@ import { ComparisonService } from '../../../core/services/comparison.service';
             </button>
 
             <!-- Comparison button -->
-            <button (click)="toggleComparison()"
+            <button (click)="toggleComparison($event)"
                     class="flex h-10 w-10 items-center justify-center rounded-lg border transition-colors focus:outline-none"
                     [class]="isCompared() ? 'border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 hover:bg-blue-100' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-400 hover:text-blue-600 hover:bg-slate-50 dark:hover:bg-slate-700'"
                     title="Comparar ficha técnica">
@@ -173,11 +173,19 @@ export class VehicleCardComponent {
     return 'bg-rose-500 text-white';
   });
 
-  protected toggleFavorite(): void {
+  protected toggleFavorite(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     this.favoriteService.toggleFavorite(this.vehicle().id);
   }
 
-  protected toggleComparison(): void {
+  protected toggleComparison(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     this.comparisonService.toggleComparison(this.vehicle());
   }
 }

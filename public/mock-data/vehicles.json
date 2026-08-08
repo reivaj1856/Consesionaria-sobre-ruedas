@@ -5,278 +5,476 @@
     "marca": "Toyota",
     "modelo": "Hilux SRX",
     "anio": 2024,
-    "precio": 45000,
+    "precio": 313200,
+    "moneda": "BOB",
     "categoria": "autos",
     "tipoCombustible": "Diésel",
     "transmision": "Automática",
     "kilometraje": 12000,
     "condicion": "usado",
-    "ubicacion": "Santiago, Centro",
-    "imagenPrincipal": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800",
+    "ubicacion": "Santa Cruz, Equipetrol",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1000",
     "imagenes": [
-      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1525609004556-c46c7d6cf0a3?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1494976388531-d1058094e2fd?auto=format&fit=crop&q=80&w=800"
+      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1525609004556-c46c7d6cf0a3?auto=format&fit=crop&q=80&w=1000"
     ],
-    "descripcion": "La camioneta pick-up líder en confiabilidad. Versión SRX tope de gama con tracción 4x4, asientos de cuero con ventilación, sistema de audio premium JBL, y el motor diésel 2.8L turbo de alta durabilidad.",
+    "descripcion": "La camioneta pick-up 4x4 preferida en Bolivia por su durabilidad extrema en todo terreno. Equipada con motor Turbo Diésel 2.8L, tracción 4x4 con reductora, asientos de cuero y pantalla táctil con CarPlay.",
     "destacado": true,
     "estado": "disponible",
     "especificaciones": {
       "Motor": "2.8L Turbo Diésel",
       "Potencia": "204 HP",
       "Torque": "500 Nm",
-      "Tracción": "4x4 acoplable con reductora",
-      "Consumo promedio": "11.5 km/l",
-      "Capacidad de carga": "1,000 kg"
+      "Tracción": "4x4 acoplable"
     },
     "fechaIngreso": "2026-05-10"
   },
   {
     "id": "auto-02",
-    "nombre": "Mazda 3 Hatchback Sport",
-    "marca": "Mazda",
-    "modelo": "Mazda 3",
+    "nombre": "Suzuki Jimny GLX 4x4",
+    "marca": "Suzuki",
+    "modelo": "Jimny GLX",
     "anio": 2023,
-    "precio": 24500,
+    "precio": 165000,
+    "moneda": "BOB",
     "categoria": "autos",
     "tipoCombustible": "Gasolina",
     "transmision": "Manual",
-    "kilometraje": 18500,
+    "kilometraje": 8500,
     "condicion": "usado",
-    "ubicacion": "Valparaíso, Viña del Mar",
-    "imagenPrincipal": "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=800",
+    "ubicacion": "Cochabamba, Recoleta",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=1000",
     "imagenes": [
-      "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80&w=800"
+      "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=1000"
     ],
-    "descripcion": "Diseño exterior Kodo dinámico y elegante. Interior premium que rivaliza con marcas de lujo. Motor SkyActiv-G 2.0L con excelente eficiencia y una conducción ágil y deportiva en cada curva.",
+    "descripcion": "El todoterreno compacto icónico ideal para los caminos de Bolivia. Tracción AllGrip Pro 4x4 con chasis de escalera, gran ángulo de ataque y rendimiento imbatible.",
     "destacado": true,
     "estado": "disponible",
     "especificaciones": {
-      "Motor": "2.0L SkyActiv-G",
-      "Potencia": "153 HP",
-      "Torque": "200 Nm",
-      "Tracción": "Delantera (FWD)",
-      "Capacidad de maletero": "358 litros",
-      "Equipamiento": "Pantalla 8.8\", Apple CarPlay/Android Auto, Control crucero adaptativo"
+      "Motor": "1.5L 4 Cilindros",
+      "Potencia": "102 HP",
+      "Tracción": "4x4 AllGrip Pro"
     },
-    "fechaIngreso": "2026-06-15"
+    "fechaIngreso": "2026-06-01"
   },
   {
     "id": "auto-03",
-    "nombre": "Ford Mustang GT Premium",
-    "marca": "Ford",
-    "modelo": "Mustang GT",
-    "anio": 2022,
-    "precio": 52000,
+    "nombre": "Nissan Frontier XE 4x4",
+    "marca": "Nissan",
+    "modelo": "Frontier XE",
+    "anio": 2023,
+    "precio": 268000,
+    "moneda": "BOB",
+    "categoria": "autos",
+    "tipoCombustible": "Diésel",
+    "transmision": "Automática",
+    "kilometraje": 15000,
+    "condicion": "usado",
+    "ubicacion": "La Paz, Calacoto",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1559416523-140ddc3d238c?auto=format&fit=crop&q=80&w=1000",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1559416523-140ddc3d238c?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "descripcion": "Camioneta robusta de alto confort con suspensión trasera multilink única en su categoría, motor Biturbo Diésel y capacidad de carga de 1 tonelada.",
+    "destacado": false,
+    "estado": "disponible",
+    "especificaciones": {
+      "Motor": "2.3L Bi-Turbo Diésel",
+      "Potencia": "190 HP",
+      "Carga": "1,050 kg"
+    },
+    "fechaIngreso": "2026-06-12"
+  },
+  {
+    "id": "auto-04",
+    "nombre": "Hyundai Tucson Limited 4WD",
+    "marca": "Hyundai",
+    "modelo": "Tucson",
+    "anio": 2024,
+    "precio": 235000,
+    "moneda": "BOB",
     "categoria": "autos",
     "tipoCombustible": "Gasolina",
     "transmision": "Automática",
-    "kilometraje": 9000,
+    "kilometraje": 5000,
     "condicion": "usado",
-    "ubicacion": "Santiago, Las Condes",
-    "imagenPrincipal": "https://images.unsplash.com/photo-1612462551805-9682548842c9?auto=format&fit=crop&q=80&w=800",
+    "ubicacion": "Cochabamba, América Norte",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1000",
     "imagenes": [
-      "https://images.unsplash.com/photo-1612462551805-9682548842c9?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=800"
+      "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=1000"
     ],
-    "descripcion": "El icónico muscle car americano. Motor V8 Coyote 5.0L que rinde tributo a la potencia. Versión GT Premium equipada con escapes activos, amortiguadores MagneRide, pantallas digitales configurables y asientos deportivos calefaccionados.",
-    "destacado": true,
-    "estado": "reservado",
-    "especificaciones": {
-      "Motor": "5.0L V8 Coyote",
-      "Potencia": "460 HP",
-      "Torque": "569 Nm",
-      "Tracción": "Trasera (RWD)",
-      "Aceleración 0-100 km/h": "4.3 segundos",
-      "Transmisión": "Automática de 10 velocidades"
-    },
-    "fechaIngreso": "2026-04-01"
-  },
-  {
-    "id": "moto-01",
-    "nombre": "Honda CB500X",
-    "marca": "Honda",
-    "modelo": "CB500X Adventure",
-    "anio": 2024,
-    "precio": 8900,
-    "categoria": "motos",
-    "tipoCombustible": "Gasolina",
-    "transmision": "Manual",
-    "kilometraje": 0,
-    "condicion": "nuevo",
-    "ubicacion": "Santiago, Las Condes",
-    "imagenPrincipal": "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&q=80&w=800",
-    "imagenes": [
-      "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&q=80&w=800"
-    ],
-    "descripcion": "La moto de aventura definitiva para el carnet A2. Equipada con horquilla invertida Showa SFF-BP de 41 mm, doble disco delantero con pinzas Nissin y una ergonomía excelente para viajes largos o desplazamientos diarios en la ciudad.",
+    "descripcion": "SUV moderno y tecnológico. Diseño de luces paramétricas futuristas, tracción integral HTRAC 4WD, techo panorámico y asistente de carril.",
     "destacado": true,
     "estado": "disponible",
     "especificaciones": {
-      "Motor": "Bicilíndrico en paralelo, 471cc",
-      "Potencia": "47 HP @ 8600 rpm",
-      "Torque": "43 Nm @ 6500 rpm",
-      "Peso en orden de marcha": "199 kg",
-      "Capacidad del tanque": "17.5 Litros",
-      "Frenos": "Doble disco delantero 296mm con ABS"
+      "Motor": "2.0L Smartstream",
+      "Potencia": "156 HP",
+      "Tracción": "HTRAC 4WD"
+    },
+    "fechaIngreso": "2026-07-02"
+  },
+  {
+    "id": "auto-ev-01",
+    "nombre": "Quantum E4 Electric - Bolivia",
+    "marca": "Quantum",
+    modelo: "E4",
+    "anio": 2024,
+    "precio": 52000,
+    "moneda": "BOB",
+    "categoria": "autos_electricos",
+    "tipoCombustible": "Eléctrico",
+    "transmision": "Automática",
+    "kilometraje": 1200,
+    "condicion": "nuevo",
+    "ubicacion": "Cochabamba, Planta Quantum",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=1000",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "descripcion": "Auto eléctrico urbano fabricado en Bolivia. Cero emisiones, recargable en cualquier enchufe doméstico de 220V con autonomía de 100 km por carga.",
+    "destacado": true,
+    "estado": "disponible",
+    "especificaciones": {
+      "Motor": "Eléctrico 4kW",
+      "Autonomía": "100 km",
+      "Carga": "220V Estándar"
+    },
+    "fechaIngreso": "2026-05-15"
+  },
+  {
+    "id": "auto-ev-02",
+    "nombre": "BYD Yuan Plus EV",
+    "marca": "BYD",
+    "modelo": "Yuan Plus",
+    "anio": 2024,
+    "precio": 248000,
+    "moneda": "BOB",
+    "categoria": "autos_electricos",
+    "tipoCombustible": "Eléctrico",
+    "transmision": "Automática",
+    "kilometraje": 3500,
+    "condicion": "nuevo",
+    "ubicacion": "Santa Cruz, Equipetrol",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=1000",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "descripcion": "SUV 100% eléctrico de alta tecnología con Blade Battery ultrasegura, pantalla giratoria de 12.8 pulgadas y autonomía extendida de 480 km.",
+    "destacado": true,
+    "estado": "disponible",
+    "especificaciones": {
+      "Batería": "Blade Battery 60.4 kWh",
+      "Potencia": "204 HP",
+      "Autonomía": "480 km"
+    },
+    "fechaIngreso": "2026-06-20"
+  },
+  {
+    "id": "auto-ev-03",
+    "nombre": "Tesla Model Y Long Range",
+    "marca": "Tesla",
+    "modelo": "Model Y",
+    "anio": 2023,
+    "precio": 398000,
+    "moneda": "BOB",
+    "categoria": "autos_electricos",
+    "tipoCombustible": "Eléctrico",
+    "transmision": "Automática",
+    "kilometraje": 9000,
+    "condicion": "usado",
+    "ubicacion": "Santa Cruz, Urubó",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=1000",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "descripcion": "El SUV eléctrico más vendido del mundo. Aceleración 0-100 km/h en 4.8s, tracción Dual Motor AWD y sistema piloto automático Autopilot.",
+    "destacado": false,
+    "estado": "disponible",
+    "especificaciones": {
+      "Tracción": "Dual Motor AWD",
+      "Aceleración": "4.8s 0-100",
+      "Autonomía": "533 km"
     },
     "fechaIngreso": "2026-07-01"
   },
   {
-    "id": "moto-02",
-    "nombre": "Yamaha MT-09 Hyper Naked",
-    "marca": "Yamaha",
-    "modelo": "MT-09",
+    "id": "moto-01",
+    "nombre": "Honda CRF 250 Rally",
+    "marca": "Honda",
+    "modelo": "CRF 250 Rally",
     "anio": 2023,
-    "precio": 13200,
+    "precio": 52000,
+    "moneda": "BOB",
     "categoria": "motos",
     "tipoCombustible": "Gasolina",
     "transmision": "Manual",
     "kilometraje": 4200,
     "condicion": "usado",
-    "ubicacion": "Concepción, Centro",
-    "imagenPrincipal": "https://images.unsplash.com/photo-1470224114660-3f6686c562eb?auto=format&fit=crop&q=80&w=800",
+    "ubicacion": "Cochabamba, Cala Cala",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&q=80&w=1000",
     "imagenes": [
-      "https://images.unsplash.com/photo-1470224114660-3f6686c562eb?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?auto=format&fit=crop&q=80&w=800"
+      "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&q=80&w=1000"
     ],
-    "descripcion": "Despierta tu lado oscuro con la Yamaha MT-09. Su motor tricilíndrico CP3 de 890 cc ofrece un torque explosivo instantáneo. Equipada con Quickshifter bidireccional, IMU de 6 ejes con ayudas electrónicas avanzadas y diseño agresivo.",
-    "destacado": false,
+    "descripcion": "Moto doble propósito inspirada en el Dakar. Suspensión de recorrido largo, parabrisas de protección de viaje y motor de 250cc de inyección electrónica.",
+    "destacado": true,
     "estado": "disponible",
     "especificaciones": {
-      "Motor": "Tricilíndrico CP3, 890cc",
-      "Potencia": "119 HP @ 10,000 rpm",
-      "Torque": "93 Nm @ 7000 rpm",
-      "Electrónica": "TCS, SCS, LIF y ABS en curvas",
-      "Peso": "189 kg",
-      "Transmisión": "6 velocidades con embrague antirrebote y Quickshifter"
+      "Motor": "249cc Monocilíndrico",
+      "Potencia": "24.4 HP",
+      "Frenos": "Disco ABS"
     },
-    "fechaIngreso": "2026-05-20"
+    "fechaIngreso": "2026-05-18"
+  },
+  {
+    "id": "moto-02",
+    "nombre": "Yamaha MT-07 ABS",
+    "marca": "Yamaha",
+    "modelo": "MT-07",
+    "anio": 2024,
+    "precio": 78000,
+    "moneda": "BOB",
+    "categoria": "motos",
+    "tipoCombustible": "Gasolina",
+    "transmision": "Manual",
+    "kilometraje": 2100,
+    "condicion": "usado",
+    "ubicacion": "Santa Cruz, Centro",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&q=80&w=1000",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "descripcion": "Moto Hyper Naked de agresivo estilo futurista. Motor crossplane CP2 de 689cc con un torque lineal demoledor y agilidad incomparable.",
+    "destacado": true,
+    "estado": "disponible",
+    "especificaciones": {
+      "Motor": "689cc CP2 Bi-cilíndrico",
+      "Potencia": "73.4 HP",
+      "Peso": "184 kg"
+    },
+    "fechaIngreso": "2026-06-10"
   },
   {
     "id": "moto-03",
     "nombre": "BMW R 1250 GS Adventure",
     "marca": "BMW",
-    "modelo": "R 1250 GS Adventure",
-    "anio": 2024,
-    "precio": 29500,
+    "modelo": "R 1250 GS",
+    "anio": 2023,
+    "precio": 195000,
+    "moneda": "BOB",
     "categoria": "motos",
     "tipoCombustible": "Gasolina",
     "transmision": "Manual",
-    "kilometraje": 1500,
+    "kilometraje": 11000,
     "condicion": "usado",
-    "ubicacion": "Santiago, Las Condes",
-    "imagenPrincipal": "https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&q=80&w=800",
+    "ubicacion": "La Paz, Zona Sur",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&q=80&w=1000",
     "imagenes": [
-      "https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&q=80&w=800"
+      "https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&q=80&w=1000"
     ],
-    "descripcion": "La reina indiscutible del turismo de aventura. Motor bóxer de 1254 cc con distribución variable ShiftCam. Edición Adventure con tanque de combustible de 30L, defensas completas de motor y maletas laterales de aluminio incluidas.",
-    "destacado": true,
+    "descripcion": "La reina incontestable de los viajes transcontinentales. Motor Boxer de 1254cc con ShiftCam, tanque de 30L y modos de conducción Pro.",
+    "destacado": false,
     "estado": "disponible",
     "especificaciones": {
-      "Motor": "Bóxer bicilíndrico con ShiftCam, 1254cc",
-      "Potencia": "136 HP @ 7750 rpm",
-      "Torque": "143 Nm @ 6250 rpm",
-      "Transmisión": "Cardán con asistente de cambios Pro",
-      "Capacidad del tanque": "30 Litros",
-      "Equipamiento": "Pantalla TFT Connectivity, luces adaptativas, modos de conducción Pro"
+      "Motor": "1254cc Boxer ShiftCam",
+      "Potencia": "136 HP",
+      "Tanque": "30 Litros"
     },
     "fechaIngreso": "2026-06-25"
   },
   {
-    "id": "maquinaria-01",
+    "id": "moto-ev-01",
+    "nombre": "Super Soco TC Max",
+    "marca": "Super Soco",
+    "modelo": "TC Max",
+    "anio": 2024,
+    "precio": 31500,
+    "moneda": "BOB",
+    "categoria": "motos_electricos",
+    "tipoCombustible": "Eléctrico",
+    "transmision": "Automática",
+    "kilometraje": 900,
+    "condicion": "nuevo",
+    "ubicacion": "Cochabamba, Uyuni",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&q=80&w=1000",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "descripcion": "Moto eléctrica de estilo Café Racer retro. Velocidad máxima de 95 km/h, frenos combinados CBS y batería extraíble de litio ATL.",
+    "destacado": true,
+    "estado": "disponible",
+    "especificaciones": {
+      "Velocidad Máx": "95 km/h",
+      "Autonomía": "110 km",
+      "Batería": "Litio 72V 45Ah"
+    },
+    "fechaIngreso": "2026-05-22"
+  },
+  {
+    "id": "moto-ev-02",
+    "nombre": "Yadea G5 Pro EV",
+    "marca": "Yadea",
+    "modelo": "G5 Pro",
+    "anio": 2023,
+    "precio": 18900,
+    "moneda": "BOB",
+    "categoria": "motos_electricos",
+    "tipoCombustible": "Eléctrico",
+    "transmision": "Automática",
+    "kilometraje": 1400,
+    "condicion": "nuevo",
+    "ubicacion": "Santa Cruz, 4to Anillo",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&q=80&w=1000",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "descripcion": "Scooter eléctrico inteligente con motor central de 3100W, pantalla LCD de 7 pulgadas y doble batería para máxima autonomía urbana.",
+    destacado: false,
+    "estado": "disponible",
+    "especificaciones": {
+      "Motor": "Central 3100W",
+      "Velocidad": "60 km/h",
+      "Autonomía": "130 km"
+    },
+    "fechaIngreso": "2026-06-18"
+  },
+  {
+    "id": "maq-agri-01",
+    "nombre": "Tractor John Deere 6125M",
+    "marca": "John Deere",
+    "modelo": "6125M",
+    "anio": 2023,
+    "precio": 620000,
+    "moneda": "BOB",
+    "categoria": "maquinaria_agricola",
+    "tipoCombustible": "Diésel",
+    "transmision": "Automática",
+    "kilometraje": 850,
+    "condicion": "usado",
+    "ubicacion": "Santa Cruz, Montero",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1589739900243-4b52cd9b104e?auto=format&fit=crop&q=80&w=1000",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1589739900243-4b52cd9b104e?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "descripcion": "Tractor agrícola versátil de alto rendimiento para el agro cruceño. Motor PowerTech 4.5L de 125 HP, transmisión PowrQuad PLUS y cabina climatizada CommandView.",
+    "destacado": true,
+    "estado": "disponible",
+    "especificaciones": {
+      "Motor": "John Deere 4.5L",
+      "Potencia": "125 HP",
+      "Horas de uso": "850 hrs"
+    },
+    "fechaIngreso": "2026-05-30"
+  },
+  {
+    "id": "maq-agri-02",
+    "nombre": "Cosechadora New Holland TC5.90",
+    "marca": "New Holland",
+    "modelo": "TC5.90",
+    "anio": 2022,
+    "precio": 1180000,
+    "moneda": "BOB",
+    "categoria": "maquinaria_agricola",
+    "tipoCombustible": "Diésel",
+    "transmision": "Automática",
+    "kilometraje": 1400,
+    "condicion": "usado",
+    "ubicacion": "Santa Cruz, San Julián",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1592982537447-6f2a6a0c5c13?auto=format&fit=crop&q=80&w=1000",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1592982537447-6f2a6a0c5c13?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "descripcion": "Cosechadora de cereales y soya de máxima productividad. Motor NEF 6.7L de 240 HP, doble zaranda vibratoria y tolva de 6400 litros.",
+    "destacado": false,
+    "estado": "disponible",
+    "especificaciones": {
+      "Motor": "FPT NEF 6.7L",
+      "Potencia": "240 HP",
+      "Tolva": "6400 Litros"
+    },
+    "fechaIngreso": "2026-06-14"
+  },
+  {
+    "id": "maq-pes-01",
     "nombre": "Excavadora Caterpillar 320 GC",
     "marca": "Caterpillar",
     "modelo": "320 GC",
     "anio": 2023,
-    "precio": 125000,
-    "categoria": "maquinaria",
+    "precio": 870000,
+    "moneda": "BOB",
+    "categoria": "transporte_pesado",
     "tipoCombustible": "Diésel",
     "transmision": "Hidrostática",
     "kilometraje": 2400,
     "condicion": "usado",
-    "ubicacion": "Antofagasta, Sector Industrial",
-    "imagenPrincipal": "https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&q=80&w=800",
+    "ubicacion": "Cochabamba, Quillacollo",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1579294800821-2e41879e6022?auto=format&fit=crop&q=80&w=1000",
     "imagenes": [
-      "https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1508962914676-134849a727f0?auto=format&fit=crop&q=80&w=800"
+      "https://images.unsplash.com/photo-1579294800821-2e41879e6022?auto=format&fit=crop&q=80&w=1000"
     ],
-    "descripcion": "La excavadora Caterpillar 320 GC equilibra perfectamente el rendimiento con funciones de costo de operación y combustible reducido. Ideal para aplicaciones de excavación ligera a mediana con una cabina confortable y segura.",
+    "descripcion": "Excavadora hidráulica líder en economía de combustible y bajo costo operativo. Motor Cat C4.4 ACERT de 146 HP con cucharón HD de 1.0 m³.",
     "destacado": true,
     "estado": "disponible",
     "especificaciones": {
       "Motor": "Cat C4.4 ACERT",
-      "Potencia neta": "145 HP",
-      "Peso operativo": "20,500 kg",
-      "Capacidad de balde": "1.2 m³",
-      "Profundidad máx. excavación": "6.72 metros",
-      "Horas de uso": "2,400 horas"
+      "Potencia": "146 HP",
+      "Peso Operativo": "20,500 kg"
     },
-    "fechaIngreso": "2026-03-10"
+    "fechaIngreso": "2026-05-12"
   },
   {
-    "id": "maquinaria-02",
-    "nombre": "Tractor John Deere 6150J",
-    "marca": "John Deere",
-    "modelo": "6150J",
-    "anio": 2022,
-    "precio": 88000,
-    "categoria": "maquinaria",
-    "tipoCombustible": "Diésel",
-    "transmision": "Mecánica Sincronizada",
-    "kilometraje": 3100,
-    "condicion": "usado",
-    "ubicacion": "Rancagua, Agrícola",
-    "imagenPrincipal": "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80&w=800",
-    "imagenes": [
-      "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80&w=800"
-    ],
-    "descripcion": "Fuerza y versatilidad agrícola incomparable. El tractor John Deere 6150J ofrece tracción 4x4, cabina presurizada de alta comodidad y la legendaria durabilidad de los motores John Deere para trabajos pesados en el campo.",
-    "destacado": false,
-    "estado": "disponible",
-    "especificaciones": {
-      "Motor": "John Deere 6.8L de 6 cilindros",
-      "Potencia": "150 HP",
-      "Tracción": "4WD doble tracción",
-      "Toma de fuerza (TDP)": "125 HP @ 1000/540 rpm",
-      "Transmisión": "PowrQuad 16x16 marchas",
-      "Horas de uso": "3,100 horas"
-    },
-    "fechaIngreso": "2026-04-18"
-  },
-  {
-    "id": "maquinaria-03",
-    "nombre": "Retroexcavadora JCB 3CX Eco",
-    "marca": "JCB",
-    "modelo": "3CX Eco",
+    "id": "maq-pes-02",
+    "nombre": "Camión Volvo FH 540 Globetrotter 6x4",
+    "marca": "Volvo",
+    "modelo": "FH 540",
     "anio": 2024,
-    "precio": 96500,
-    "categoria": "maquinaria",
+    "precio": 980000,
+    "moneda": "BOB",
+    "categoria": "transporte_pesado",
     "tipoCombustible": "Diésel",
-    "transmision": "Powershift",
-    "kilometraje": 0,
-    "condicion": "nuevo",
-    "ubicacion": "Santiago, San Bernardo",
-    "imagenPrincipal": "https://images.unsplash.com/photo-1586528116311-ad8dd3c9310d?auto=format&fit=crop&q=80&w=800",
+    "transmision": "Automática",
+    "kilometraje": 45000,
+    "condicion": "usado",
+    "ubicacion": "La Paz, El Alto",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1000",
     "imagenes": [
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c9310d?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?auto=format&fit=crop&q=80&w=800"
+      "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1000"
     ],
-    "descripcion": "La retroexcavadora número uno del mundo. Diseñada para ofrecer máxima eficiencia de combustible, bajos costos operativos, excelente rendimiento en excavación y empuje, y cabina con aire acondicionado y controles ergonómicos.",
+    "descripcion": "Tractocamión de larga distancia preparado para la topografía de Bolivia. Motor D13K de 540 HP, transmisión I-Shift y cabina de descanso Globetrotter XL.",
     "destacado": true,
     "estado": "disponible",
     "especificaciones": {
-      "Motor": "JCB EcoMAX",
-      "Potencia": "74 HP",
-      "Peso operativo": "8,135 kg",
-      "Tracción": "4x4 automática",
-      "Capacidad pala delantera": "1.0 m³",
-      "Profundidad máx. excavación retro": "4.75 metros"
+      "Motor": "D13K 540 HP",
+      "Torque": "2600 Nm",
+      "Configuración": "6x4 Tractor"
     },
-    "fechaIngreso": "2026-07-05"
+    "fechaIngreso": "2026-06-05"
+  },
+  {
+    "id": "maq-pes-03",
+    "nombre": "Volqueta Scania G450 6x4",
+    "marca": "Scania",
+    "modelo": "G450 6x4",
+    "anio": 2023,
+    "precio": 910000,
+    "moneda": "BOB",
+    "categoria": "transporte_pesado",
+    "tipoCombustible": "Diésel",
+    "transmision": "Automática",
+    "kilometraje": 32000,
+    "condicion": "usado",
+    "ubicacion": "Santa Cruz, Warnes",
+    "imagenPrincipal": "https://images.unsplash.com/photo-1586191582118-275488426027?auto=format&fit=crop&q=80&w=1000",
+    "imagenes": [
+      "https://images.unsplash.com/photo-1586191582118-275488426027?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "descripcion": "Volqueta pesada para minería y construcción. Tolva roquera de 16m³, motor 13L de 450 HP con freno retarder Opticruise.",
+    "destacado": false,
+    "estado": "disponible",
+    "especificaciones": {
+      "Motor": "Scania 13L 450 HP",
+      "Tolva": "16 m³ Roquera",
+      "Freno": "Retarder Scania"
+    },
+    "fechaIngreso": "2026-06-22"
   }
 ]

@@ -245,7 +245,7 @@ export class SeedService implements OnApplicationBootstrap {
           link: '/catalogo'
         },
         {
-          image: 'https://images.unsplash.com/photo-1579294800821-2e41879e6022?auto=format&fit=crop&q=80&w=1000',
+          image: '/maquinaria_pesada.png',
           badge: 'Maquinaria de Alto Poder',
           title: 'Soluciones robustas para tu negocio o industria',
           description: 'Excavadoras, grúas y tractores de potencia garantizada para impulsar la productividad de tus grandes obras.',
