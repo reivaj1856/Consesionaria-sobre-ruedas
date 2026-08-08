@@ -5,7 +5,8 @@ ENV NG_DISABLE_VERSION_CHECK=true
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npm run build -- --configuration production
+RUN chmod -R +x node_modules/.bin || true
+RUN npx ng build --configuration production
 
 FROM nginx:alpine
 COPY --from=builder /app/dist/ConcesionariaApp/browser /usr/share/nginx/html

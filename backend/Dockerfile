@@ -4,7 +4,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npm run build
+RUN chmod -R +x node_modules/.bin || true
+RUN npx nest build
 
 FROM node:24-alpine AS runner
 WORKDIR /app
