@@ -1,6 +1,7 @@
 # Frontend Dockerfile for Angular
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
+ENV NG_DISABLE_VERSION_CHECK=true
 COPY package*.json ./
 RUN npm ci
 COPY . .
