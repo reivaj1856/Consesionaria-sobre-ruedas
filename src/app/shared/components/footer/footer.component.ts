@@ -13,12 +13,7 @@ import { RouterLink } from '@angular/router';
           <!-- Brand & Info -->
           <div>
             <div class="flex items-center gap-2">
-              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white font-heading font-extrabold text-xl shadow-md">
-                R
-              </div>
-              <span class="font-heading text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-                ruedas<span class="text-blue-500">.store</span>
-              </span>
+              <img src="/logo.png" alt="Ruedas Store Logo" class="h-10 sm:h-12 w-auto object-contain" />
             </div>
             <p class="mt-4 max-w-xs text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               Líderes en venta de autos, motos y maquinaria pesada. Ofrecemos calidad garantizada, financiamiento flexible y la mejor atención del país.

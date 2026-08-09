@@ -15,9 +15,7 @@ import { ThemeService } from '../../../core/services/theme.service';
         
         <!-- Logo -->
         <a routerLink="/" class="flex items-center gap-2 group">
-          <span class="font-heading text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-            RUEDAS<span class="text-blue-600 dark:text-blue-400">.STORE</span>
-          </span>
+          <img src="/logo.png" alt="Ruedas Store Logo" class="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105" />
         </a>
 
         <!-- Desktop Navigation -->
