@@ -8,7 +8,7 @@ import { Reservation } from '../models/reservation.model';
 })
 export class ReservationService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/reservations';
+  private readonly apiUrl = '/api/reservations';
 
   public async createReservation(vehicleId: string, metodoPago: string, montoReservado: number): Promise<boolean> {
     try {

@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/auth';
+  private readonly apiUrl = '/api/auth';
   private readonly sessionKey = 'concesionaria_session';
   private readonly tokenKey = 'concesionaria_token';
   

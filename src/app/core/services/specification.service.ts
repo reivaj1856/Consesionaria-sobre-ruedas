@@ -8,7 +8,7 @@ import { Specification, SpecificationGroup } from '../models/vehicle.model';
 })
 export class SpecificationService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/specifications';
+  private readonly apiUrl = '/api/specifications';
 
   public async getGroups(): Promise<SpecificationGroup[]> {
     try {

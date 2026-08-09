@@ -8,7 +8,7 @@ import { ContactRequest } from '../models/reservation.model';
 })
 export class QuoteService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/quotes';
+  private readonly apiUrl = '/api/quotes';
 
   public async submitQuote(quote: ContactRequest): Promise<boolean> {
     try {

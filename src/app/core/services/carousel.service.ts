@@ -8,7 +8,7 @@ import { CarouselSlide } from '../models/carousel.model';
 })
 export class CarouselService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/carousel';
+  private readonly apiUrl = '/api/carousel';
 
   public async getSlides(): Promise<CarouselSlide[]> {
     try {

@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class VehicleService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000/api/vehicles';
+  private readonly apiUrl = '/api/vehicles';
 
   private readonly vehiclesSignal = signal<Vehicle[]>([]);
   public readonly vehicles = this.vehiclesSignal.asReadonly();

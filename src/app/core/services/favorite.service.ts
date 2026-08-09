@@ -9,7 +9,7 @@ import { firstValueFrom } from 'rxjs';
 export class FavoriteService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
-  private readonly apiUrl = 'http://localhost:3000/api/favorites';
+  private readonly apiUrl = '/api/favorites';
   private readonly storageKey = 'concesionaria_favorites';
   
   private readonly favoritesSignal = signal<string[]>([]);
