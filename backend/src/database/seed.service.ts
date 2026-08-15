@@ -49,42 +49,56 @@ export class SeedService implements OnApplicationBootstrap {
   }
 
   private async seedUsers() {
-    const adminExists = await this.userRepository.findOne({ where: { email: 'admin@concesionaria.com' } });
-    if (!adminExists) {
-      this.logger.log('Cuentas de prueba no encontradas. Creando usuarios predeterminados...');
-      
-      const adminPasswordHash = await bcrypt.hash('admin123', 10);
-      const clientPasswordHash = await bcrypt.hash('cliente123', 10);
+    const adminPasswordHash = await bcrypt.hash('admin123', 10);
+    const clientPasswordHash = await bcrypt.hash('cliente123', 10);
 
-      const admin = this.userRepository.create({
+    let admin = await this.userRepository.findOne({ where: { email: 'admin@concesionaria.com' } });
+    if (!admin) {
+      admin = this.userRepository.create({
         nombre: 'Administrador Concesionaria',
         email: 'admin@concesionaria.com',
         contrasenia: adminPasswordHash,
         rol: 'administrador',
       });
+      await this.userRepository.save(admin);
+    }
 
-      const concesionaria = this.userRepository.create({
+    let concesionaria = await this.userRepository.findOne({ where: { email: 'toyota@concesionaria.com' } });
+    if (!concesionaria) {
+      concesionaria = this.userRepository.create({
         nombre: 'Toyota Bolivia',
         email: 'toyota@concesionaria.com',
         contrasenia: clientPasswordHash,
         rol: 'concesionaria',
       });
+      concesionaria = await this.userRepository.save(concesionaria);
+    }
 
-      const savedConcesionaria = await this.userRepository.save(concesionaria);
-      await this.userRepository.save(admin);
-
-      const agente = this.userRepository.create({
+    let agente = await this.userRepository.findOne({ where: { email: 'agente@concesionaria.com' } });
+    if (!agente) {
+      agente = this.userRepository.create({
         nombre: 'Juan Agente',
         email: 'agente@concesionaria.com',
         contrasenia: clientPasswordHash,
         rol: 'agente',
-        concesionariaId: savedConcesionaria.id,
+        concesionariaId: concesionaria.id,
         beneficios: 0,
       });
-
       await this.userRepository.save(agente);
-      this.logger.log('Usuarios predeterminados creados exitosamente.');
     }
+
+    let cliente = await this.userRepository.findOne({ where: { email: 'cliente@concesionaria.com' } });
+    if (!cliente) {
+      cliente = this.userRepository.create({
+        nombre: 'Cliente General',
+        email: 'cliente@concesionaria.com',
+        contrasenia: clientPasswordHash,
+        rol: 'cliente',
+      });
+      await this.userRepository.save(cliente);
+    }
+
+    this.logger.log('Usuarios predeterminados verificados/creados exitosamente.');
   }
 
   private async seedSettings() {
