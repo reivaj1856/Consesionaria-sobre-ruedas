@@ -9,10 +9,11 @@ import { VehiclesController } from './vehicles.controller';
 import { AuthModule } from '../auth/auth.module';
 import { SpecificationsModule } from '../specifications/specifications.module';
 import { User } from '../users/entities/user.entity';
+import { Setting } from '../users/entities/setting.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Vehicle, AutoDetail, MotoDetail, MaquinariaDetail, User]),
+    TypeOrmModule.forFeature([Vehicle, AutoDetail, MotoDetail, MaquinariaDetail, User, Setting]),
     AuthModule,
     SpecificationsModule,
   ],

@@ -19,21 +19,21 @@ export class CarouselController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles('admin', 'administrador')
   @Post()
   async create(@Body() slideData: any) {
     return this.carouselService.create(slideData);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles('admin', 'administrador')
   @Patch(':id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() slideData: any) {
     return this.carouselService.update(id, slideData);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles('admin', 'administrador')
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.carouselService.remove(id);

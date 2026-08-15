@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
+import { User } from '../../core/models/user.model';
 
 @Component({
   selector: 'app-auth',
@@ -31,7 +32,7 @@ import { AuthService } from '../../core/services/auth.service';
             Registrarse
           </button>
         </div>
-
+ 
         <!-- Alert Error -->
         @if (errorMessage()) {
           <div class="mt-4 rounded-lg bg-rose-50 border border-rose-100 p-3 text-rose-800 text-xs flex gap-2">
@@ -41,7 +42,7 @@ import { AuthService } from '../../core/services/auth.service';
             <span>{{ errorMessage() }}</span>
           </div>
         }
-
+ 
         <!-- Forms Area -->
         @if (isLoginMode()) {
           
@@ -58,45 +59,65 @@ import { AuthService } from '../../core/services/auth.service';
               <input type="password" formControlName="contrasenia" 
                      class="mt-1.5 w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-none" />
             </div>
-
+ 
             <button type="submit" [disabled]="loginForm.invalid"
                     class="w-full rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-bold text-white shadow-md hover:bg-blue-500 disabled:opacity-50 transition-colors">
               Ingresar a la Plataforma
             </button>
           </form>
-
-          <!-- Accounts Info Box (Only for Demo) -->
-          <!-- <div class="mt-8 border border-slate-100 rounded-xl p-4 bg-slate-50 space-y-2 text-[11px] text-slate-500 leading-relaxed">
-            <p class="font-bold text-slate-700">Cuentas de demostración predefinidas:</p>
-            <div>
-              <span class="block"><strong class="text-slate-600">Administrador:</strong> 'admin&#64;concesionaria.com' / admin123</span>
-              <span class="block"><strong class="text-slate-600">Cliente estándar:</strong> cliente&#64;concesionaria.com / cliente123</span>
-            </div>
-            <p class="text-[10px] text-slate-400 border-t border-slate-200/60 pt-1.5">Cualquier otra cuenta con clave de +6 caracteres iniciará sesión automáticamente como cliente.</p>
-          </div> -->
-
+ 
         } @else {
           
           <!-- REGISTER FORM -->
           <form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" class="mt-6 space-y-4">
             <div>
-              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Nombre Completo</label>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Nombre Completo o Empresa</label>
               <input type="text" formControlName="nombre" 
                      class="mt-1.5 w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-none" />
             </div>
-
+ 
             <div>
               <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Correo Electrónico</label>
               <input type="email" formControlName="email" 
                      class="mt-1.5 w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-none" />
             </div>
-
+ 
             <div>
               <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Contraseña (Mín. 6 caracteres)</label>
               <input type="password" formControlName="contrasenia" 
                      class="mt-1.5 w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-none" />
             </div>
 
+            <div>
+              <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Tipo de Cuenta</label>
+              <select formControlName="rol" 
+                      class="mt-1.5 w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-none">
+                <option value="agente">Agente de Ventas</option>
+                <option value="concesionaria">Concesionaria (Empresa)</option>
+              </select>
+            </div>
+
+            @if (registerForm.get('rol')?.value === 'agente') {
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Seleccionar Concesionaria</label>
+                <select formControlName="concesionariaId" 
+                        class="mt-1.5 w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:border-blue-500 focus:outline-none">
+                  <option value="" disabled selected>Seleccione una concesionaria...</option>
+                  @for (c of concesionariasList(); track c.id) {
+                    <option [value]="c.id">{{ c.nombre }}</option>
+                  }
+                </select>
+                @if (concesionariasList().length === 0) {
+                  <p class="text-[10px] text-amber-600 mt-1 font-semibold leading-normal">
+                    ⚠️ No hay concesionarias registradas. Registre una cuenta de Concesionaria primero.
+                  </p>
+                }
+                @if (registerForm.get('concesionariaId')?.touched && registerForm.errors?.['concesionariaRequired']) {
+                  <p class="text-xs text-rose-500 mt-1 font-semibold">Debes seleccionar una concesionaria para continuar.</p>
+                }
+              </div>
+            }
+ 
             <div>
               <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Monedas que Aceptas para Recibir Pagos</label>
               <div class="mt-2 flex gap-4">
@@ -113,7 +134,7 @@ import { AuthService } from '../../core/services/auth.service';
                 <p class="text-xs text-rose-500 mt-1 font-semibold">Debes seleccionar al menos una moneda para recibir pagos.</p>
               }
             </div>
-
+ 
             <button type="submit" [disabled]="registerForm.invalid"
                     class="w-full rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-bold text-white shadow-md hover:bg-blue-500 disabled:opacity-50 transition-colors">
               Crear Cuenta Nueva
@@ -121,50 +142,74 @@ import { AuthService } from '../../core/services/auth.service';
           </form>
           
         }
-
+ 
       </div>
     </div>
   `
 })
-export class AuthComponent {
+export class AuthComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-
+ 
   protected readonly isLoginMode = signal(true);
   protected readonly errorMessage = signal<string>('');
-
+  protected readonly concesionariasList = signal<User[]>([]);
+ 
   protected readonly loginForm: FormGroup;
   protected readonly registerForm: FormGroup;
-
+ 
   constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       contrasenia: ['', [Validators.required]]
     });
-
+ 
     this.registerForm = this.fb.group({
       nombre: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       contrasenia: ['', [Validators.required, Validators.minLength(6)]],
+      rol: ['agente', [Validators.required]],
+      concesionariaId: [''],
       recibeDolares: [true],
       recibeBolivianos: [true]
-    }, { validators: this.currencySelectionValidator });
+    }, { validators: [this.currencySelectionValidator, this.concesionariaRequiredValidator] });
   }
 
+  public ngOnInit(): void {
+    this.loadConcesionarias();
+  }
+
+  private async loadConcesionarias(): Promise<void> {
+    const list = await this.authService.getConcesionarias();
+    this.concesionariasList.set(list);
+  }
+ 
   private currencySelectionValidator(group: FormGroup): any {
     const usd = group.get('recibeDolares')?.value;
     const bob = group.get('recibeBolivianos')?.value;
     return (usd || bob) ? null : { noCurrencySelected: true };
   }
 
+  private concesionariaRequiredValidator(group: FormGroup): any {
+    const rol = group.get('rol')?.value;
+    const concesionariaId = group.get('concesionariaId')?.value;
+    if (rol === 'agente' && !concesionariaId) {
+      return { concesionariaRequired: true };
+    }
+    return null;
+  }
+ 
   protected setMode(login: boolean): void {
     this.isLoginMode.set(login);
     this.errorMessage.set('');
     this.loginForm.reset();
     this.registerForm.reset();
+    if (!login) {
+      this.loadConcesionarias();
+    }
   }
-
+ 
   protected async onLoginSubmit(): Promise<void> {
     if (this.loginForm.valid) {
       const { email, contrasenia } = this.loginForm.value;
@@ -181,16 +226,16 @@ export class AuthComponent {
       }
     }
   }
-
+ 
   protected async onRegisterSubmit(): Promise<void> {
     if (this.registerForm.valid) {
-      const { nombre, email, contrasenia, recibeDolares, recibeBolivianos } = this.registerForm.value;
-      const success = await this.authService.register(nombre, email, contrasenia, recibeDolares, recibeBolivianos);
+      const { nombre, email, contrasenia, rol, concesionariaId, recibeDolares, recibeBolivianos } = this.registerForm.value;
+      const success = await this.authService.register(nombre, email, contrasenia, rol, rol === 'agente' ? concesionariaId : null, recibeDolares, recibeBolivianos);
       if (success) {
         this.errorMessage.set('');
         this.router.navigate(['/']);
       } else {
-        this.errorMessage.set('Error en el registro. Verifica los datos ingresados.');
+        this.errorMessage.set('Error en el registro. Verifica los datos ingresados o el correo ya registrado.');
       }
     }
   }

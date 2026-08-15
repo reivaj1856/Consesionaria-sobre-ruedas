@@ -7,6 +7,7 @@ import { MotoDetail } from './entities/moto-detail.entity';
 import { MaquinariaDetail } from './entities/maquinaria-detail.entity';
 import { Specification } from '../specifications/entities/specification.entity';
 import { User } from '../users/entities/user.entity';
+import { Setting } from '../users/entities/setting.entity';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 
 @Injectable()
@@ -24,6 +25,8 @@ export class VehiclesService {
     private readonly specificationRepository: Repository<Specification>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Setting)
+    private readonly settingRepository: Repository<Setting>,
   ) {}
 
   async findAll(query: {
@@ -104,26 +107,15 @@ export class VehiclesService {
   }
 
   async create(createVehicleDto: CreateVehicleDto, creator: any) {
-    // Validar cuotas del usuario
-    const dbUser = await this.userRepository.findOne({ where: { id: creator.id } });
+    // Validar existencia del usuario
+    const dbUser = await this.userRepository.findOne({ where: { id: creator.id || creator.sub } });
     if (!dbUser) {
       throw new NotFoundException('Usuario creador no encontrado.');
     }
 
-    if (dbUser.rol === 'cliente') {
-      const activeCount = await this.vehicleRepository.count({
-        where: { userId: dbUser.id }
-      });
-      
-      let limit = 2;
-      if (dbUser.plan === 'negocio') limit = 60;
-      if (dbUser.plan === 'empresa') limit = 300;
-
-      if (activeCount >= limit) {
-        throw new BadRequestException(`Límite de publicaciones alcanzado. Tu plan actual (${dbUser.plan}) permite un máximo de ${limit} publicaciones activas.`);
-      }
-
-
+    const allowedRoles = ['admin', 'administrador', 'concesionaria', 'agente'];
+    if (!allowedRoles.includes(dbUser.rol)) {
+      throw new ForbiddenException('No tienes permiso para publicar vehículos.');
     }
 
     const id = `${createVehicleDto.categoria}-${Date.now()}`;
@@ -135,7 +127,7 @@ export class VehiclesService {
       ...baseData,
       id,
       fechaIngreso,
-      userId: dbUser.rol === 'admin' ? null : dbUser.id,
+      userId: dbUser.rol === 'administrador' ? null : dbUser.id,
       especificaciones: [],
     });
 
@@ -174,9 +166,27 @@ export class VehiclesService {
   async update(id: string, updateVehicleDto: any, user?: any) {
     const vehicle = await this.findOne(id);
 
-    // Verificar propiedad si no es admin y se proporciona el usuario
-    if (user && user.rol !== 'admin' && vehicle.userId !== user.id) {
+    // Verificar propiedad si no es admin/administrador y se proporciona el usuario
+    if (user && user.rol !== 'admin' && user.rol !== 'administrador' && vehicle.userId !== user.id) {
       throw new ForbiddenException('No tienes permiso para modificar esta publicación.');
+    }
+
+    const oldEstado = vehicle.estado;
+    const newEstado = updateVehicleDto.estado;
+
+    // Si el estado cambia a vendido por primera vez y el creador es un agente
+    if (newEstado === 'vendido' && oldEstado !== 'vendido' && !vehicle.beneficioEntregado && vehicle.userId) {
+      const owner = await this.userRepository.findOne({ where: { id: vehicle.userId } });
+      if (owner && owner.rol === 'agente') {
+        let benefitAmount = 100;
+        const setting = await this.settingRepository.findOne({ where: { clave: 'beneficio_agente' } });
+        if (setting) {
+          benefitAmount = parseFloat(setting.valor) || 100;
+        }
+        owner.beneficios = Number(owner.beneficios || 0) + benefitAmount;
+        await this.userRepository.save(owner);
+        vehicle.beneficioEntregado = true;
+      }
     }
 
 

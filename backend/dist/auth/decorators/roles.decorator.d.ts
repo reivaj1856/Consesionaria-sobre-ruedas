@@ -1,2 +1,2 @@
 export declare const ROLES_KEY = "roles";
-export declare const Roles: (...roles: ("admin" | "cliente")[]) => import("@nestjs/common").CustomDecorator<string>;
+export declare const Roles: (...roles: ("admin" | "cliente" | "administrador" | "concesionaria" | "agente")[]) => import("@nestjs/common").CustomDecorator<string>;

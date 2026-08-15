@@ -24,6 +24,7 @@ export declare class Vehicle {
     descripcion: string;
     destacado: boolean;
     estado: 'disponible' | 'reservado' | 'vendido';
+    beneficioEntregado: boolean;
     fechaIngreso: string;
     telefonoContacto: string;
     userId: string | null;

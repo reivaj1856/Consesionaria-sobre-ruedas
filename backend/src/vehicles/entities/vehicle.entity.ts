@@ -63,6 +63,9 @@ export class Vehicle {
   @Column({ type: 'varchar', length: 20, default: 'disponible' })
   estado: 'disponible' | 'reservado' | 'vendido';
 
+  @Column({ type: 'boolean', default: false })
+  beneficioEntregado: boolean;
+
   @Column({ type: 'varchar', length: 20 })
   fechaIngreso: string;
 

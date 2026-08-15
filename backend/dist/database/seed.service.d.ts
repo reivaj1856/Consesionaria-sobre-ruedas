@@ -1,6 +1,7 @@
 import { OnApplicationBootstrap } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
+import { Setting } from '../users/entities/setting.entity';
 import { Vehicle } from '../vehicles/entities/vehicle.entity';
 import { AutoDetail } from '../vehicles/entities/auto-detail.entity';
 import { MotoDetail } from '../vehicles/entities/moto-detail.entity';
@@ -10,6 +11,7 @@ import { SpecificationGroup } from '../specifications/entities/specification-gro
 import { CarouselSlide } from '../carousel/entities/carousel.entity';
 export declare class SeedService implements OnApplicationBootstrap {
     private readonly userRepository;
+    private readonly settingRepository;
     private readonly vehicleRepository;
     private readonly autoRepository;
     private readonly motoRepository;
@@ -18,9 +20,10 @@ export declare class SeedService implements OnApplicationBootstrap {
     private readonly groupRepository;
     private readonly carouselRepository;
     private readonly logger;
-    constructor(userRepository: Repository<User>, vehicleRepository: Repository<Vehicle>, autoRepository: Repository<AutoDetail>, motoRepository: Repository<MotoDetail>, maquinariaRepository: Repository<MaquinariaDetail>, specificationRepository: Repository<Specification>, groupRepository: Repository<SpecificationGroup>, carouselRepository: Repository<CarouselSlide>);
+    constructor(userRepository: Repository<User>, settingRepository: Repository<Setting>, vehicleRepository: Repository<Vehicle>, autoRepository: Repository<AutoDetail>, motoRepository: Repository<MotoDetail>, maquinariaRepository: Repository<MaquinariaDetail>, specificationRepository: Repository<Specification>, groupRepository: Repository<SpecificationGroup>, carouselRepository: Repository<CarouselSlide>);
     onApplicationBootstrap(): Promise<void>;
     private seedUsers;
+    private seedSettings;
     private seedSpecifications;
     private seedVehicles;
     private seedCarousel;

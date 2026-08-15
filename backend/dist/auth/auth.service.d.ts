@@ -1,21 +1,23 @@
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
+import { Setting } from '../users/entities/setting.entity';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 export declare class AuthService {
     private readonly userRepository;
+    private readonly settingRepository;
     private readonly jwtService;
-    constructor(userRepository: Repository<User>, jwtService: JwtService);
+    constructor(userRepository: Repository<User>, settingRepository: Repository<Setting>, jwtService: JwtService);
     register(registerDto: RegisterDto): Promise<{
         token: string;
         user: {
             id: string;
             email: string;
             nombre: string;
-            rol: "cliente" | "admin";
-            plan: "gratis" | "negocio" | "empresa";
-            suscripcionFecha: string;
+            rol: "agente" | "administrador" | "concesionaria";
+            concesionariaId: string | null;
+            beneficios: number;
             recibeDolares: boolean;
             recibeBolivianos: boolean;
         };
@@ -26,9 +28,9 @@ export declare class AuthService {
             id: string;
             email: string;
             nombre: string;
-            rol: "cliente" | "admin";
-            plan: "gratis" | "negocio" | "empresa";
-            suscripcionFecha: string;
+            rol: "agente" | "administrador" | "concesionaria";
+            concesionariaId: string | null;
+            beneficios: number;
             recibeDolares: boolean;
             recibeBolivianos: boolean;
         };
@@ -37,28 +39,26 @@ export declare class AuthService {
         id: string;
         email: string;
         nombre: string;
-        rol: "cliente" | "admin";
-        plan: "gratis" | "negocio" | "empresa";
-        suscripcionFecha: string;
+        rol: "agente" | "administrador" | "concesionaria";
+        concesionariaId: string | null;
+        concesionaria: {
+            id: string;
+            nombre: string;
+        } | null;
+        beneficios: number;
         recibeDolares: boolean;
         recibeBolivianos: boolean;
     }>;
-    subscribe(userId: string, plan: 'gratis' | 'negocio' | 'empresa'): Promise<{
+    findConcesionarias(): Promise<User[]>;
+    getBeneficioSetting(): Promise<{
+        valor: number;
+    }>;
+    updateBeneficioSetting(valor: number): Promise<{
         success: boolean;
-        message: string;
-        user: {
-            id: string;
-            email: string;
-            nombre: string;
-            rol: "cliente" | "admin";
-            plan: "gratis" | "negocio" | "empresa";
-            suscripcionFecha: string;
-            recibeDolares: boolean;
-            recibeBolivianos: boolean;
-        };
+        valor: number;
     }>;
     findAllUsers(): Promise<User[]>;
-    updateUserPlan(id: string, plan: 'gratis' | 'negocio' | 'empresa'): Promise<{
+    adminUpdateUser(id: string, updateData: any): Promise<{
         success: boolean;
         message: string;
     }>;

@@ -15,6 +15,8 @@ class RegisterDto {
     nombre;
     email;
     contrasenia;
+    rol;
+    concesionariaId;
     recibeDolares;
     recibeBolivianos;
 }
@@ -33,6 +35,16 @@ __decorate([
     (0, class_validator_1.MinLength)(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "contrasenia", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: 'El rol es requerido' }),
+    (0, class_validator_1.IsEnum)(['administrador', 'concesionaria', 'agente'], { message: 'El rol no es válido' }),
+    __metadata("design:type", String)
+], RegisterDto.prototype, "rol", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)({ message: 'La concesionaria debe ser un string (UUID)' }),
+    __metadata("design:type", String)
+], RegisterDto.prototype, "concesionariaId", void 0);
 __decorate([
     (0, class_validator_1.IsBoolean)({ message: 'El campo recibeDolares debe ser un booleano' }),
     (0, class_validator_1.IsOptional)(),

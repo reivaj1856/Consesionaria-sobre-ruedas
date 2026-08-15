@@ -1,7 +1,6 @@
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { SubscribeDto } from '../users/dto/subscribe.dto';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
@@ -11,9 +10,9 @@ export declare class AuthController {
             id: string;
             email: string;
             nombre: string;
-            rol: "cliente" | "admin";
-            plan: "gratis" | "negocio" | "empresa";
-            suscripcionFecha: string;
+            rol: "agente" | "administrador" | "concesionaria";
+            concesionariaId: string | null;
+            beneficios: number;
             recibeDolares: boolean;
             recibeBolivianos: boolean;
         };
@@ -24,9 +23,9 @@ export declare class AuthController {
             id: string;
             email: string;
             nombre: string;
-            rol: "cliente" | "admin";
-            plan: "gratis" | "negocio" | "empresa";
-            suscripcionFecha: string;
+            rol: "agente" | "administrador" | "concesionaria";
+            concesionariaId: string | null;
+            beneficios: number;
             recibeDolares: boolean;
             recibeBolivianos: boolean;
         };
@@ -35,28 +34,26 @@ export declare class AuthController {
         id: string;
         email: string;
         nombre: string;
-        rol: "cliente" | "admin";
-        plan: "gratis" | "negocio" | "empresa";
-        suscripcionFecha: string;
+        rol: "agente" | "administrador" | "concesionaria";
+        concesionariaId: string | null;
+        concesionaria: {
+            id: string;
+            nombre: string;
+        } | null;
+        beneficios: number;
         recibeDolares: boolean;
         recibeBolivianos: boolean;
     }>;
-    subscribe(req: any, subscribeDto: SubscribeDto): Promise<{
+    findConcesionarias(): Promise<import("../users/entities/user.entity").User[]>;
+    getBeneficioSetting(): Promise<{
+        valor: number;
+    }>;
+    updateBeneficioSetting(valor: number): Promise<{
         success: boolean;
-        message: string;
-        user: {
-            id: string;
-            email: string;
-            nombre: string;
-            rol: "cliente" | "admin";
-            plan: "gratis" | "negocio" | "empresa";
-            suscripcionFecha: string;
-            recibeDolares: boolean;
-            recibeBolivianos: boolean;
-        };
+        valor: number;
     }>;
     findAllUsers(): Promise<import("../users/entities/user.entity").User[]>;
-    updateUserPlan(id: string, plan: 'gratis' | 'negocio' | 'empresa'): Promise<{
+    adminUpdateUser(id: string, updateData: any): Promise<{
         success: boolean;
         message: string;
     }>;

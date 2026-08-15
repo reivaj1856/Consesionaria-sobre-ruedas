@@ -20,14 +20,14 @@ export class SpecificationsController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles('admin', 'administrador')
   @Post('groups')
   async createGroup(@Body() createGroupDto: CreateGroupDto) {
     return this.specsService.createGroup(createGroupDto);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles('admin', 'administrador')
   @Post()
   async createSpec(@Body() createSpecDto: CreateSpecificationDto) {
     return this.specsService.createSpec(createSpecDto);

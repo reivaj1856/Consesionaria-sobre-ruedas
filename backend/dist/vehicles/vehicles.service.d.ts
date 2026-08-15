@@ -5,6 +5,7 @@ import { MotoDetail } from './entities/moto-detail.entity';
 import { MaquinariaDetail } from './entities/maquinaria-detail.entity';
 import { Specification } from '../specifications/entities/specification.entity';
 import { User } from '../users/entities/user.entity';
+import { Setting } from '../users/entities/setting.entity';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 export declare class VehiclesService {
     private readonly vehicleRepository;
@@ -13,7 +14,8 @@ export declare class VehiclesService {
     private readonly maquinariaRepository;
     private readonly specificationRepository;
     private readonly userRepository;
-    constructor(vehicleRepository: Repository<Vehicle>, autoRepository: Repository<AutoDetail>, motoRepository: Repository<MotoDetail>, maquinariaRepository: Repository<MaquinariaDetail>, specificationRepository: Repository<Specification>, userRepository: Repository<User>);
+    private readonly settingRepository;
+    constructor(vehicleRepository: Repository<Vehicle>, autoRepository: Repository<AutoDetail>, motoRepository: Repository<MotoDetail>, maquinariaRepository: Repository<MaquinariaDetail>, specificationRepository: Repository<Specification>, userRepository: Repository<User>, settingRepository: Repository<Setting>);
     findAll(query: {
         categoria?: string;
         condicion?: string;

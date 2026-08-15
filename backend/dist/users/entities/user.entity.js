@@ -20,8 +20,9 @@ let User = class User {
     contrasenia;
     nombre;
     rol;
-    plan;
-    suscripcionFecha;
+    concesionariaId;
+    concesionaria;
+    beneficios;
     recibeDolares;
     recibeBolivianos;
     reservas;
@@ -46,17 +47,22 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "nombre", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 20, default: 'cliente' }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 20, default: 'agente' }),
     __metadata("design:type", String)
 ], User.prototype, "rol", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 20, default: 'gratis' }),
-    __metadata("design:type", String)
-], User.prototype, "plan", void 0);
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "concesionariaId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 30, nullable: true }),
-    __metadata("design:type", String)
-], User.prototype, "suscripcionFecha", void 0);
+    (0, typeorm_1.ManyToOne)(() => User, { nullable: true, onDelete: 'SET NULL' }),
+    (0, typeorm_1.JoinColumn)({ name: 'concesionariaId' }),
+    __metadata("design:type", User)
+], User.prototype, "concesionaria", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2, default: 0 }),
+    __metadata("design:type", Number)
+], User.prototype, "beneficios", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'boolean', default: true }),
     __metadata("design:type", Boolean)

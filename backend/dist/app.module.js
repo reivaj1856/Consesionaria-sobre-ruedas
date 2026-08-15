@@ -29,6 +29,7 @@ const maquinaria_detail_entity_1 = require("./vehicles/entities/maquinaria-detai
 const specification_entity_1 = require("./specifications/entities/specification.entity");
 const specification_group_entity_1 = require("./specifications/entities/specification-group.entity");
 const carousel_entity_1 = require("./carousel/entities/carousel.entity");
+const setting_entity_1 = require("./users/entities/setting.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -51,7 +52,7 @@ exports.AppModule = AppModule = __decorate([
                     entities: [
                         user_entity_1.User, vehicle_entity_1.Vehicle, reservation_entity_1.Reservation, favorite_entity_1.Favorite, quote_entity_1.Quote,
                         auto_detail_entity_1.AutoDetail, moto_detail_entity_1.MotoDetail, maquinaria_detail_entity_1.MaquinariaDetail,
-                        specification_entity_1.Specification, specification_group_entity_1.SpecificationGroup, carousel_entity_1.CarouselSlide
+                        specification_entity_1.Specification, specification_group_entity_1.SpecificationGroup, carousel_entity_1.CarouselSlide, setting_entity_1.Setting
                     ],
                     synchronize: true,
                 }),
@@ -65,7 +66,7 @@ exports.AppModule = AppModule = __decorate([
             carousel_module_1.CarouselModule,
             typeorm_1.TypeOrmModule.forFeature([
                 user_entity_1.User, vehicle_entity_1.Vehicle, auto_detail_entity_1.AutoDetail, moto_detail_entity_1.MotoDetail, maquinaria_detail_entity_1.MaquinariaDetail,
-                specification_entity_1.Specification, specification_group_entity_1.SpecificationGroup, carousel_entity_1.CarouselSlide
+                specification_entity_1.Specification, specification_group_entity_1.SpecificationGroup, carousel_entity_1.CarouselSlide, setting_entity_1.Setting
             ]),
         ],
         providers: [seed_service_1.SeedService],

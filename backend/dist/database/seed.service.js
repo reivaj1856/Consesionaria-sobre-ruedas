@@ -51,6 +51,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../users/entities/user.entity");
+const setting_entity_1 = require("../users/entities/setting.entity");
 const vehicle_entity_1 = require("../vehicles/entities/vehicle.entity");
 const auto_detail_entity_1 = require("../vehicles/entities/auto-detail.entity");
 const moto_detail_entity_1 = require("../vehicles/entities/moto-detail.entity");
@@ -62,6 +63,7 @@ const seed_data_1 = require("./seed-data");
 const bcrypt = __importStar(require("bcrypt"));
 let SeedService = SeedService_1 = class SeedService {
     userRepository;
+    settingRepository;
     vehicleRepository;
     autoRepository;
     motoRepository;
@@ -70,8 +72,9 @@ let SeedService = SeedService_1 = class SeedService {
     groupRepository;
     carouselRepository;
     logger = new common_1.Logger(SeedService_1.name);
-    constructor(userRepository, vehicleRepository, autoRepository, motoRepository, maquinariaRepository, specificationRepository, groupRepository, carouselRepository) {
+    constructor(userRepository, settingRepository, vehicleRepository, autoRepository, motoRepository, maquinariaRepository, specificationRepository, groupRepository, carouselRepository) {
         this.userRepository = userRepository;
+        this.settingRepository = settingRepository;
         this.vehicleRepository = vehicleRepository;
         this.autoRepository = autoRepository;
         this.motoRepository = motoRepository;
@@ -83,31 +86,54 @@ let SeedService = SeedService_1 = class SeedService {
     async onApplicationBootstrap() {
         this.logger.log('Iniciando verificación de datos de sembrado...');
         await this.seedUsers();
+        await this.seedSettings();
         await this.seedSpecifications();
         await this.seedVehicles();
         await this.seedCarousel();
         this.logger.log('Verificación de datos de sembrado finalizada.');
     }
     async seedUsers() {
-        const userCount = await this.userRepository.count();
-        if (userCount === 0) {
-            this.logger.log('No se encontraron usuarios. Creando usuarios predeterminados...');
+        const adminExists = await this.userRepository.findOne({ where: { email: 'admin@concesionaria.com' } });
+        if (!adminExists) {
+            this.logger.log('Cuentas de prueba no encontradas. Creando usuarios predeterminados...');
             const adminPasswordHash = await bcrypt.hash('admin123', 10);
             const clientPasswordHash = await bcrypt.hash('cliente123', 10);
             const admin = this.userRepository.create({
                 nombre: 'Administrador Concesionaria',
                 email: 'admin@concesionaria.com',
                 contrasenia: adminPasswordHash,
-                rol: 'admin',
+                rol: 'administrador',
             });
-            const client = this.userRepository.create({
-                nombre: 'Juan Pérez',
-                email: 'cliente@concesionaria.com',
+            const concesionaria = this.userRepository.create({
+                nombre: 'Toyota Bolivia',
+                email: 'toyota@concesionaria.com',
                 contrasenia: clientPasswordHash,
-                rol: 'cliente',
+                rol: 'concesionaria',
             });
-            await this.userRepository.save([admin, client]);
+            const savedConcesionaria = await this.userRepository.save(concesionaria);
+            await this.userRepository.save(admin);
+            const agente = this.userRepository.create({
+                nombre: 'Juan Agente',
+                email: 'agente@concesionaria.com',
+                contrasenia: clientPasswordHash,
+                rol: 'agente',
+                concesionariaId: savedConcesionaria.id,
+                beneficios: 0,
+            });
+            await this.userRepository.save(agente);
             this.logger.log('Usuarios predeterminados creados exitosamente.');
+        }
+    }
+    async seedSettings() {
+        const settingExists = await this.settingRepository.findOne({ where: { clave: 'beneficio_agente' } });
+        if (!settingExists) {
+            this.logger.log('No se encontró la configuración del beneficio. Sembrando...');
+            const setting = this.settingRepository.create({
+                clave: 'beneficio_agente',
+                valor: '100'
+            });
+            await this.settingRepository.save(setting);
+            this.logger.log('Configuraciones predeterminadas creadas exitosamente.');
         }
     }
     async seedSpecifications() {
@@ -289,14 +315,16 @@ exports.SeedService = SeedService;
 exports.SeedService = SeedService = SeedService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
-    __param(1, (0, typeorm_1.InjectRepository)(vehicle_entity_1.Vehicle)),
-    __param(2, (0, typeorm_1.InjectRepository)(auto_detail_entity_1.AutoDetail)),
-    __param(3, (0, typeorm_1.InjectRepository)(moto_detail_entity_1.MotoDetail)),
-    __param(4, (0, typeorm_1.InjectRepository)(maquinaria_detail_entity_1.MaquinariaDetail)),
-    __param(5, (0, typeorm_1.InjectRepository)(specification_entity_1.Specification)),
-    __param(6, (0, typeorm_1.InjectRepository)(specification_group_entity_1.SpecificationGroup)),
-    __param(7, (0, typeorm_1.InjectRepository)(carousel_entity_1.CarouselSlide)),
+    __param(1, (0, typeorm_1.InjectRepository)(setting_entity_1.Setting)),
+    __param(2, (0, typeorm_1.InjectRepository)(vehicle_entity_1.Vehicle)),
+    __param(3, (0, typeorm_1.InjectRepository)(auto_detail_entity_1.AutoDetail)),
+    __param(4, (0, typeorm_1.InjectRepository)(moto_detail_entity_1.MotoDetail)),
+    __param(5, (0, typeorm_1.InjectRepository)(maquinaria_detail_entity_1.MaquinariaDetail)),
+    __param(6, (0, typeorm_1.InjectRepository)(specification_entity_1.Specification)),
+    __param(7, (0, typeorm_1.InjectRepository)(specification_group_entity_1.SpecificationGroup)),
+    __param(8, (0, typeorm_1.InjectRepository)(carousel_entity_1.CarouselSlide)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Reservation } from '../../reservations/entities/reservation.entity';
 import { Favorite } from '../../favorites/entities/favorite.entity';
 import { Vehicle } from '../../vehicles/entities/vehicle.entity';
@@ -17,14 +17,18 @@ export class User {
   @Column()
   nombre: string;
 
-  @Column({ type: 'varchar', length: 20, default: 'cliente' })
-  rol: 'cliente' | 'admin';
+  @Column({ type: 'varchar', length: 20, default: 'agente' })
+  rol: 'administrador' | 'concesionaria' | 'agente';
 
-  @Column({ type: 'varchar', length: 20, default: 'gratis' })
-  plan: 'gratis' | 'negocio' | 'empresa';
+  @Column({ type: 'varchar', nullable: true })
+  concesionariaId: string | null;
 
-  @Column({ type: 'varchar', length: 30, nullable: true })
-  suscripcionFecha: string;
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'concesionariaId' })
+  concesionaria?: User;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  beneficios: number;
 
   @Column({ type: 'boolean', default: true })
   recibeDolares: boolean;

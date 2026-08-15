@@ -6,9 +6,10 @@ export declare class User {
     email: string;
     contrasenia: string;
     nombre: string;
-    rol: 'cliente' | 'admin';
-    plan: 'gratis' | 'negocio' | 'empresa';
-    suscripcionFecha: string;
+    rol: 'administrador' | 'concesionaria' | 'agente';
+    concesionariaId: string | null;
+    concesionaria?: User;
+    beneficios: number;
     recibeDolares: boolean;
     recibeBolivianos: boolean;
     reservas: Reservation[];

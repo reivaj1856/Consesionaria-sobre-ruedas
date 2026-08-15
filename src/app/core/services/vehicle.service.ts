@@ -61,12 +61,14 @@ export class VehicleService {
     }
   }
 
-  public async updateVehicle(id: string, vehicle: Partial<Vehicle>): Promise<void> {
+  public async updateVehicle(id: string, vehicle: Partial<Vehicle>): Promise<boolean> {
     try {
       await firstValueFrom(this.http.patch<Vehicle>(`${this.apiUrl}/${id}`, vehicle));
       await this.refreshVehicles();
+      return true;
     } catch (err) {
       console.error('Error al actualizar vehículo:', err);
+      return false;
     }
   }
 

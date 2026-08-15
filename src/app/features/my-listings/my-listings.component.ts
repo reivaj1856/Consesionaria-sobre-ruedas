@@ -12,7 +12,7 @@ import { Vehicle, getCategoryLabel } from '../../core/models/vehicle.model';
   template: `
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 fade-in">
       
-      <!-- Upper Section: Profile & Plan Info -->
+      <!-- Upper Section: Profile Info -->
       <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
         <div>
           <span class="text-xs font-bold uppercase tracking-wider text-blue-600">Mi Cuenta</span>
@@ -20,35 +20,29 @@ import { Vehicle, getCategoryLabel } from '../../core/models/vehicle.model';
           
           <div class="mt-4 flex flex-wrap gap-3 items-center">
             <span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 capitalize ring-1 ring-inset ring-blue-700/10">
-              Plan: {{ currentPlan() }}
+              Rol: {{ userRole() }}
             </span>
-            <span class="text-xs text-slate-500 font-medium">
-              Publicado: {{ listingsCount() }} de {{ planLimit() }} cuotas activas
-            </span>
+            @if (userConcesionaria()) {
+              <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 ring-1 ring-inset ring-slate-700/10">
+                Concesionaria: {{ userConcesionaria() }}
+              </span>
+            }
+            @if (userRole() === 'agente') {
+              <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 ring-1 ring-inset ring-emerald-600/10">
+                Beneficios Acumulados: {{ userBenefits() | currency:'USD':'$':'1.0-0' }}
+              </span>
+            }
           </div>
         </div>
 
         <div class="flex gap-2">
-          <a routerLink="/planes" 
-             class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-sm transition-colors">
-            Cambiar Plan
+          <a routerLink="/admin/crear" 
+             class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white shadow hover:bg-blue-500 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Publicar Vehículo
           </a>
-          
-          @if (listingsCount() < planLimit()) {
-            <a routerLink="/admin/crear" 
-               class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white shadow hover:bg-blue-500 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              Publicar Vehículo
-            </a>
-          } @else {
-            <button disabled 
-                    title="Límite alcanzado, por favor mejora tu plan de suscripción."
-                    class="inline-flex items-center justify-center rounded-xl bg-slate-300 px-5 py-3 text-xs font-bold text-slate-500 cursor-not-allowed">
-              Límite Alcanzado
-            </button>
-          }
         </div>
       </div>
 
@@ -106,13 +100,21 @@ import { Vehicle, getCategoryLabel } from '../../core/models/vehicle.model';
                       </td>
 
                       <td class="whitespace-nowrap px-6 py-4">
-                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
-                              [class]="v.estado === 'disponible' ? 'bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/10' : 'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/10'">
+                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize"
+                              [class]="v.estado === 'disponible' ? 'bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/10' : (v.estado === 'vendido' ? 'bg-slate-155 text-slate-600 ring-1 ring-inset ring-slate-400/10' : 'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/10')">
                           {{ v.estado }}
                         </span>
                       </td>
 
                       <td class="whitespace-nowrap px-6 py-4 text-right text-xs font-medium space-x-2">
+                        @if (userRole() === 'agente' && v.estado === 'disponible') {
+                          <button (click)="markAsSold(v.id)" class="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-1.5 font-bold text-white hover:bg-emerald-500 shadow-sm hover:shadow transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Vendido (+{{ benefitAmount() }} USD)
+                          </button>
+                        }
                         <a [routerLink]="['/admin/editar', v.id]" class="inline-flex rounded-lg border border-slate-200 bg-white px-3 py-1.5 font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-50 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-350 dark:hover:bg-slate-800 dark:hover:text-white shadow-sm transition-colors">
                           Editar
                         </a>
@@ -154,28 +156,36 @@ export class MyListingsComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
   private readonly authService = inject(AuthService);
   protected readonly getCategoryLabel = getCategoryLabel;
-
+ 
   protected readonly myListings = signal<Vehicle[]>([]);
   protected readonly loading = signal(true);
-
-  protected readonly currentPlan = computed(() => {
+  protected readonly benefitAmount = signal<number>(100);
+ 
+  protected readonly userRole = computed(() => {
     const user = this.authService.currentUser();
-    return user ? user.plan || 'gratis' : 'gratis';
+    return user ? user.rol : 'agente';
   });
 
-  protected readonly listingsCount = computed(() => this.myListings().length);
-
-  protected readonly planLimit = computed(() => {
-    const plan = this.currentPlan();
-    if (plan === 'negocio') return 60;
-    if (plan === 'empresa') return 300;
-    return 2;
+  protected readonly userConcesionaria = computed(() => {
+    const user = this.authService.currentUser();
+    return user && user.concesionaria ? user.concesionaria.nombre : null;
   });
 
+  protected readonly userBenefits = computed(() => {
+    const user = this.authService.currentUser();
+    return user ? user.beneficios || 0 : 0;
+  });
+ 
   public ngOnInit(): void {
     this.fetchListings();
+    this.loadBenefitSetting();
   }
 
+  private async loadBenefitSetting(): Promise<void> {
+    const val = await this.authService.getBeneficioSetting();
+    this.benefitAmount.set(val);
+  }
+ 
   private async fetchListings(): Promise<void> {
     this.loading.set(true);
     const data = await this.vehicleService.getMyListings();
@@ -183,6 +193,18 @@ export class MyListingsComponent implements OnInit {
     this.loading.set(false);
   }
 
+  protected async markAsSold(id: string): Promise<void> {
+    if (confirm('¿Confirmar venta de este vehículo? Se cargará el beneficio correspondiente de manera inmediata.')) {
+      const success = await this.vehicleService.updateVehicle(id, { estado: 'vendido' });
+      if (success) {
+        await this.authService.refreshProfile();
+        await this.fetchListings();
+      } else {
+        alert('Hubo un error al registrar la venta.');
+      }
+    }
+  }
+ 
   protected async deleteItem(id: string): Promise<void> {
     if (confirm('¿Estás seguro de que deseas eliminar esta publicación permanentemente?')) {
       await this.vehicleService.deleteVehicle(id);

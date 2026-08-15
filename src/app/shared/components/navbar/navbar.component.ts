@@ -82,8 +82,6 @@ import { ThemeService } from '../../../core/services/theme.service';
           </a>
           <a routerLink="/contacto" routerLinkActive="text-blue-600 dark:text-blue-400 font-semibold"
              class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contacto</a>
-          <a routerLink="/planes" routerLinkActive="text-blue-600 dark:text-blue-400 font-semibold"
-             class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Planes</a>
           @if (authService.currentUser() && !authService.isAdmin()) {
             <a routerLink="/mis-publicaciones" routerLinkActive="text-blue-600 dark:text-blue-400 font-semibold"
                class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Mis Publicaciones</a>
@@ -242,7 +240,6 @@ import { ThemeService } from '../../../core/services/theme.service';
           <a routerLink="/comparador" (click)="closeMenu()" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Comparar ({{ comparisonCount() }})</a>
           <a routerLink="/favoritos" (click)="closeMenu()" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Favoritos ({{ favoriteCount() }})</a>
           <a routerLink="/contacto" (click)="closeMenu()" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Contacto</a>
-          <a routerLink="/planes" (click)="closeMenu()" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Planes de Precios</a>
           @if (authService.currentUser() && !authService.isAdmin()) {
             <a routerLink="/mis-publicaciones" (click)="closeMenu()" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900">Mis Publicaciones</a>
             <a routerLink="/admin/crear" (click)="closeMenu()" class="block rounded-lg px-3 py-2 text-base font-medium text-white bg-blue-600 text-center hover:bg-blue-500">Publicar Vehículo</a>

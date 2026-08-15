@@ -21,14 +21,14 @@ export class ReservationsController {
   }
 
   @UseGuards(RolesGuard)
-  @Roles('admin')
+  @Roles('admin', 'administrador')
   @Get()
   async findAll() {
     return this.reservationsService.findAll();
   }
 
   @UseGuards(RolesGuard)
-  @Roles('admin')
+  @Roles('admin', 'administrador')
   @Patch(':id/status')
   async updateStatus(
     @Param('id') id: string,

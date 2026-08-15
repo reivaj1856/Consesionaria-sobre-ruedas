@@ -22,6 +22,7 @@ const moto_detail_entity_1 = require("./entities/moto-detail.entity");
 const maquinaria_detail_entity_1 = require("./entities/maquinaria-detail.entity");
 const specification_entity_1 = require("../specifications/entities/specification.entity");
 const user_entity_1 = require("../users/entities/user.entity");
+const setting_entity_1 = require("../users/entities/setting.entity");
 let VehiclesService = class VehiclesService {
     vehicleRepository;
     autoRepository;
@@ -29,13 +30,15 @@ let VehiclesService = class VehiclesService {
     maquinariaRepository;
     specificationRepository;
     userRepository;
-    constructor(vehicleRepository, autoRepository, motoRepository, maquinariaRepository, specificationRepository, userRepository) {
+    settingRepository;
+    constructor(vehicleRepository, autoRepository, motoRepository, maquinariaRepository, specificationRepository, userRepository, settingRepository) {
         this.vehicleRepository = vehicleRepository;
         this.autoRepository = autoRepository;
         this.motoRepository = motoRepository;
         this.maquinariaRepository = maquinariaRepository;
         this.specificationRepository = specificationRepository;
         this.userRepository = userRepository;
+        this.settingRepository = settingRepository;
     }
     async findAll(query) {
         const where = {};
@@ -103,22 +106,13 @@ let VehiclesService = class VehiclesService {
         return vehicle;
     }
     async create(createVehicleDto, creator) {
-        const dbUser = await this.userRepository.findOne({ where: { id: creator.id } });
+        const dbUser = await this.userRepository.findOne({ where: { id: creator.id || creator.sub } });
         if (!dbUser) {
             throw new common_1.NotFoundException('Usuario creador no encontrado.');
         }
-        if (dbUser.rol === 'cliente') {
-            const activeCount = await this.vehicleRepository.count({
-                where: { userId: dbUser.id }
-            });
-            let limit = 2;
-            if (dbUser.plan === 'negocio')
-                limit = 60;
-            if (dbUser.plan === 'empresa')
-                limit = 300;
-            if (activeCount >= limit) {
-                throw new common_1.BadRequestException(`Límite de publicaciones alcanzado. Tu plan actual (${dbUser.plan}) permite un máximo de ${limit} publicaciones activas.`);
-            }
+        const allowedRoles = ['admin', 'administrador', 'concesionaria', 'agente'];
+        if (!allowedRoles.includes(dbUser.rol)) {
+            throw new common_1.ForbiddenException('No tienes permiso para publicar vehículos.');
         }
         const id = `${createVehicleDto.categoria}-${Date.now()}`;
         const fechaIngreso = new Date().toISOString().split('T')[0];
@@ -127,7 +121,7 @@ let VehiclesService = class VehiclesService {
             ...baseData,
             id,
             fechaIngreso,
-            userId: dbUser.rol === 'admin' ? null : dbUser.id,
+            userId: dbUser.rol === 'administrador' ? null : dbUser.id,
             especificaciones: [],
         });
         if (especificaciones && especificaciones.length > 0) {
@@ -162,8 +156,23 @@ let VehiclesService = class VehiclesService {
     }
     async update(id, updateVehicleDto, user) {
         const vehicle = await this.findOne(id);
-        if (user && user.rol !== 'admin' && vehicle.userId !== user.id) {
+        if (user && user.rol !== 'admin' && user.rol !== 'administrador' && vehicle.userId !== user.id) {
             throw new common_1.ForbiddenException('No tienes permiso para modificar esta publicación.');
+        }
+        const oldEstado = vehicle.estado;
+        const newEstado = updateVehicleDto.estado;
+        if (newEstado === 'vendido' && oldEstado !== 'vendido' && !vehicle.beneficioEntregado && vehicle.userId) {
+            const owner = await this.userRepository.findOne({ where: { id: vehicle.userId } });
+            if (owner && owner.rol === 'agente') {
+                let benefitAmount = 100;
+                const setting = await this.settingRepository.findOne({ where: { clave: 'beneficio_agente' } });
+                if (setting) {
+                    benefitAmount = parseFloat(setting.valor) || 100;
+                }
+                owner.beneficios = Number(owner.beneficios || 0) + benefitAmount;
+                await this.userRepository.save(owner);
+                vehicle.beneficioEntregado = true;
+            }
         }
         const { autoDetail, motoDetail, maquinariaDetail, especificaciones, ...baseData } = updateVehicleDto;
         Object.assign(vehicle, baseData);
@@ -242,7 +251,9 @@ exports.VehiclesService = VehiclesService = __decorate([
     __param(3, (0, typeorm_1.InjectRepository)(maquinaria_detail_entity_1.MaquinariaDetail)),
     __param(4, (0, typeorm_1.InjectRepository)(specification_entity_1.Specification)),
     __param(5, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __param(6, (0, typeorm_1.InjectRepository)(setting_entity_1.Setting)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

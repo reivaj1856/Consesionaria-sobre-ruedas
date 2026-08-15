@@ -2,6 +2,7 @@ import { Injectable, OnApplicationBootstrap, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
+import { Setting } from '../users/entities/setting.entity';
 import { Vehicle } from '../vehicles/entities/vehicle.entity';
 import { AutoDetail } from '../vehicles/entities/auto-detail.entity';
 import { MotoDetail } from '../vehicles/entities/moto-detail.entity';
@@ -19,6 +20,8 @@ export class SeedService implements OnApplicationBootstrap {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Setting)
+    private readonly settingRepository: Repository<Setting>,
     @InjectRepository(Vehicle)
     private readonly vehicleRepository: Repository<Vehicle>,
     @InjectRepository(AutoDetail)
@@ -38,6 +41,7 @@ export class SeedService implements OnApplicationBootstrap {
   async onApplicationBootstrap() {
     this.logger.log('Iniciando verificación de datos de sembrado...');
     await this.seedUsers();
+    await this.seedSettings();
     await this.seedSpecifications();
     await this.seedVehicles();
     await this.seedCarousel();
@@ -45,9 +49,9 @@ export class SeedService implements OnApplicationBootstrap {
   }
 
   private async seedUsers() {
-    const userCount = await this.userRepository.count();
-    if (userCount === 0) {
-      this.logger.log('No se encontraron usuarios. Creando usuarios predeterminados...');
+    const adminExists = await this.userRepository.findOne({ where: { email: 'admin@concesionaria.com' } });
+    if (!adminExists) {
+      this.logger.log('Cuentas de prueba no encontradas. Creando usuarios predeterminados...');
       
       const adminPasswordHash = await bcrypt.hash('admin123', 10);
       const clientPasswordHash = await bcrypt.hash('cliente123', 10);
@@ -56,18 +60,43 @@ export class SeedService implements OnApplicationBootstrap {
         nombre: 'Administrador Concesionaria',
         email: 'admin@concesionaria.com',
         contrasenia: adminPasswordHash,
-        rol: 'admin',
+        rol: 'administrador',
       });
 
-      const client = this.userRepository.create({
-        nombre: 'Juan Pérez',
-        email: 'cliente@concesionaria.com',
+      const concesionaria = this.userRepository.create({
+        nombre: 'Toyota Bolivia',
+        email: 'toyota@concesionaria.com',
         contrasenia: clientPasswordHash,
-        rol: 'cliente',
+        rol: 'concesionaria',
       });
 
-      await this.userRepository.save([admin, client]);
+      const savedConcesionaria = await this.userRepository.save(concesionaria);
+      await this.userRepository.save(admin);
+
+      const agente = this.userRepository.create({
+        nombre: 'Juan Agente',
+        email: 'agente@concesionaria.com',
+        contrasenia: clientPasswordHash,
+        rol: 'agente',
+        concesionariaId: savedConcesionaria.id,
+        beneficios: 0,
+      });
+
+      await this.userRepository.save(agente);
       this.logger.log('Usuarios predeterminados creados exitosamente.');
+    }
+  }
+
+  private async seedSettings() {
+    const settingExists = await this.settingRepository.findOne({ where: { clave: 'beneficio_agente' } });
+    if (!settingExists) {
+      this.logger.log('No se encontró la configuración del beneficio. Sembrando...');
+      const setting = this.settingRepository.create({
+        clave: 'beneficio_agente',
+        valor: '100'
+      });
+      await this.settingRepository.save(setting);
+      this.logger.log('Configuraciones predeterminadas creadas exitosamente.');
     }
   }
 

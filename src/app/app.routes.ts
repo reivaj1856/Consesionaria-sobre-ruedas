@@ -110,7 +110,7 @@ export const routes: Routes = [
   },
   { 
     path: 'planes', 
-    component: PlansComponent 
+    redirectTo: '' 
   },
   { 
     path: 'mis-publicaciones', 

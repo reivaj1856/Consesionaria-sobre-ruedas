@@ -37,6 +37,7 @@ let Vehicle = class Vehicle {
     descripcion;
     destacado;
     estado;
+    beneficioEntregado;
     fechaIngreso;
     telefonoContacto;
     userId;
@@ -121,6 +122,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 20, default: 'disponible' }),
     __metadata("design:type", String)
 ], Vehicle.prototype, "estado", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: false }),
+    __metadata("design:type", Boolean)
+], Vehicle.prototype, "beneficioEntregado", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 20 }),
     __metadata("design:type", String)

@@ -18,13 +18,14 @@ const vehicles_controller_1 = require("./vehicles.controller");
 const auth_module_1 = require("../auth/auth.module");
 const specifications_module_1 = require("../specifications/specifications.module");
 const user_entity_1 = require("../users/entities/user.entity");
+const setting_entity_1 = require("../users/entities/setting.entity");
 let VehiclesModule = class VehiclesModule {
 };
 exports.VehiclesModule = VehiclesModule;
 exports.VehiclesModule = VehiclesModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([vehicle_entity_1.Vehicle, auto_detail_entity_1.AutoDetail, moto_detail_entity_1.MotoDetail, maquinaria_detail_entity_1.MaquinariaDetail, user_entity_1.User]),
+            typeorm_1.TypeOrmModule.forFeature([vehicle_entity_1.Vehicle, auto_detail_entity_1.AutoDetail, moto_detail_entity_1.MotoDetail, maquinaria_detail_entity_1.MaquinariaDetail, user_entity_1.User, setting_entity_1.Setting]),
             auth_module_1.AuthModule,
             specifications_module_1.SpecificationsModule,
         ],

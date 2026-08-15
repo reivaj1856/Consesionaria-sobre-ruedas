@@ -15,7 +15,7 @@ export class QuotesController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles('admin', 'administrador')
   @Get()
   async findAll() {
     return this.quotesService.findAll();

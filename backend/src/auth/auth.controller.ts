@@ -2,7 +2,6 @@ import { Controller, Post, Get, Patch, Body, UseGuards, Request, Param } from '@
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { SubscribeDto } from '../users/dto/subscribe.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
@@ -27,23 +26,34 @@ export class AuthController {
     return this.authService.findUserById(req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('subscribe')
-  async subscribe(@Request() req: any, @Body() subscribeDto: SubscribeDto) {
-    return this.authService.subscribe(req.user.id, subscribeDto.plan);
+  @Get('concesionarias')
+  async findConcesionarias() {
+    return this.authService.findConcesionarias();
+  }
+
+  @Get('settings/beneficio')
+  async getBeneficioSetting() {
+    return this.authService.getBeneficioSetting();
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles('admin', 'administrador')
+  @Patch('settings/beneficio')
+  async updateBeneficioSetting(@Body('valor') valor: number) {
+    return this.authService.updateBeneficioSetting(valor);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'administrador')
   @Get('users')
   async findAllUsers() {
     return this.authService.findAllUsers();
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
-  @Patch('users/:id/plan')
-  async updateUserPlan(@Param('id') id: string, @Body('plan') plan: 'gratis' | 'negocio' | 'empresa') {
-    return this.authService.updateUserPlan(id, plan);
+  @Roles('admin', 'administrador')
+  @Patch('users/:id/admin-update')
+  async adminUpdateUser(@Param('id') id: string, @Body() updateData: any) {
+    return this.authService.adminUpdateUser(id, updateData);
   }
 }

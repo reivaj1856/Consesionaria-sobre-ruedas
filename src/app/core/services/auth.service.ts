@@ -59,10 +59,10 @@ export class AuthService {
     }
   }
 
-  public async register(nombre: string, email: string, contrasenia: string, recibeDolares: boolean, recibeBolivianos: boolean): Promise<boolean> {
+  public async register(nombre: string, email: string, contrasenia: string, rol: 'administrador' | 'concesionaria' | 'agente', concesionariaId: string | null, recibeDolares: boolean, recibeBolivianos: boolean): Promise<boolean> {
     try {
       const response = await firstValueFrom(
-        this.http.post<{ token: string; user: User }>(`${this.apiUrl}/register`, { nombre, email, contrasenia, recibeDolares, recibeBolivianos })
+        this.http.post<{ token: string; user: User }>(`${this.apiUrl}/register`, { nombre, email, contrasenia, rol, concesionariaId, recibeDolares, recibeBolivianos })
       );
 
       if (response && response.token) {
@@ -80,22 +80,22 @@ export class AuthService {
     }
   }
 
-  public async subscribe(plan: 'gratis' | 'negocio' | 'empresa'): Promise<boolean> {
+  public async refreshProfile(): Promise<void> {
     try {
-      const response = await firstValueFrom(
-        this.http.post<{ success: boolean; user: User }>(`${this.apiUrl}/subscribe`, { plan })
-      );
-      if (response && response.user) {
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(this.sessionKey, JSON.stringify(response.user));
-        }
-        this.currentUserSignal.set(response.user);
-        return true;
-      }
-      return false;
+      const freshUser = await firstValueFrom(this.http.get<User>(`${this.apiUrl}/me`));
+      this.currentUserSignal.set(freshUser);
+      localStorage.setItem(this.sessionKey, JSON.stringify(freshUser));
+    } catch (e) {
+      console.error('Error al restaurar sesión activa:', e);
+    }
+  }
+
+  public async getConcesionarias(): Promise<User[]> {
+    try {
+      return await firstValueFrom(this.http.get<User[]>(`${this.apiUrl}/concesionarias`));
     } catch (err) {
-      console.error('Error al suscribirse:', err);
-      return false;
+      console.error('Error al obtener concesionarias:', err);
+      return [];
     }
   }
 
@@ -108,14 +108,35 @@ export class AuthService {
     }
   }
 
-  public async updateUserPlan(userId: string, plan: 'gratis' | 'negocio' | 'empresa'): Promise<boolean> {
+  public async adminUpdateUser(userId: string, updateData: any): Promise<boolean> {
     try {
       const response = await firstValueFrom(
-        this.http.patch<{ success: boolean }>(`${this.apiUrl}/users/${userId}/plan`, { plan })
+        this.http.patch<{ success: boolean }>(`${this.apiUrl}/users/${userId}/admin-update`, updateData)
       );
       return response && response.success;
     } catch (err) {
-      console.error('Error al actualizar plan del usuario:', err);
+      console.error('Error al actualizar usuario:', err);
+      return false;
+    }
+  }
+
+  public async getBeneficioSetting(): Promise<number> {
+    try {
+      const response = await firstValueFrom(this.http.get<{ valor: number }>(`${this.apiUrl}/settings/beneficio`));
+      return response ? response.valor : 100;
+    } catch (err) {
+      console.error('Error al obtener beneficio:', err);
+      return 100;
+    }
+  }
+
+  public async updateBeneficioSetting(valor: number): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.http.patch<{ success: boolean }>(`${this.apiUrl}/settings/beneficio`, { valor }));
+      return response && response.success;
+    } catch (err) {
+      console.error('Error al actualizar beneficio:', err);
       return false;
     }
   }
@@ -134,6 +155,6 @@ export class AuthService {
 
   public isAdmin(): boolean {
     const user = this.currentUser();
-    return user !== null && user.rol === 'admin';
+    return user !== null && user.rol === 'administrador';
   }
 }

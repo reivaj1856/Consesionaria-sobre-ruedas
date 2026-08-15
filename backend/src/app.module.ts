@@ -20,6 +20,7 @@ import { MaquinariaDetail } from './vehicles/entities/maquinaria-detail.entity';
 import { Specification } from './specifications/entities/specification.entity';
 import { SpecificationGroup } from './specifications/entities/specification-group.entity';
 import { CarouselSlide } from './carousel/entities/carousel.entity';
+import { Setting } from './users/entities/setting.entity';
 
 @Module({
   imports: [
@@ -39,7 +40,7 @@ import { CarouselSlide } from './carousel/entities/carousel.entity';
         entities: [
           User, Vehicle, Reservation, Favorite, Quote,
           AutoDetail, MotoDetail, MaquinariaDetail,
-          Specification, SpecificationGroup, CarouselSlide
+          Specification, SpecificationGroup, CarouselSlide, Setting
         ],
         synchronize: true,
       }),
@@ -53,7 +54,7 @@ import { CarouselSlide } from './carousel/entities/carousel.entity';
     CarouselModule,
     TypeOrmModule.forFeature([
       User, Vehicle, AutoDetail, MotoDetail, MaquinariaDetail,
-      Specification, SpecificationGroup, CarouselSlide
+      Specification, SpecificationGroup, CarouselSlide, Setting
     ]),
   ],
   providers: [SeedService],

@@ -50,17 +50,20 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../users/entities/user.entity");
+const setting_entity_1 = require("../users/entities/setting.entity");
 const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
 let AuthService = class AuthService {
     userRepository;
+    settingRepository;
     jwtService;
-    constructor(userRepository, jwtService) {
+    constructor(userRepository, settingRepository, jwtService) {
         this.userRepository = userRepository;
+        this.settingRepository = settingRepository;
         this.jwtService = jwtService;
     }
     async register(registerDto) {
-        const { email, contrasenia, nombre } = registerDto;
+        const { email, contrasenia, nombre, rol, concesionariaId } = registerDto;
         const existingUser = await this.userRepository.findOne({ where: { email } });
         if (existingUser) {
             throw new common_1.BadRequestException('El correo electrónico ya está registrado.');
@@ -70,9 +73,9 @@ let AuthService = class AuthService {
             email,
             contrasenia: hashedPassword,
             nombre,
-            rol: 'cliente',
-            plan: 'gratis',
-            suscripcionFecha: new Date().toISOString().split('T')[0],
+            rol,
+            concesionariaId: (rol === 'agente') ? concesionariaId : null,
+            beneficios: 0,
             recibeDolares: registerDto.recibeDolares !== undefined ? registerDto.recibeDolares : true,
             recibeBolivianos: registerDto.recibeBolivianos !== undefined ? registerDto.recibeBolivianos : true,
         });
@@ -85,8 +88,8 @@ let AuthService = class AuthService {
                 email: savedUser.email,
                 nombre: savedUser.nombre,
                 rol: savedUser.rol,
-                plan: savedUser.plan,
-                suscripcionFecha: savedUser.suscripcionFecha,
+                concesionariaId: savedUser.concesionariaId,
+                beneficios: savedUser.beneficios,
                 recibeDolares: savedUser.recibeDolares,
                 recibeBolivianos: savedUser.recibeBolivianos,
             },
@@ -110,15 +113,18 @@ let AuthService = class AuthService {
                 email: user.email,
                 nombre: user.nombre,
                 rol: user.rol,
-                plan: user.plan,
-                suscripcionFecha: user.suscripcionFecha,
+                concesionariaId: user.concesionariaId,
+                beneficios: user.beneficios,
                 recibeDolares: user.recibeDolares,
                 recibeBolivianos: user.recibeBolivianos,
             },
         };
     }
     async findUserById(id) {
-        const user = await this.userRepository.findOne({ where: { id } });
+        const user = await this.userRepository.findOne({
+            where: { id },
+            relations: { concesionaria: true }
+        });
         if (!user) {
             throw new common_1.UnauthorizedException('Usuario no encontrado.');
         }
@@ -127,65 +133,81 @@ let AuthService = class AuthService {
             email: user.email,
             nombre: user.nombre,
             rol: user.rol,
-            plan: user.plan,
-            suscripcionFecha: user.suscripcionFecha,
+            concesionariaId: user.concesionariaId,
+            concesionaria: user.concesionaria ? { id: user.concesionaria.id, nombre: user.concesionaria.nombre } : null,
+            beneficios: user.beneficios,
             recibeDolares: user.recibeDolares,
             recibeBolivianos: user.recibeBolivianos,
         };
     }
-    async subscribe(userId, plan) {
-        const user = await this.userRepository.findOne({ where: { id: userId } });
-        if (!user) {
-            throw new common_1.UnauthorizedException('Usuario no encontrado.');
+    async findConcesionarias() {
+        return this.userRepository.find({
+            where: { rol: 'concesionaria' },
+            select: { id: true, nombre: true },
+            order: { nombre: 'ASC' }
+        });
+    }
+    async getBeneficioSetting() {
+        let setting = await this.settingRepository.findOne({ where: { clave: 'beneficio_agente' } });
+        if (!setting) {
+            setting = this.settingRepository.create({ clave: 'beneficio_agente', valor: '100' });
+            await this.settingRepository.save(setting);
         }
-        user.plan = plan;
-        user.suscripcionFecha = new Date().toISOString().split('T')[0];
-        await this.userRepository.save(user);
-        return {
-            success: true,
-            message: `Plan actualizado a ${plan} con éxito.`,
-            user: {
-                id: user.id,
-                email: user.email,
-                nombre: user.nombre,
-                rol: user.rol,
-                plan: user.plan,
-                suscripcionFecha: user.suscripcionFecha,
-                recibeDolares: user.recibeDolares,
-                recibeBolivianos: user.recibeBolivianos,
-            }
-        };
+        return { valor: parseFloat(setting.valor) || 100 };
+    }
+    async updateBeneficioSetting(valor) {
+        let setting = await this.settingRepository.findOne({ where: { clave: 'beneficio_agente' } });
+        if (!setting) {
+            setting = this.settingRepository.create({ clave: 'beneficio_agente', valor: valor.toString() });
+        }
+        else {
+            setting.valor = valor.toString();
+        }
+        await this.settingRepository.save(setting);
+        return { success: true, valor };
     }
     async findAllUsers() {
         return this.userRepository.find({
+            relations: { concesionaria: true },
             select: {
                 id: true,
                 email: true,
                 nombre: true,
                 rol: true,
-                plan: true,
-                suscripcionFecha: true,
+                concesionariaId: true,
+                beneficios: true,
                 recibeDolares: true,
-                recibeBolivianos: true
+                recibeBolivianos: true,
+                concesionaria: {
+                    id: true,
+                    nombre: true
+                }
             },
             order: { nombre: 'ASC' }
         });
     }
-    async updateUserPlan(id, plan) {
+    async adminUpdateUser(id, updateData) {
         const user = await this.userRepository.findOne({ where: { id } });
         if (!user) {
             throw new common_1.BadRequestException('Usuario no encontrado.');
         }
-        user.plan = plan;
-        user.suscripcionFecha = new Date().toISOString().split('T')[0];
+        if (updateData.rol !== undefined) {
+            user.rol = updateData.rol;
+        }
+        if (updateData.concesionariaId !== undefined) {
+            user.concesionariaId = updateData.concesionariaId || null;
+        }
+        if (updateData.beneficios !== undefined) {
+            user.beneficios = Number(updateData.beneficios) || 0;
+        }
         await this.userRepository.save(user);
         return {
             success: true,
-            message: `Plan del usuario ${user.nombre} actualizado a ${plan} con éxito.`
+            message: `Usuario ${user.nombre} actualizado con éxito.`
         };
     }
     generateToken(user) {
-        const payload = { sub: user.id, email: user.email, nombre: user.nombre, rol: user.rol, plan: user.plan };
+        const payload = { sub: user.id, email: user.email, nombre: user.nombre, rol: user.rol };
         return this.jwtService.sign(payload);
     }
 };
@@ -193,7 +215,9 @@ exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __param(1, (0, typeorm_1.InjectRepository)(setting_entity_1.Setting)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         jwt_1.JwtService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

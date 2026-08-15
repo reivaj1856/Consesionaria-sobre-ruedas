@@ -32,7 +32,7 @@ export class VehiclesController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'cliente')
+  @Roles('admin', 'cliente', 'administrador', 'concesionaria', 'agente')
   @Post()
   async create(@Request() req: any, @Body() createVehicleDto: CreateVehicleDto) {
     const user = req.user;
@@ -40,7 +40,7 @@ export class VehiclesController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'cliente')
+  @Roles('admin', 'cliente', 'administrador', 'concesionaria', 'agente')
   @Patch(':id')
   async update(@Param('id') id: string, @Request() req: any, @Body() updateVehicleDto: any) {
     const user = req.user;
@@ -48,7 +48,7 @@ export class VehiclesController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'cliente')
+  @Roles('admin', 'cliente', 'administrador', 'concesionaria', 'agente')
   @Delete(':id')
   async remove(@Param('id') id: string, @Request() req: any) {
     const user = req.user;

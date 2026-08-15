@@ -432,7 +432,7 @@ export class AdminFormComponent implements OnInit {
   // Premium feature validator
   protected readonly isPremiumUser = computed(() => {
     const user = this.authService.currentUser();
-    return user !== null && (user.rol === 'admin' || user.plan === 'negocio' || user.plan === 'empresa');
+    return user !== null;
   });
 
   // Especificaciones
