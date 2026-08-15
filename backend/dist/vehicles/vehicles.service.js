@@ -235,7 +235,7 @@ let VehiclesService = class VehiclesService {
     }
     async remove(id, user) {
         const vehicle = await this.findOne(id);
-        if (user && user.rol !== 'admin' && vehicle.userId !== user.id) {
+        if (user && user.rol !== 'admin' && user.rol !== 'administrador' && vehicle.userId !== user.id) {
             throw new common_1.ForbiddenException('No tienes permiso para eliminar esta publicación.');
         }
         await this.vehicleRepository.remove(vehicle);

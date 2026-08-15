@@ -253,8 +253,8 @@ export class VehiclesService {
   async remove(id: string, user?: any) {
     const vehicle = await this.findOne(id);
 
-    // Verificar propiedad si no es admin y se proporciona el usuario
-    if (user && user.rol !== 'admin' && vehicle.userId !== user.id) {
+    // Verificar propiedad si no es admin/administrador y se proporciona el usuario
+    if (user && user.rol !== 'admin' && user.rol !== 'administrador' && vehicle.userId !== user.id) {
       throw new ForbiddenException('No tienes permiso para eliminar esta publicación.');
     }
 

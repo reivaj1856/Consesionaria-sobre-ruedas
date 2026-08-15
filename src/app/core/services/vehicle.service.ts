@@ -52,12 +52,15 @@ export class VehicleService {
     }
   }
 
-  public async createVehicle(vehicle: Omit<Vehicle, 'id' | 'fechaIngreso'>): Promise<void> {
+  public async createVehicle(vehicle: Omit<Vehicle, 'id' | 'fechaIngreso'>): Promise<boolean> {
     try {
       await firstValueFrom(this.http.post<Vehicle>(this.apiUrl, vehicle));
       await this.refreshVehicles();
-    } catch (err) {
+      return true;
+    } catch (err: any) {
       console.error('Error al crear vehículo:', err);
+      const message = err.error?.message ? (Array.isArray(err.error.message) ? err.error.message.join(', ') : err.error.message) : (err.message || 'Error del servidor');
+      throw new Error(message);
     }
   }
 
@@ -66,18 +69,22 @@ export class VehicleService {
       await firstValueFrom(this.http.patch<Vehicle>(`${this.apiUrl}/${id}`, vehicle));
       await this.refreshVehicles();
       return true;
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error al actualizar vehículo:', err);
-      return false;
+      const message = err.error?.message ? (Array.isArray(err.error.message) ? err.error.message.join(', ') : err.error.message) : (err.message || 'Error del servidor');
+      throw new Error(message);
     }
   }
 
-  public async deleteVehicle(id: string): Promise<void> {
+  public async deleteVehicle(id: string): Promise<boolean> {
     try {
       await firstValueFrom(this.http.delete<void>(`${this.apiUrl}/${id}`));
       await this.refreshVehicles();
-    } catch (err) {
+      return true;
+    } catch (err: any) {
       console.error('Error al eliminar vehículo:', err);
+      const message = err.error?.message ? (Array.isArray(err.error.message) ? err.error.message.join(', ') : err.error.message) : (err.message || 'Error del servidor');
+      throw new Error(message);
     }
   }
 }
