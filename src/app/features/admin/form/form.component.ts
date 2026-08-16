@@ -418,7 +418,7 @@ interface HotspotConfig {
       
       <!-- MODAL: Agregar Especificación -->
       @if (isAddSpecModalOpen()) {
-        <div class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="fixed inset-0 z-50 overflow-y-auto bg-black/50 flex items-center justify-center p-4">
           <div class="w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl relative">
             <button type="button" (click)="closeAddSpecModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -511,7 +511,7 @@ export class AdminFormComponent implements OnInit {
       condicion: ['usado', [Validators.required]],
       ubicacion: ['', [Validators.required]],
       descripcion: ['', [Validators.required, Validators.minLength(10)]],
-      telefonoContacto: ['59177490451', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
+      telefonoContacto: ['59177490451', [Validators.required, Validators.pattern(/^[\+0-9\s\-]+$/)]],
       destacado: [false],
       estado: ['disponible', [Validators.required]],
       // Autos
@@ -710,7 +710,7 @@ export class AdminFormComponent implements OnInit {
     if (this.vehicleForm.get('precio')?.invalid) missingFields.push('Precio debe ser mayor a 0');
     if (this.vehicleForm.get('ubicacion')?.invalid) missingFields.push('Ubicación física es requerida');
     if (this.vehicleForm.get('descripcion')?.invalid) missingFields.push('Descripción debe tener al menos 10 caracteres');
-    if (this.vehicleForm.get('telefonoContacto')?.invalid) missingFields.push('Teléfono de contacto es requerido (solo números)');
+    if (this.vehicleForm.get('telefonoContacto')?.invalid) missingFields.push('Teléfono de contacto es requerido (ej. +591 77490451)');
     if (!mainImg) missingFields.push('Debe cargar la Imagen Principal del vehículo');
 
     if (this.vehicleForm.invalid || !mainImg) {

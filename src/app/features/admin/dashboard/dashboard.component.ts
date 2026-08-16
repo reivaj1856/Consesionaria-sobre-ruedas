@@ -174,72 +174,71 @@ import { Vehicle, getCategoryLabel } from '../../../core/models/vehicle.model';
         </div>
       </div>
 
-      <!-- Toast Feedback -->
-      @if (toast()) {
-        <div class="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl px-5 py-4 shadow-2xl transition-all border animate-bounce"
-             [class.bg-emerald-950]="toast()?.type === 'success'"
-             [class.border-emerald-800]="toast()?.type === 'success'"
-             [class.text-emerald-200]="toast()?.type === 'success'"
-             [class.bg-rose-950]="toast()?.type === 'error'"
-             [class.border-rose-800]="toast()?.type === 'error'"
-             [class.text-rose-200]="toast()?.type === 'error'">
-          @if (toast()?.type === 'success') {
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+    </div><!-- /fin del div fade-in -->
+
+
+    <!-- Toast Feedback — fuera del contenedor fade-in para que position:fixed funcione correctamente -->
+    @if (toast()) {
+      <div class="fixed bottom-6 right-6 z-[10000] flex items-center gap-3 rounded-2xl px-5 py-4 shadow-2xl border"
+           [class.bg-emerald-950]="toast()?.type === 'success'"
+           [class.border-emerald-800]="toast()?.type === 'success'"
+           [class.text-emerald-200]="toast()?.type === 'success'"
+           [class.bg-rose-950]="toast()?.type === 'error'"
+           [class.border-rose-800]="toast()?.type === 'error'"
+           [class.text-rose-200]="toast()?.type === 'error'">
+        @if (toast()?.type === 'success') {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        }
+        <span class="text-sm font-semibold">{{ toast()?.message }}</span>
+      </div>
+    }
+
+    <!-- MODAL CONFIRMACIÓN ELIMINACIÓN — fuera del fade-in para que position:fixed apunte al viewport -->
+    @if (deleteTarget()) {
+      <div class="fixed top-1/2 left-1/2 z-[10000] w-[90vw] max-w-sm bg-white rounded-2xl p-5 shadow-[0_8px_40px_rgba(0,0,0,0.2)] border border-slate-200"
+           style="position:fixed;top:50vh;left:50vw;transform:translate(-50%,-50%);">
+        
+        <div class="flex items-start gap-3">
+          <div class="h-9 w-9 rounded-full bg-red-50 text-red-500 flex items-center justify-center shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
-          } @else {
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          }
-          <span class="text-sm font-semibold">{{ toast()?.message }}</span>
-        </div>
-      }
-
-      <!-- MODAL ELEGANTE DE CONFIRMACIÓN DE ELIMINACIÓN -->
-      @if (deleteTarget()) {
-        <div class="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4">
-          <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 relative transform transition-all">
-            
-            <!-- Warning Badge -->
-            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 ring-8 ring-rose-50 dark:ring-rose-950/30">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </div>
-
-            <div class="mt-4 text-center">
-              <h3 class="font-heading text-xl font-extrabold text-slate-900 dark:text-white">¿Eliminar Vehículo?</h3>
-              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                Estás a punto de eliminar permanentemente <strong class="text-slate-900 dark:text-white font-bold">"{{ deleteTarget()?.name }}"</strong>. Esta acción eliminará sus fotos y fichas técnicas y no se puede deshacer.
-              </p>
-            </div>
-
-            <!-- Actions -->
-            <div class="mt-6 flex gap-3">
-              <button type="button" (click)="confirmDelete()" [disabled]="isDeleting()"
-                      class="w-1/2 rounded-xl bg-rose-600 px-4 py-3 text-sm font-bold text-white shadow-md hover:bg-rose-500 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
-                @if (isDeleting()) {
-                  <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span>Eliminando...</span>
-                } @else {
-                  <span>Sí, Eliminar</span>
-                }
-              </button>
-              <button type="button" (click)="cancelDelete()" [disabled]="isDeleting()"
-                      class="w-1/2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                Cancelar
-              </button>
-            </div>
-
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="text-sm font-bold text-slate-900">¿Eliminar vehículo del inventario?</h3>
+            <p class="mt-1 text-xs text-slate-500 leading-relaxed">
+              Se eliminará permanentemente <strong class="text-slate-700">"{{ deleteTarget()?.name }}"</strong>. Esta acción no se puede deshacer.
+            </p>
           </div>
         </div>
-      }
 
-    </div>
+        <div class="mt-4 flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" (click)="cancelDelete()" [disabled]="isDeleting()"
+                  class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-slate-600 text-xs font-semibold hover:bg-slate-50 transition-colors disabled:opacity-50">
+            Cancelar
+          </button>
+          <button type="button" (click)="confirmDelete()" [disabled]="isDeleting()"
+                  class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-semibold shadow-sm transition-colors flex items-center gap-1.5 disabled:opacity-60">
+            @if (isDeleting()) {
+              <svg class="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Eliminando...</span>
+            } @else {
+              <span>Sí, Eliminar</span>
+            }
+          </button>
+        </div>
+
+      </div>
+    }
   `
 })
 export class AdminDashboardComponent {
