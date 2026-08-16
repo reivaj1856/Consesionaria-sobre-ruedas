@@ -27,7 +27,7 @@ import { QuoteService } from '../../core/services/quote.service';
           <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
             <div class="flex items-center gap-2">
               <span class="inline-flex h-2.5 w-2.5 rounded-full bg-blue-600 animate-pulse"></span>
-              <h3 class="font-heading text-base font-bold text-slate-900">Casa Matriz - Vitacura</h3>
+              <h3 class="font-heading text-base font-bold text-slate-900">365 SOFT - Casa Matriz</h3>
             </div>
             
             <ul class="space-y-3.5 text-sm text-slate-600">
@@ -36,22 +36,22 @@ import { QuoteService } from '../../core/services/quote.service';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                <span>Av. Vitacura 4500, Las Condes, Santiago, Chile</span>
+                <span>Av. América y Av. Beijing, Cochabamba, Bolivia</span>
               </li>
               <li class="flex items-start gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                 </svg>
                 <div>
-                  <span class="block font-semibold text-slate-800">Ventas: +56 2 2345 6789</span>
-                  <span class="block text-slate-400 text-xs">Soporte técnico: +56 2 2345 6780</span>
+                  <span class="block font-semibold text-slate-800">VENTAS: +591 77490451</span>
+                  <span class="block text-slate-500 text-xs font-medium">Soporte técnico: +591 61628908</span>
                 </div>
               </li>
               <li class="flex items-start gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L22 8m-2 11a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h12a2 2 0 012 2v11z"/>
                 </svg>
-                <span>contacto&#64;concesionariapremium.com</span>
+                <span>guslavi22&#64;gmail.com</span>
               </li>
               <li class="flex items-start gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -69,7 +69,7 @@ import { QuoteService } from '../../core/services/quote.service';
           <!-- Interactive Iframe Map -->
           <div class="h-72 w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm relative">
             <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
-                    src="https://www.openstreetmap.org/export/embed.html?bbox=-70.6121%2C-33.4079%2C-70.5721%2C-33.3779&amp;layer=mapnik&amp;marker=-33.3929%2C-70.5921"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=-66.1900%2C-17.3850%2C-66.1600%2C-17.3650&amp;layer=mapnik&amp;marker=-17.3750%2C-66.1750"
                     style="border: 0;"></iframe>
           </div>
         </div>
