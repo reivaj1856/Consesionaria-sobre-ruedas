@@ -18,7 +18,7 @@ export class User {
   nombre: string;
 
   @Column({ type: 'varchar', length: 20, default: 'agente' })
-  rol: 'administrador' | 'concesionaria' | 'agente';
+  rol: 'admin' | 'administrador' | 'concesionaria' | 'agente' | 'cliente';
 
   @Column({ type: 'varchar', nullable: true })
   concesionariaId: string | null;

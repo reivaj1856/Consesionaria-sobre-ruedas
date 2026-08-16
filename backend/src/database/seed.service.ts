@@ -36,7 +36,7 @@ export class SeedService implements OnApplicationBootstrap {
     private readonly groupRepository: Repository<SpecificationGroup>,
     @InjectRepository(CarouselSlide)
     private readonly carouselRepository: Repository<CarouselSlide>,
-  ) {}
+  ) { }
 
   async onApplicationBootstrap() {
     this.logger.log('Iniciando verificación de datos de sembrado...');
@@ -159,8 +159,8 @@ export class SeedService implements OnApplicationBootstrap {
       for (const [groupName, specs] of Object.entries(mapping)) {
         const group = this.groupRepository.create({ nombre: groupName });
         const savedGroup = await this.groupRepository.save(group);
-        
-        const specEntities = specs.map(name => 
+
+        const specEntities = specs.map(name =>
           this.specificationRepository.create({
             nombre: name,
             grupoId: savedGroup.id
