@@ -15,7 +15,7 @@ export declare class AuthService {
             id: string;
             email: string;
             nombre: string;
-            rol: "agente" | "administrador" | "concesionaria";
+            rol: "agente" | "admin" | "administrador" | "concesionaria" | "cliente";
             concesionariaId: string | null;
             beneficios: number;
             recibeDolares: boolean;
@@ -28,7 +28,7 @@ export declare class AuthService {
             id: string;
             email: string;
             nombre: string;
-            rol: "agente" | "administrador" | "concesionaria";
+            rol: "agente" | "admin" | "administrador" | "concesionaria" | "cliente";
             concesionariaId: string | null;
             beneficios: number;
             recibeDolares: boolean;
@@ -39,7 +39,7 @@ export declare class AuthService {
         id: string;
         email: string;
         nombre: string;
-        rol: "agente" | "administrador" | "concesionaria";
+        rol: "agente" | "admin" | "administrador" | "concesionaria" | "cliente";
         concesionariaId: string | null;
         concesionaria: {
             id: string;

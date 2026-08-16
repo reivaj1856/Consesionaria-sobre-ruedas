@@ -6,7 +6,7 @@ export declare class User {
     email: string;
     contrasenia: string;
     nombre: string;
-    rol: 'administrador' | 'concesionaria' | 'agente';
+    rol: 'admin' | 'administrador' | 'concesionaria' | 'agente' | 'cliente';
     concesionariaId: string | null;
     concesionaria?: User;
     beneficios: number;

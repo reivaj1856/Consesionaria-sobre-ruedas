@@ -480,7 +480,7 @@ export declare const SEED_VEHICLES: ({
     condicion: string;
     ubicacion: string;
     imagenPrincipal: string;
-    imagenes: never[];
+    imagenes: string[];
     descripcion: string;
     destacado: boolean;
     estado: string;
@@ -532,7 +532,7 @@ export declare const SEED_VEHICLES: ({
     condicion: string;
     ubicacion: string;
     imagenPrincipal: string;
-    imagenes: never[];
+    imagenes: string[];
     descripcion: string;
     destacado: boolean;
     estado: string;
